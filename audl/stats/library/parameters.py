@@ -51,3 +51,20 @@ class StatisticAbbreviation:
     stat_col_offensive_points_played = 'OPP'
     stat_col_defensive_points_played = 'DPP'
     stat_col_pulls = 'P'
+
+#######################################################################
+#                            Miscellaneous                            #
+#######################################################################
+
+
+season_dict = {
+    2021: '1',
+    2019: '2',
+    2018: '3',
+    2017: '4',
+    2015: '5',
+    2016: '6',
+    2014: '7',
+    2013: '8',
+    2012: '9',
+}

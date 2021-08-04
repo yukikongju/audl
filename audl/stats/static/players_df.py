@@ -71,3 +71,15 @@ def find_player_full_name_from_id(player_id: str) -> str:
 
 def find_player_id_from_full_name(full_name: str) -> str:
     return _find_cell_value_from_col_value(full_name, player_col_full_name, player_index_id)
+
+
+def _get_dataframe_column_as_list(col_name: str):
+    return list(_get_players_df()[col_name])
+
+
+def get_list_players_by_name() -> list:
+    return _get_dataframe_column_as_list(player_col_full_name)
+
+
+def get_list_players_id() -> list:
+    return _get_dataframe_column_as_list(player_col_id)
