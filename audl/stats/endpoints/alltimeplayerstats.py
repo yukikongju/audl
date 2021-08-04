@@ -21,7 +21,7 @@ class AllTimePlayerStats(Endpoint):
                 page_df = pd.read_html(url)[0]
                 dfs.append(page_df)
                 if show_message:
-                    print(f"Updating page {page} ...")
+                    print(f"Downloading page {page} ...")
                 page = page + 1
             except ValueError:
                 hasPlayerLeft = False

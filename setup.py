@@ -9,9 +9,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = '0.0.1'
-DESCRIPTION = 'AUDL data downloader'
-LONG_DESCRIPTION = 'A package that downloads AUDL players and team statistics'
+VERSION = '1.0.0'
+DESCRIPTION = 'AUDL API'
+LONG_DESCRIPTION = 'Unofficial AUDL API'
 
 setup(
     name="audl",
@@ -22,8 +22,9 @@ setup(
     long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
     packages=find_packages(),
-    install_requires=['matplotlib', 'pandas'],
-    #  url=
+    install_requires=['lxml', 'html5lib', 'pandas'],
+    url="https://github.com/yukikongju/audl",
+    include_package_data=True,
     keywords=['audl'],
     classifiers=[
         "Development Status :: 1 - Planning",

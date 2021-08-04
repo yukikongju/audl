@@ -16,7 +16,7 @@ Unofficial AUDL api for python users
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
 	- [X] [Team Stats](https://theaudl.com/stats/team?year=1)
 	- [X] [Team Season Player Stats](https://theaudl.com/stats/team-season-players)
-	- [ ] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
+	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
 	- [ ] [Season Player Stats](https://theaudl.com/stats/player-season)
 	- [ ] [Season Schedule](https://theaudl.com/league/schedule/week)
 	- [ ] [Team Game Stats](https://theaudl.com/stats/team-game-stats)
@@ -33,4 +33,7 @@ Unofficial AUDL api for python users
 
 #### How to download all-time player stats
 
+##  [Ressources](#ressources)
+
+- [How to publish Python Package](https://realpython.com/pypi-publish-python-package/)
 
