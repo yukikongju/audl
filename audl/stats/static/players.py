@@ -2,7 +2,7 @@
 
 import re
 from audl.stats.library.data import players
-from audl.stats.library.data import player_index_id, player_index_full_name, player_index_first_name, player_index_last_name, player_index_is_active
+from audl.stats.library.data import player_index_id, player_index_full_name, player_index_first_name, player_index_last_name
 
 
 def _find_players(regex_pattern: str, col_id: int) -> list:
@@ -35,12 +35,23 @@ def find_players_by_last_name(regex_pattern):
     return _find_players(regex_pattern, player_index_last_name)
 
 
-def find_active_players():
-    return _find_players("True", player_index_is_active)
+#  def find_active_players():
+    #  return _find_players("True", player_index_is_active)
 
 
-def find_inactive_players():
-    return _find_players("False", player_index_is_active)
+#  def find_inactive_players():
+    #  return _find_players("False", player_index_is_active)
+
+
+def find_player_by_id(player_id: str) -> str:
+    regex_pattern = '^{}$'.format(player_id)
+    players_list = _find_players(regex_pattern, player_index_id)
+    if len(players_list) > 1:
+        raise Exception('Found more than 1 id')
+    elif not players_list:
+        return None
+    else:
+        return players_list[0]
 
 
 def get_all_players():
