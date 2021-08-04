@@ -2,7 +2,7 @@
 
 import pandas as pd
 from audl.stats.endpoints._base import Endpoint
-from audl.stats.static import players_df
+from audl.stats.static import players
 from audl.stats.library.parameters import StatisticAbbreviation
 
 
@@ -15,14 +15,14 @@ class PlayerProfile(Endpoint):
         self.url = self._get_url()
 
     def _get_endpoint(self):
-        return players_df.find_player_id_from_full_name(self.full_name)
+        return players.find_player_id_from_full_name(self.full_name)
 
     def get_all_regular_seasons(self):
         dfs = pd.read_html(self.url)
         return dfs[0]
 
     def _is_audl_player(self) -> bool:
-        player_names = players_df.get_list_players_by_name()
+        player_names = players.get_list_players_by_name()
         for name in player_names:
             if name == self.full_name:
                 return True

@@ -1,74 +1,93 @@
 #!/usr/bin/env/python
 
-import re
+""" Work with Pandas Dataframe """
+
+import pandas as pd
 from audl.stats.library.data import teams
-from audl.stats.library.data import team_index_id, team_index_abbreviation, team_index_nickname, team_index_full_name
-from audl.stats.library.data import team_index_city, team_index_state, team_index_year_founded
-
-""" Work with JSON Format """
-
-
-def _find_teams(regex_pattern, row_id):
-    teams_found = []
-    for team in teams:
-        if re.search(regex_pattern, str(team[row_id]), flags=re.I):
-            teams_found.append(_get_team_dict(team))
-    return teams_found
+from audl.stats.library.data import teams_columns_name
+from audl.stats.library.data import team_col_id, team_col_abr, team_col_full_name, team_col_nickname, team_col_city, team_col_state, team_col_year_founded
+from audl.stats.library.data import team_index_full_name, team_index_state, team_index_city, team_index_id, team_index_year_founded, team_index_abbreviation
 
 
-def _get_team_dict(team_row):
-    return {
-        'id': team_row[team_index_id],
-        'full_name': team_row[team_index_full_name],
-        'abbreviation': team_row[team_index_abbreviation],
-        'nickname': team_row[team_index_nickname],
-        'city': team_row[team_index_city],
-        'state': team_row[team_index_state],
-        'year_founded': team_row[team_index_year_founded]
-    }
+def _get_teams_df():
+    return pd.DataFrame(teams, columns=teams_columns_name)
 
 
-def find_teams_by_full_name(regex_pattern):
-    return _find_teams(regex_pattern, team_index_full_name)
+def _find_value_in_column(substring: str, column_name: str) -> list:
+    df = _get_teams_df()
+    values = []
+    for value in list(df[column_name]):
+        if substring in value:
+            values.append(value)
+    return values
 
 
-def find_teams_by_state(regex_pattern):
-    return _find_teams(regex_pattern, team_index_state)
+def find_teams_containing_substring_in_full_name(substring: str) -> list:
+    return _find_value_in_column(substring, team_col_full_name)
 
 
-def find_teams_by_city(regex_pattern):
-    return _find_teams(regex_pattern, team_index_city)
+def find_teams_containing_substring_in_city(substring: str) -> list:
+    return _find_value_in_column(substring, team_col_city)
 
 
-def find_teams_by_nickname(regex_pattern):
-    return _find_teams(regex_pattern, team_index_nickname)
+def _find_row_by_col_args(col_val: str, column_name: str) -> list:
+    df = _get_teams_df()
+    row = df.loc[df[column_name] == col_val]
+    return row.values.flatten().tolist()
 
 
-def find_team_by_year_founded(year: int):
-    return [_get_team_dict(team) for team in teams if team[team_index_year_founded] == year]
+def find_team_row_by_full_name(full_name: str) -> list:
+    return _find_row_by_col_args(full_name, team_col_full_name)
 
 
-def find_team_by_abbreviation(abbreviation: str):
-    regex_pattern = '^{}$'.format(abbreviation)
-    teams_list = _find_teams(regex_pattern, team_index_abbreviation)
-    if len(teams_list) > 1:
-        raise Exception('Found more than 1 id')
-    elif not teams_list:
-        return None
-    else:
-        return teams_list[0]
+def find_team_row_by_city(full_name: str) -> list:
+    return _find_row_by_col_args(full_name, team_col_city)
 
 
-def find_team_name_by_id(team_id):
-    regex_pattern = '^{}$'.format(team_id)
-    teams_list = _find_teams(regex_pattern, team_index_id)
-    if len(teams_list) > 1:
-        raise Exception('Found more than 1 id')
-    elif not teams_list:
-        return None
-    else:
-        return {_get_team_dict(teams_list[0])}
+def _find_rows_with_same_col_value(shared_value: str, column_name: str):
+    df = _get_teams_df()
+    rows = []
+    for index, value in enumerate(list(df[column_name])):
+        if value == shared_value:
+            row = df.iloc[index]
+            rows.append(list(row))
+    return rows
 
 
-def get_all_teams():
-    return [_get_team_dict(team) for team in teams]
+def find_df_teams_with_same_state(state: str):
+    data = _find_rows_with_same_col_value(state, team_col_state)
+    return pd.DataFrame(data, columns=teams_columns_name)
+
+
+def find_df_teams_with_same_creation_date(year: str):  # TOFIX: error with 2015
+    data = _find_rows_with_same_col_value(year, team_col_year_founded)
+    return pd.DataFrame(data, columns=teams_columns_name)
+
+
+def _find_cell_value_from_col_value(col_value: str, col_name_input: str, col_index_output: int):
+    row = _find_row_by_col_args(col_value, col_name_input)
+    return row[col_index_output]
+
+
+def find_team_full_name_from_id(team_id: str) -> str:
+    return _find_cell_value_from_col_value(team_id, team_col_id, team_index_full_name)
+
+
+def find_id_from_team_full_name(full_name: str) -> str:
+    return _find_cell_value_from_col_value(full_name, team_col_full_name, team_index_id)
+
+
+def find_id_from_team_abreviation(abreviation: str) -> str:
+    return _find_cell_value_from_col_value(abreviation, team_col_abr, team_index_id)
+
+
+def find_team_abreviation_from_id(team_id: str) -> str:
+    return _find_cell_value_from_col_value(team_id, team_col_id, team_index_abbreviation)
+
+
+def find_team_full_name_from_team_abreviation(abreviation: str) -> str:
+    return _find_cell_value_from_col_value(abreviation, team_col_abr, team_index_full_name)
+
+
+def find_team_abreviation_from_team_full_name(full_name: str) -> str:
+    return _find_cell_value_from_col_value(full_name, team_col_full_name, team_index_abbreviation)

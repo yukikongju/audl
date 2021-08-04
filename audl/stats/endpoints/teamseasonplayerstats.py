@@ -3,7 +3,7 @@
 import pandas as pd
 from audl.stats.endpoints._base import Endpoint
 from audl.stats.static.miscellaneous import get_season_id
-from audl.stats.static.teams_df import find_id_from_team_full_name
+from audl.stats.static.teams import find_id_from_team_full_name
 
 
 class TeamSeasonPlayerStats(Endpoint):
