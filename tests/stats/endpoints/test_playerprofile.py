@@ -14,3 +14,6 @@ class TestPlayerProfile(unittest.TestCase):
 
     def test_get_regular_season_by_year(self):
         print(PlayerProfile("Rowan McDonnell").get_regular_season_by_year(2021))
+
+    def test_get_regular_season_career(self):
+        print(PlayerProfile("Rowan McDonnell").get_regular_season_career())

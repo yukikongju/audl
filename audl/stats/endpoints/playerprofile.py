@@ -1,17 +1,21 @@
 #!/usr/bin/env/python
 
 import pandas as pd
+from audl.stats.endpoints._base import Endpoint
 from audl.stats.static import players_df
 from audl.stats.library.parameters import StatisticAbbreviation
 
 
-class PlayerProfile(object):
+class PlayerProfile(Endpoint):
 
     def __init__(self, full_name: str):
-        BASE_URL = "https://theaudl.com/league/players/"
+        super().__init__("https://theaudl.com/league/players/")
         self.full_name = full_name
-        self.player_id = players_df.find_player_id_from_full_name(full_name)
-        self.url = BASE_URL + self.player_id
+        self.endpoint = self._get_endpoint()
+        self.url = self._get_url()
+
+    def _get_endpoint(self):
+        return players_df.find_player_id_from_full_name(self.full_name)
 
     def get_all_regular_seasons(self):
         dfs = pd.read_html(self.url)
@@ -35,8 +39,8 @@ class PlayerProfile(object):
             return df_season
 
     def get_regular_season_career(self):
-        df = self.get_regular_season_career()
-        return df.loc[df['YR'] == 'Career']
+        df = self.get_all_regular_seasons()
+        return df.loc[df[StatisticAbbreviation.stat_col_year] == 'Career']
 
     def get_all_playoffs_stats(self):
         pass
