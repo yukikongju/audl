@@ -31,4 +31,23 @@ class StatisticsDescription:
 
 
 class StatisticAbbreviation:
-    pass
+    stat_col_year = 'YR'
+    stat_col_games_played = 'G'
+    stat_col_points_played = 'PP'
+    stat_col_team = 'TM'
+    stat_col_assists = 'AST'
+    stat_col_goals = 'GLS'
+    stat_col_blocks = 'BLK'
+    stat_col_plus_minus = '+/-'
+    stat_col_completions = 'CMP'
+    stat_col_completion_perc = 'CMP%'
+    stat_col_throwing_yards = 'TY'
+    stat_col_receiving_yards = 'RY'
+    stat_col_hockey_assists = 'HA'
+    stat_col_throwaways = 'T'
+    stat_col_stalls = 'S'
+    stat_col_callahans = 'C'
+    stat_col_drops = 'D'
+    stat_col_offensive_points_played = 'OPP'
+    stat_col_defensive_points_played = 'DPP'
+    stat_col_pulls = 'P'

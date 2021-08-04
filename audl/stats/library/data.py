@@ -1,17 +1,24 @@
 #!/usr/bin/env/python
 
+#######################################################################
+#                         Player Information                          #
+#######################################################################
+
+# Column index for player dataframe
 player_index_id = 0
 player_index_full_name = 1
 player_index_first_name = 2
 player_index_last_name = 3
 #  player_index_is_active = 4
 
+# Column name for player dataframe
 player_col_id = 'player_id'
 player_col_full_name = 'full_name'
 player_col_first_name = 'first_name'
 player_col_last_name = 'last_name'
 player_col_is_active = 'is_active'
 
+# Column Names for player dataframe
 players_columns_name = [
     player_col_id,
     player_col_full_name,
@@ -2239,6 +2246,12 @@ players = [
     ['zabdulla', 'Zubair Abdulla', 'Zubair', 'Abdulla'],
 ]
 
+
+#######################################################################
+#                          Team Information                           #
+#######################################################################
+
+# Column index for team dataframe
 team_index_id = 0
 team_index_abbreviation = 1
 team_index_nickname = 2
@@ -2248,7 +2261,7 @@ team_index_full_name = 5
 team_index_state = 6
 #  team_index_stadium = 7
 
-
+# Column name for teams dataframe
 team_col_id = 'team_num_id'
 team_col_abr = 'ABR'
 team_col_nickname = 'team_name'
@@ -2257,6 +2270,7 @@ team_col_city = 'city'
 team_col_full_name = 'full_name'
 team_col_state = 'state'
 
+# Column Name
 teams_columns_name = [
     team_col_id,
     team_col_abr,
