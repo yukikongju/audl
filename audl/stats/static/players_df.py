@@ -60,14 +60,14 @@ def find_df_players_who_share_last_name(last_name: str) -> list:
     return pd.DataFrame(data=data, columns=players_columns_name)
 
 
-def _find_cell_value_from_player_col_value(col_value: str, col_name_input: str, col_index_output: int):
+def _find_cell_value_from_col_value(col_value: str, col_name_input: str, col_index_output: int):
     row = _find_row_by_col_args(col_value, col_name_input)
     return row[col_index_output]
 
 
 def find_player_full_name_from_id(player_id: str) -> str:
-    return _find_cell_value_from_player_col_value(player_id, player_col_id, player_index_full_name)
+    return _find_cell_value_from_col_value(player_id, player_col_id, player_index_full_name)
 
 
 def find_player_id_from_full_name(full_name: str) -> str:
-    return _find_cell_value_from_player_col_value(full_name, player_col_full_name, player_index_id)
+    return _find_cell_value_from_col_value(full_name, player_col_full_name, player_index_id)
