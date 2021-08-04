@@ -28,3 +28,7 @@ class StatisticsDescription:
     OPP = 'Offensive Points Played'
     DPP = 'Defensive Points Played'
     P = 'Pulls'
+
+
+class StatisticAbbreviation:
+    pass

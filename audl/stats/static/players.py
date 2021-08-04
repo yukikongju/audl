@@ -4,6 +4,8 @@ import re
 from audl.stats.library.data import players
 from audl.stats.library.data import player_index_id, player_index_full_name, player_index_first_name, player_index_last_name
 
+""" Work with JSON Format """
+
 
 def _find_players(regex_pattern: str, col_id: int) -> list:
     players_found = []

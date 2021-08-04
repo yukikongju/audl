@@ -1,15 +1,24 @@
 #!/usr/bin/env/python
 
-# allow non-ascii symbols
-# coding=utf-8
-
 player_index_id = 0
-player_index_last_name = 1
+player_index_full_name = 1
 player_index_first_name = 2
-player_index_full_name = 3
+player_index_last_name = 3
 #  player_index_is_active = 4
 
-#  ['ID', 'Last Name', 'First Name', 'Full Name']
+player_col_id = 'player_id'
+player_col_full_name = 'full_name'
+player_col_first_name = 'first_name'
+player_col_last_name = 'last_name'
+player_col_is_active = 'is_active'
+
+players_columns_name = [
+    player_col_id,
+    player_col_full_name,
+    player_col_first_name,
+    player_col_last_name
+]
+
 players = [
     ['ahumbert','AJ Humbert', 'AJ', 'Humbert'],
     ['ajacoski','AJ Jacoski', 'AJ', 'Jacoski'],
@@ -2239,7 +2248,25 @@ team_index_full_name = 5
 team_index_state = 6
 #  team_index_stadium = 7
 
-#  ['team_num_ID', 'ABR', 'team_name', 'year_founded', 'city', 'Full Name', 'state']
+
+team_col_id = 'team_num_id'
+team_col_abr = 'ABR'
+team_col_nickname = 'team_name'
+team_col_year_founded = ' year_founded'
+team_col_city = 'city'
+team_col_full_name = 'full_name'
+team_col_state = 'state'
+
+teams_columns_name = [
+    team_col_id,
+    team_col_abr,
+    team_col_nickname,
+    team_col_year_founded,
+    team_col_city,
+    team_col_full_name,
+    team_col_state ,
+]
+
 teams = [
     ['1', 'ATL', 'Hustle', '2015', 'Atlanta', 'Atlanta Hustle', 'Georgia'],
     ['2', 'AUS', 'Sol', '2016', 'Austin', 'Austin Sol', 'Texas'],

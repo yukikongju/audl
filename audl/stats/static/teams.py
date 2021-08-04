@@ -5,6 +5,8 @@ from audl.stats.library.data import teams
 from audl.stats.library.data import team_index_id, team_index_abbreviation, team_index_nickname, team_index_full_name
 from audl.stats.library.data import team_index_city, team_index_state, team_index_year_founded
 
+""" Work with JSON Format """
+
 
 def _find_teams(regex_pattern, row_id):
     teams_found = []
