@@ -52,6 +52,11 @@ class StatisticAbbreviation:
     stat_col_defensive_points_played = 'DPP'
     stat_col_pulls = 'P'
 
+
+class FileName:
+    alltimeplayer = 'AllTimePlayerStats.csv'
+
+
 #######################################################################
 #                            Miscellaneous                            #
 #######################################################################

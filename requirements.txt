@@ -2,3 +2,6 @@ setuptools
 wheel
 tdqm
 twine
+lxml
+html5lib
+pandas
