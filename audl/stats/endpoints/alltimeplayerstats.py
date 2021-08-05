@@ -35,4 +35,5 @@ class AllTimePlayerStats(Endpoint):
 
     def download_all_time_player_stats(self, show_message=True):
         df = self._get_all_time_player_stats_df(show_message)
-        download_dataframe(FileName.alltimeplayer, df)
+        file_name = f"{FileName.alltimeplayer}.csv"
+        download_dataframe(file_name, df)

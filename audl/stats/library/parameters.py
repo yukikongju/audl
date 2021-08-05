@@ -54,7 +54,8 @@ class StatisticAbbreviation:
 
 
 class FileName:
-    alltimeplayer = 'AllTimePlayerStats.csv'
+    alltimeplayer = 'AllTimePlayerStats'
+    seasonplayerstats = 'SeasonPlayerStats'
 
 
 #######################################################################
