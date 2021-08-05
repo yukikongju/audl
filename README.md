@@ -7,9 +7,12 @@ Unofficial AUDL api for python users
 - [Requirements](#requirements)
 - [Features](#features)
 - [Usage](#usage)
-- [Ressources](#ressources)
+
 
 ## [Requirements](#requirements)
+
+Download package with `` pip install audl ``
+
 ## [Features](#features)
 
 - [ ] Fetch Data from
@@ -23,17 +26,50 @@ Unofficial AUDL api for python users
 
 ## [Usage](#usage)
 
+
+#### How to get player profile 
+
+```python 
+
+from audl.stats.endpoints.playerprofile import PlayerProfile 
+
+# Fetching dataframe from https://theaudl.com/league/players/mmcdonnel
+player = PlayerProfile("Rowan McDonnell")
+
+# Get player's regular season and playoffs stats
+regular_season = player.get_regular_seasons_career()
+playoffs = player.get_playoffs_career()
+```
+
 #### How to get team stats by season
+
+```python 
+
+from audl.stats.endpoints.teamstats import TeamStats
+
+# Fetching dataframe from https://theaudl.com/stats/team
+season = TeamStats(2021).get_teams_stats_by_season()
+```
 
 #### How to get team season player stats by team and by season
 
-#### How to get player profile (regular season and playoffs stats)
+```python 
 
-#### How to download all players stats by season
+from audl.stats.endpoints.teamseasonplayerstats import TeamSeasonPlayerStats
+
+# Fetching dataframe from https://theaudl.com/stats/team-season-players?year=1&aw_team_id=12
+royal_mtl = TeamSeasonPlayerStats("Montreal Royal", 2021).get_team_season_player_stats()
+```
 
 #### How to download all-time player stats
 
-##  [Ressources](#ressources)
+```python 
 
-- [How to publish Python Package](https://realpython.com/pypi-publish-python-package/)
+from audl.stats.endpoints.alltimeplayerstats import AllTimePlayerStats
+
+# Downloading all-time player stats from https://theaudl.com/stats/players-all-time as .csv file
+AllTimePlayerStats.download_all_time_player_stats(show_message=True)
+```
+
+#### How to download all players stats by season
 
