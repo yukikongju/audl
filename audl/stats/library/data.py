@@ -36,7 +36,7 @@ players = [
     ['abell','Aaron Bell', 'Aaron', 'Bell'],
     ['abuss','Aaron Buss', 'Aaron', 'Buss'],
     ['acorley','Aaron Corley', 'Aaron', 'Corley'],
-    ['aDel real','Aaron Del Real', 'Aaron', 'Real'],
+    ['adelreal','Aaron Del Real', 'Aaron', 'Real'],
     ['alangley','Aaron Langley', 'Aaron', 'Langley'],
     ['arichards','Aaron Richards', 'Aaron', 'Richards'],
     ['aroberts','Aaron Roberts', 'Aaron', 'Roberts'],

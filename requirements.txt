@@ -5,3 +5,5 @@ twine
 lxml
 html5lib
 pandas
+numpy
+requests

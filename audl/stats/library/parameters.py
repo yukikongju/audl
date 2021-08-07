@@ -56,12 +56,84 @@ class StatisticAbbreviation:
 class FileName:
     alltimeplayer = 'AllTimePlayerStats.csv'
 
+#######################################################################
+#                          Games Parameters                           #
+#######################################################################
+
+# Types of throws and their id :\t on heroku server
+
+
+class GameEventAction:
+    # Types of events defined on heroku server
+    # Block
+    # Dish
+    # Dump
+    # Huck throwaway
+    # Pass
+    # Pull
+    # Score
+    # Swing
+    pass
+
+
+class TeamStatsName:
+    Completions = 'Completions'
+    Hucks = 'Hucks'
+    Offensive_holds = 'Offensive Holds'
+    Defensive_breaks = 'Defensive Breaks'
+    Red_zone_possessions = 'Red Zone Posessions'
+    Hucks = 'Hucks'
+    Turnovers = 'Turnovers'
+    Blocks = 'Blocks'
+    Turnovers = 'Turnovers'
+
+
+team_stats_row_names = [
+    TeamStatsName.Completions,
+    TeamStatsName.Hucks,
+    TeamStatsName.Offensive_holds,
+    TeamStatsName.Defensive_breaks,
+    TeamStatsName.Red_zone_possessions,
+    TeamStatsName.Blocks,
+    TeamStatsName.Turnovers,
+]
+
+team_stats_perc_columns_names = [
+    "",
+    "Successful",
+    "Opportunities",
+    "Percentage"
+]
+
+# \t: number mapings
+# \r: receiver
+# \l: lineup
+# \x: disc absolute position in x
+# \y: disc absolut position in y
+# \s: ???
+herokuT_dict = {
+    '1': 'receiving-pull',
+    '2': 'pulling',
+    '3': 'throaway-provoked',  # rename?
+    #  '5':
+    #  '8':
+    #  '10':
+    #  '12':
+    #  '15':
+    #  '18',
+    #  '19':
+    '20': 'pass-completed',
+    #  '21':
+    '22': 'score',
+    #  '23':
+    #  '24':
+    #  '40':
+}
+
 
 #######################################################################
 #                            Miscellaneous                            #
 #######################################################################
-
-
 season_dict = {
     2021: '1',
     2019: '2',
