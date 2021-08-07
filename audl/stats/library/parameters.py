@@ -56,6 +56,32 @@ class StatisticAbbreviation:
 class FileName:
     alltimeplayer = 'AllTimePlayerStats.csv'
 
+
+#######################################################################
+#                             Box Scores                              #
+#######################################################################
+
+box_scores_columns_names = ["Team", "Q1", "Q2", "Q3", "Q4", "T"]
+
+# Absolute time in seconds for each quarter
+# Regular time: 12 min per quarter
+# 1rst OT: 5 minutes
+# 2nd OT: sudden death
+quarters_clock_dict = {
+    "Q1_start": 1,      # 0 min
+    "Q1_end": 720,      # 12 min
+    "Q2_start": 721,    # 12 min
+    "Q2_end": 1440,     # 24 min
+    "Q3_start": 1441,   # 24 min
+    "Q3_end": 2160,     # 36 min
+    "Q4_start": 2161,   # 36 min
+    "Q4_end": 2880,        # 48 min
+    "OT1_start": 2881,     # 48 min
+    "OT1_end": 3180,       # 53 min
+    "OT2_start": 3181,     # 53 min
+    #  "OT2_end": 0,       # ? min
+}
+
 #######################################################################
 #                          Games Parameters                           #
 #######################################################################
@@ -112,9 +138,9 @@ team_stats_perc_columns_names = [
 # \y: disc absolut position in y
 # \s: ???
 herokuT_dict = {
-    '1': 'receiving-pull',
-    '2': 'pulling',
-    '3': 'throaway-provoked',  # rename?
+    'o-line': '1',
+    'd-line': '2',
+    'throaway-provoked': '3',
     #  '5':
     #  '8':
     #  '10':
@@ -122,9 +148,9 @@ herokuT_dict = {
     #  '15':
     #  '18',
     #  '19':
-    '20': 'pass-completed',
-    #  '21':
-    '22': 'score',
+    'pass-completed': '20',
+    'timeout': '21',
+    'goal': '22',
     #  '23':
     #  '24':
     #  '40':

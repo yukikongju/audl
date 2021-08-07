@@ -9,6 +9,7 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.static import players
 from audl.stats.library.parameters import TeamStatsName
 from audl.stats.library.parameters import team_stats_perc_columns_names, team_stats_row_names
+from audl.stats.library.parameters import quarters_clock_dict, box_scores_columns_names
 
 
 class GameStats(Endpoint):
@@ -154,17 +155,9 @@ class GameStats(Endpoint):
         #  df = self._get_team_stats_df_perc_from_json(tsgAway)
         return df
 
-    def _get_home_team_events(self):
-        tsgHome = self.json['tsgHome']
-        events = tsgHome['events']
-        print(events)
-
-    def get_box_scores(self):
-        pass
-
     def get_team_stats(self) -> list:  # same format as audl
         # get column stats for each team
-        home_team, away_team = self._get_teams_full_name()
+        home_team_name, away_team_name = self._get_teams_full_name()
         home_col_formatted = self._get_home_team_stats_formatted()
         away_col_formatted = self._get_away_team_stats_formatted()
 
@@ -172,13 +165,9 @@ class GameStats(Endpoint):
         data = [team_stats_row_names,
                 away_col_formatted, home_col_formatted]
         data_transposed = GameStats._transpose_list(data)
-        header = ['', away_team, home_team]
+        header = ['', away_team_name, home_team_name]
         df = pd.DataFrame(data_transposed, columns=header)
         return df
-
-    @staticmethod
-    def _transpose_list(data: list) -> list:
-        return np.array(data).T.tolist()
 
     def _get_player_stats_both_teams(self):
         pass
@@ -189,5 +178,89 @@ class GameStats(Endpoint):
     def get_player_stats_away_team(self):
         pass
 
-    def _get_play_by_play_lineups(self):
+    @staticmethod
+    def _transpose_list(data: list) -> list:
+        return np.array(data).T.tolist()
+
+    def _get_team_lineups_from_line(self, events: list) -> list:
         pass
+
+    def _get_play_by_play_lineups_home_team(self):
+        home_events = self._get_home_team_events()
+        pass
+
+    def _get_play_by_play_lineups_away_team(self):
+        away_events = self._get_away_team_events()
+        pass
+
+    def _get_home_team_events(self) -> list:
+        tsgHome = self.json['tsgHome']
+        events = tsgHome['events']
+        return events
+
+    def _get_away_team_events(self) -> list:
+        tsgAway = self.json['tsgAway']
+        events = tsgAway['events']
+        return events
+
+    def get_box_scores(self):
+        # get team name
+        home_team_name, away_team_name = self._get_teams_full_name()
+        # get teams score count by quarter
+        game = self.json['game']
+        home_team_row = self._get_home_team_box_scores(game)
+        away_team_row = self._get_away_team_box_scores(game)
+        # create dataframe
+        data = [away_team_row, home_team_row]
+        df = pd.DataFrame(data)
+        # add team name column to df
+        teams = [away_team_name, home_team_name]
+        df.insert(loc=0, column='Teams', value=teams)
+        df.columns = box_scores_columns_names
+        return df
+
+    def _get_home_team_box_scores(self, game: list) -> list:
+        final_score_home = game['score_home']
+        score_times_home = game['score_times_home'][1:]
+        box_scores = self._get_team_box_scores(
+            final_score_home, score_times_home)
+        return box_scores
+
+    def _get_away_team_box_scores(self, game: list) -> list:
+        final_score_away = game['score_away']
+        score_times_away = game['score_times_away'][1:]
+        box_scores = self._get_team_box_scores(
+            final_score_away, score_times_away)
+        return box_scores
+
+    @staticmethod
+    def _flatten_2D_to_1D(data):
+        return [item for sublist in data for item in sublist]
+
+        # TODO: Fix if overtime
+    def _get_team_box_scores(self, team_final_score: int, scores_times: list) -> list:
+        # TODO: Add team name here?
+        has_overtime, quarters_scores = self._get_team_scores_count_by_quarter(
+            scores_times)
+        print(has_overtime)
+        quarters_scores.append(team_final_score)
+        return quarters_scores
+
+    # TOFIX: handle Overtime
+    def _get_team_scores_count_by_quarter(self, scores_time: list) -> [bool, list]:
+        Q1_count, Q2_count, Q3_count, Q4_count, OT1_count = 0, 0, 0, 0, 0
+        for score in scores_time:
+            if score <= quarters_clock_dict['Q1_end']:
+                Q1_count += 1
+            elif score <= quarters_clock_dict['Q2_end']:
+                Q2_count += 1
+            elif score <= quarters_clock_dict['Q3_end']:
+                Q3_count += 1
+            elif score <= quarters_clock_dict['Q4_end']:
+                Q4_count += 1
+            elif score <= quarters_clock_dict['OT1_end']:
+                OT1_count += 1
+        if OT1_count > 0:  # there was an overtime
+            return True, [Q1_count, Q2_count, Q3_count, Q4_count, OT1_count]
+        else:
+            return False, [Q1_count, Q2_count, Q3_count, Q4_count]
