@@ -15,14 +15,14 @@ Download package with `` pip install audl ``
 
 ## [Features](#features)
 
-- [O] Fetch Data from
+- [X] Fetch Data from
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
 	- [X] [Team Stats](https://theaudl.com/stats/team?year=1)
 	- [X] [Team Season Player Stats](https://theaudl.com/stats/team-season-players)
 	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
 	- [X] [Season Player Stats](https://theaudl.com/stats/player-season)
 	- [X] [Team Season Schedule](https://theaudl.com/hustle/schedule)
-	- [ ] [Season Schedule](https://theaudl.com/league/schedule/week)
+	- [X] [Season Schedule](https://theaudl.com/league/schedule/week)
 	- [ ] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
 ## [Usage](#usage)

@@ -44,6 +44,10 @@ class TeamSeasonSchedule(Endpoint):
         locations = soup.findAll('td', {"class": "audl-schedule-location"} )
         teams = soup.findAll('td', {"class": "audl-schedule-team-name"} )
         scores = soup.findAll('td', {"class": "audl-schedule-team-score"} )
+
+        # get value inside tags
+        stadiums = [location.text.strip() for location in locations]
+
         data = []
         i = 0 # index to keep track of teams
         for index, _ in enumerate(locations):
@@ -55,7 +59,7 @@ class TeamSeasonSchedule(Endpoint):
             time = times[index].text
 
             # find stadium
-            stadium = locations[index].find('a')['href']
+            stadium = stadiums[index]
 
             # find home team
             away_team = teams[i].text
@@ -69,6 +73,7 @@ class TeamSeasonSchedule(Endpoint):
 
             # add game to data
             game = [away_team, home_team, time, stadium, game_id, away_score, home_score]
+            print(game)
             data.append(game)
         # create dataframe
         df = pd.DataFrame(data, columns=game_schedule_columns_name)

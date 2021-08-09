@@ -56,7 +56,6 @@ class SeasonSchedule(Endpoint):
             # add game to data
             game = [away_team, home_team, time, stadium, game_id, away_score, home_score]
             games.append(game)
-            print(game)
         return games
 
     def get_season_schedule_df(self):
