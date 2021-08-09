@@ -57,6 +57,24 @@ class FileName:
     alltimeplayer = 'AllTimePlayerStats'
     seasonplayerstats = 'SeasonPlayerStats'
 
+#######################################################################
+#                         TeamSeasonSchedule                          #
+#######################################################################
+
+team_season_schedule_index_away	 = 0
+team_season_schedule_index_home	 = 1
+team_season_schedule_index_time = 2
+team_season_schedule_index_stadium = 3
+team_season_schedule_index_game_id = 4
+
+team_season_schedule_columns_name = [
+    "Away",
+    "Home",
+    "Time",
+    "Stadium",
+    "Game ID"
+]
+
 
 #######################################################################
 #                            Miscellaneous                            #

@@ -15,14 +15,15 @@ Download package with `` pip install audl ``
 
 ## [Features](#features)
 
-- [ ] Fetch Data from
+- [O] Fetch Data from
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
 	- [X] [Team Stats](https://theaudl.com/stats/team?year=1)
 	- [X] [Team Season Player Stats](https://theaudl.com/stats/team-season-players)
 	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
 	- [X] [Season Player Stats](https://theaudl.com/stats/player-season)
+	- [X] [Team Season Schedule](https://theaudl.com/hustle/schedule)
 	- [ ] [Season Schedule](https://theaudl.com/league/schedule/week)
-	- [ ] [Team Game Stats](https://theaudl.com/stats/team-game-stats)
+	- [ ] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
 ## [Usage](#usage)
 
@@ -79,6 +80,17 @@ from audl.stats.endpoints.seasonplayerstats import SeasonPlayerStats
 
 # Downloading season player stats from https://theaudl.com/stats/player-season?year={all_pages}
 SeasonPlayerStats(2021).download_season_player_stats()
+
+```
+
+#### How to get team season schedule
+
+```python
+
+from audl.stats.endpoints.teamseasonschedule import TeamSeasonSchedule
+
+# fetch schedule from https://theaudl.com/hustle/schedule as Data Frame
+schedule = TeamSeasonSchedule("Atlanta Hustle").get_team_schedule()
 
 ```
 
