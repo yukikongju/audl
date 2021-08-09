@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from audl.stats.endpoints._base import Endpoint
 from audl.stats.static.teams import find_team_name_from_full_name
-from audl.stats.library.parameters import team_season_schedule_columns_name
+from audl.stats.library.parameters import game_schedule_columns_name
 
 class TeamSeasonSchedule(Endpoint):
 
@@ -43,6 +43,7 @@ class TeamSeasonSchedule(Endpoint):
         times = soup.findAll('span', {"class": "audl-schedule-start-time-text"} )
         locations = soup.findAll('td', {"class": "audl-schedule-location"} )
         teams = soup.findAll('td', {"class": "audl-schedule-team-name"} )
+        scores = soup.findAll('td', {"class": "audl-schedule-team-score"} )
         data = []
         i = 0 # index to keep track of teams
         for index, _ in enumerate(locations):
@@ -58,17 +59,20 @@ class TeamSeasonSchedule(Endpoint):
 
             # find home team
             away_team = teams[i].text
+            away_score = scores[i].text
             i += 1
 
             # find away team
             home_team = teams[i].text
+            home_score = scores[i].text
             i += 1
 
             # add game to data
-            game = [away_team, home_team, time, stadium, game_id]
+            game = [away_team, home_team, time, stadium, game_id, away_score, home_score]
             data.append(game)
         # create dataframe
-        df = pd.DataFrame(data, columns=team_season_schedule_columns_name)
+        df = pd.DataFrame(data, columns=game_schedule_columns_name)
         return df
+
 
 
