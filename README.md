@@ -94,5 +94,19 @@ schedule = TeamSeasonSchedule("Atlanta Hustle").get_team_schedule()
 
 ```
 
+#### How to download season schedule
+
+```python
+
+from audl.stats.endpoints.seasonschedule import SeasonSchedule
+
+# Fetch complete season schedule from https://theaudl.com/league/schedule/ as Data Frame
+schedule = SeasonSchedule().get_season_schedule_df()
+
+# Download season schedule as csv
+SeasonSchedule().download_season_schedule_as_csv()
+
+```
+
 #### How to get game information
 

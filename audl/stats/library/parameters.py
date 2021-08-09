@@ -56,6 +56,7 @@ class StatisticAbbreviation:
 class FileName:
     alltimeplayer = 'AllTimePlayerStats'
     seasonplayerstats = 'SeasonPlayerStats'
+    seasonschedule = 'SeasonSchedule'
 
 #######################################################################
 #                         TeamSeasonSchedule                          #
@@ -66,14 +67,24 @@ team_season_schedule_index_home	 = 1
 team_season_schedule_index_time = 2
 team_season_schedule_index_stadium = 3
 team_season_schedule_index_game_id = 4
+team_season_schedule_index_home_score = 5
+team_season_schedule_index_away_score = 6
 
-team_season_schedule_columns_name = [
+game_schedule_columns_name = [
     "Away",
     "Home",
     "Time",
     "Stadium",
-    "Game ID"
+    "Game ID",
+    "Away Score",
+    "Home Score"
 ]
+
+#######################################################################
+#                           Season Schedule                           #
+#######################################################################
+
+NUM_WEEKS_IN_SEASON = 12
 
 
 #######################################################################
