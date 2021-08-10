@@ -5,8 +5,8 @@
 import pandas as pd
 from audl.stats.library.data import teams
 from audl.stats.library.data import teams_columns_name
-from audl.stats.library.data import team_col_id, team_col_abr, team_col_full_name, team_col_nickname, team_col_city, team_col_state, team_col_year_founded
-from audl.stats.library.data import team_index_full_name, team_index_state, team_index_city, team_index_id, team_index_year_founded, team_index_abbreviation
+from audl.stats.library.data import team_col_id, team_col_abr, team_col_full_name, team_col_team_name	, team_col_city, team_col_state, team_col_year_founded
+from audl.stats.library.data import team_index_full_name, team_index_state, team_index_city, team_index_id, team_index_year_founded, team_index_abbreviation, team_index_team_name
 
 
 def _get_teams_df():
@@ -91,3 +91,15 @@ def find_team_full_name_from_team_abreviation(abreviation: str) -> str:
 
 def find_team_abreviation_from_team_full_name(full_name: str) -> str:
     return _find_cell_value_from_col_value(full_name, team_col_full_name, team_index_abbreviation)
+
+
+def find_team_name_from_full_name(full_name:str) ->str:
+    return _find_cell_value_from_col_value(full_name, team_col_full_name, team_index_team_name)
+
+def get_list_teams_by_name() -> list:
+    return _get_dataframe_column_as_list(team_col_full_name)
+
+
+def get_list_teams_id() -> list:
+    return _get_dataframe_column_as_list(team_col_id)
+

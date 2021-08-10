@@ -2254,7 +2254,7 @@ players = [
 # Column index for team dataframe
 team_index_id = 0
 team_index_abbreviation = 1
-team_index_nickname = 2
+team_index_team_name = 2
 team_index_year_founded = 3
 team_index_city = 4
 team_index_full_name = 5
@@ -2264,7 +2264,7 @@ team_index_state = 6
 # Column name for teams dataframe
 team_col_id = 'team_num_id'
 team_col_abr = 'ABR'
-team_col_nickname = 'team_name'
+team_col_team_name	 = 'team_name'
 team_col_year_founded = ' year_founded'
 team_col_city = 'city'
 team_col_full_name = 'full_name'
@@ -2274,7 +2274,7 @@ team_col_state = 'state'
 teams_columns_name = [
     team_col_id,
     team_col_abr,
-    team_col_nickname,
+    team_col_team_name	,
     team_col_year_founded,
     team_col_city,
     team_col_full_name,

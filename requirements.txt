@@ -6,4 +6,5 @@ lxml
 html5lib
 pandas
 numpy
+BeautifulSoup4
 requests
