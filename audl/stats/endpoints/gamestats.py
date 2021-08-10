@@ -52,7 +52,6 @@ class GameStats(Endpoint):
         return home_full_name, away_full_name
 
     def _get_roster_df(self, roster):
-        # get data from json
         rows = []
         for index, player in enumerate(roster):
             players = roster[index]
@@ -60,7 +59,6 @@ class GameStats(Endpoint):
             jersey_number = player['jersey_number']
             first_name = player['player']['first_name']
             last_name = player['player']['last_name']
-            #  full_name = f"{first_name} {last_name}"
             player_id = player['player']['ext_player_id']
             row = [identification_num, first_name,
                    last_name, jersey_number, player_id]
