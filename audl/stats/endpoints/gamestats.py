@@ -10,16 +10,21 @@ from audl.stats.static import players
 from audl.stats.library.parameters import TeamStatsName
 from audl.stats.library.parameters import team_stats_perc_columns_names, team_stats_row_names
 from audl.stats.library.parameters import quarters_clock_dict, box_scores_columns_names
+from audl.stats.library.parameters import HerokuPlay
+from audl.stats.library.parameters import team_points_by_points_columns_names
+from audl.stats.library.parameters import team_roster_columns_name
 
 
 class GameStats(Endpoint):
 
     def __init__(self, game_id: str):
-        self.game_id = game_id
         super().__init__("https://audl-stat-server.herokuapp.com/stats-pages/game/")
+        self.game_id = game_id
         self.endpoint = game_id
         self.url = self._get_url()
         self.json = self._get_json_from_url()
+        self.roster_home = self._get_roster_home_team_df()
+        self.roster_away = self._get_roster_away_team_df()
 
     def _get_json_from_url(self):
         return requests.get(self.url).json()
@@ -62,7 +67,7 @@ class GameStats(Endpoint):
             rows.append(row)
 
         # create data frame
-        df = pd.DataFrame(rows)
+        df = pd.DataFrame(rows, columns=team_roster_columns_name)
         return df
 
     def _get_roster_home_team_df(self):
@@ -183,14 +188,200 @@ class GameStats(Endpoint):
         return np.array(data).T.tolist()
 
     def _get_team_lineups_from_line(self, events: list) -> list:
-        pass
+        data = []
+        for event in json.loads(events):
+            #  print(event)
+            if event["t"] == HerokuPlay.OLineIndex:
+                lineup_ids = event["l"]
+                row = ["O-Line", lineup_ids]
+                data.append(row)
+            elif event["t"] == HerokuPlay.DLineIndex:
+                lineup_ids = event["l"]
+                row = ["D-Line", lineup_ids]
+                data.append(row)
+        return data
+
+    def _get_all_scores_time(self):
+        game = self.json['game']
+        score_times_home = game['score_times_home'][1:]
+        score_times_away = game['score_times_away'][1:]
+        times = score_times_away + score_times_home
+        times.sort()
+        return times
+
+    def _get_lineup_from_lineup_ids(self, team_lineup_df: list, lineup_ids: list) -> list:
+        players = []
+        for player_id in lineup_ids:
+            player_index = team_lineup_df[team_lineup_df['identification_num']
+                                          == player_id].index[0]
+            #  first_name = team_lineup_df.iloc[player_index]['first_name']
+            last_name = team_lineup_df.iloc[player_index]['last_name']
+            #  full_name = f"{first_name} {last_name}"
+            #  players.append(full_name)
+            players.append(last_name)
+        players.sort()
+        return players
+
+    def _get_team_points_by_points_df(self, events: list, team_scoring_times: list, team_lineup_df: list):
+        # TOFIX : deal with changement de ligne
+        # get points durations + clock
+        all_scoring_times = self._get_all_scores_time()
+        points_durations = GameStats._convert_times_to_point_durations(
+            all_scoring_times)
+
+        # get data
+        score_home = 0
+        score_away = 0
+        last_scoring_time = 0
+        index = 0
+        data = []
+        for _, event in enumerate(json.loads(events)):
+            if event['t'] == HerokuPlay.OLineIndex or event['t'] == HerokuPlay.DLineIndex:
+                # get line type
+                line = "O-Line" if event['t'] == HerokuPlay.OLineIndex else "D-Line"
+                # get lineup + convert ids to name
+                lineup_ids = event['l']
+                lineup = self._get_lineup_from_lineup_ids(
+                    team_lineup_df, lineup_ids)
+
+            if event['t'] == HerokuPlay.Goal:  # Goal is scored
+                # add point duration
+                points_duration = points_durations[index]
+                # add clock
+                clock = GameStats._convert_time_to_clock(
+                    all_scoring_times[index])
+                # get quarter
+                quarter = GameStats._convert_time_to_quarter(
+                    all_scoring_times[index])
+                # add outcome
+                outcome = "Win"
+                # add current score
+                score_home += 1
+                current_score = f"{score_home}-{score_away}"
+
+                #  add row
+                row = [current_score, line, clock,
+                       points_duration, quarter, lineup]
+                data.append(row)
+                last_scoring_time = all_scoring_times[index]
+                index += 1
+                print(row)
+            elif event['t'] == HerokuPlay.ScoredOn:
+                # add point duration
+                points_duration = points_durations[index]
+                # add clock
+                clock = GameStats._convert_time_to_clock(
+                    all_scoring_times[index])
+                # get quarter
+                quarter = GameStats._convert_time_to_quarter(
+                    all_scoring_times[index])
+                # add outcome
+                outcome = "Lost"
+                score_away += 1
+                current_score = f"{score_home}-{score_away}"
+
+                #  add row
+                row = [current_score, line, clock,
+                       points_duration, quarter, lineup]
+                data.append(row)
+                last_scoring_time = all_scoring_times[index]
+                index += 1
+                print(row)
+            elif event['t'] == HerokuPlay.EndOfQ1 or event['t'] == HerokuPlay.EndOfQ2 or event['t'] == HerokuPlay.EndOfQ3 or event['t'] == HerokuPlay.EndOfQ4:
+                # set outcome to NA -> point not finished
+                outcome = "NA"
+                #  current_score = f"{score_home}-{score_away}"
+                # get quarter
+                quarter = GameStats._convert_time_to_quarter(last_scoring_time)
+                # get point duration
+                point_duration = GameStats._get_endquarter_point_duration(
+                    last_scoring_time)
+                # get clock
+                clock = "0:00"
+                # add row
+                row = [current_score, line, clock,
+                       points_duration, quarter, lineup]
+                data.append(row)
+                print(row)
+                #  print(index)
+        df = pd.DataFrame(data, columns=team_points_by_points_columns_names)
+        return df
+
+    @staticmethod
+    def _get_endquarter_point_duration(last_scoring_time: int) -> str:
+        time_til_end_quarter = min(
+            quarters_clock_dict['Q1_end'] - last_scoring_time,
+            quarters_clock_dict['Q2_end'] - last_scoring_time,
+            quarters_clock_dict['Q3_end'] - last_scoring_time,
+            quarters_clock_dict['Q4_end'] - last_scoring_time,
+            quarters_clock_dict['OT1_end'] - last_scoring_time
+        )
+        return GameStats._convert_seconds_to_minutes_string(time_til_end_quarter)
+
+    @staticmethod
+    def _convert_time_to_clock(time: int):
+        if time <= quarters_clock_dict['Q1_end']:
+            return GameStats._convert_time_to_minutes(quarters_clock_dict['Q1_end'] - time)
+        elif time <= quarters_clock_dict['Q2_end']:
+            return GameStats._convert_time_to_minutes(quarters_clock_dict['Q2_end'] - time)
+        elif time <= quarters_clock_dict['Q3_end']:
+            return GameStats._convert_time_to_minutes(quarters_clock_dict['Q3_end'] - time)
+        elif time <= quarters_clock_dict['Q4_end']:
+            return GameStats._convert_time_to_minutes(quarters_clock_dict['Q4_end'] - time)
+        elif time <= quarters_clock_dict['OT1_end']:
+            return GameStats._convert_time_to_minutes(quarters_clock_dict['OT1_end'] - time)
+
+    @staticmethod
+    def _convert_time_to_quarter(time: int) -> str:
+        if time <= quarters_clock_dict['Q1_end']:
+            return "Q1"
+        elif time <= quarters_clock_dict['Q2_end']:
+            return "Q2"
+        elif time <= quarters_clock_dict['Q3_end']:
+            return "Q3"
+        elif time <= quarters_clock_dict['Q4_end']:
+            return "Q4"
+        elif time <= quarters_clock_dict['OT1_end']:
+            return "OT1"
+
+    @staticmethod
+    def _convert_times_to_point_durations(times: list) -> list:
+        point_durations = []
+        last_point_time = 0
+        for time in times:
+            point_duration = time - last_point_time
+            string_duration = GameStats._convert_seconds_to_minutes_string(
+                point_duration)
+            point_durations.append(string_duration)
+            last_point_time = time
+        return point_durations
+
+    @ staticmethod
+    def _convert_time_to_minutes(seconds: int) -> str:
+        # mm:ss
+        m = seconds % 3600 // 60
+        s = seconds % 3600 % 60
+        return '{:2d}:{:02d}'.format(m, s).strip()
+
+    @staticmethod
+    def _convert_seconds_to_minutes_string(seconds: int) -> str:
+        # 1m50s
+        m = seconds % 3600 // 60
+        s = seconds % 3600 % 60
+        return '{:2d}m{:02d}s'.format(m, s).strip()
 
     def _get_play_by_play_lineups_home_team(self):
         home_events = self._get_home_team_events()
-        pass
+        game = self.json['game']
+        score_times_home = game['score_times_home'][1:]
+        df = self._get_team_points_by_points_df(
+            home_events, score_times_home, self.roster_home)
+        return df
 
     def _get_play_by_play_lineups_away_team(self):
         away_events = self._get_away_team_events()
+        game = self.json['game']
+        score_times_away = game['score_times_away'][1:]
         pass
 
     def _get_home_team_events(self) -> list:
@@ -264,3 +455,75 @@ class GameStats(Endpoint):
             return True, [Q1_count, Q2_count, Q3_count, Q4_count, OT1_count]
         else:
             return False, [Q1_count, Q2_count, Q3_count, Q4_count]
+
+    # DUMY
+    def _print_events(self):
+        events = self._get_home_team_events()
+        for _, event in enumerate(json.loads(events)):
+            if event['t'] == HerokuPlay.Goal:
+                receiver_id = event['r']
+                receiver = self._get_player_last_name_from_identification(
+                    receiver_id, self.roster_home)
+                x = event['x']
+                y = event['y']
+                print(f"Scored by: {receiver} x: {x} y: {y}")
+            elif event['t'] == HerokuPlay.OLineIndex:
+                # get lineup + convert ids to name
+                lineup_ids = event['l']
+                lineup = self._get_lineup_from_lineup_ids(
+                    self.roster_home, lineup_ids)
+                print(f"Lineup O-Line: {lineup}")
+            elif event['t'] == HerokuPlay.DLineIndex:
+                lineup_ids = event['l']
+                lineup = self._get_lineup_from_lineup_ids(
+                    self.roster_home, lineup_ids)
+                print(f"Lineup D-Line: {lineup}")
+            elif event['t'] == HerokuPlay.TimeoutDefense:
+                lineup_ids = event['l']
+                lineup = self._get_lineup_from_lineup_ids(
+                    self.roster_home, lineup_ids)
+                print(f"Timeout Defense: {lineup}")
+            elif event['t'] == HerokuPlay.TimeoutOffense:
+                lineup_ids = event['l']
+                lineup = self._get_lineup_from_lineup_ids(
+                    self.roster_home, lineup_ids)
+                print(f"Timeout Offense: {lineup}")
+            elif event['t'] == HerokuPlay.EndOfQ1:
+                print(f"EndOfQ1")
+            elif event['t'] == HerokuPlay.EndOfQ2:
+                print(f"EndOfQ2")
+            elif event['t'] == HerokuPlay.EndOfQ3:
+                print(f"EndOfQ3")
+            elif event['t'] == HerokuPlay.EndOfQ4:
+                print(f"EndOfQ4")
+            elif event['t'] == HerokuPlay.PassCompleted:
+                receiver_id = event['r']
+                receiver = self._get_player_last_name_from_identification(
+                    receiver_id, self.roster_home)
+                x = event['x']
+                y = event['y']
+                print(f"Pass to {receiver} x: {x} y: {y}")
+            elif event['t'] == HerokuPlay.Block:
+                receiver_id = event['r']
+                receiver = self._get_player_last_name_from_identification(
+                    receiver_id, self.roster_home)
+                print(f"Blocked by {receiver}")
+            elif event['t'] == HerokuPlay.ThrowawayCaused:
+                print(f"Throwaway caused")
+            elif event['t'] == HerokuPlay.ScoredOn:
+                print("Scored On")
+            elif event['t'] == HerokuPlay.Pull:
+                receiver_id = event['r']
+                receiver = self._get_player_last_name_from_identification(
+                    receiver_id, self.roster_home)
+                print(f"Pull by {receiver}")
+            elif event['t'] == HerokuPlay.Throwaway:
+                print("Throwaway from ")
+            else:
+                print(f"Unknown {event['t']}")
+
+    def _get_player_last_name_from_identification(self, identification: int, team_lineup_df: list) -> str:
+        player_index = team_lineup_df[team_lineup_df['identification_num']
+                                      == identification].index[0]
+        last_name = team_lineup_df.iloc[player_index]['last_name']
+        return last_name

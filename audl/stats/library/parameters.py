@@ -131,30 +131,61 @@ team_stats_perc_columns_names = [
     "Percentage"
 ]
 
+team_roster_columns_name = [
+    "identification_num",
+    "first_name",
+    "last_name",
+    "jersey_number",
+    "player_id"
+
+]
+
 # \t: number mapings
 # \r: receiver
 # \l: lineup
 # \x: disc absolute position in x
 # \y: disc absolut position in y
 # \s: ???
-herokuT_dict = {
-    'o-line': '1',
-    'd-line': '2',
-    'throaway-provoked': '3',
-    #  '5':
-    #  '8':
-    #  '10':
-    #  '12':
-    #  '15':
-    #  '18',
-    #  '19':
-    'pass-completed': '20',
-    'timeout': '21',
-    'goal': '22',
-    #  '23':
-    #  '24':
-    #  '40':
-}
+
+
+class HerokuPlay:
+    OLineIndex = 1
+    DLineIndex = 2
+    Pull = 3
+    Block = 5
+    ThrowawayCaused = 8
+    Throwaway = 9
+    EndOfQ1 = 23
+    EndOfQ2 = 24
+    EndOfQ3 = 25
+    EndOfQ4 = 26
+    PassCompleted = 20
+    ScoredOn = 21
+    Goal = 22
+    TimeoutDefense = 40
+    TimeoutOffense = 41
+
+
+team_points_by_points_columns_names = [
+    "Current Score",
+    "Line",
+    "Clock",
+    "Point Duration",
+    "Quarter",
+    "Lineup"
+]
+
+play_by_play_columns_names = [
+    "Score",
+    "Offensive Team",
+    "Defensive Team",
+    "O-Line",
+    "D-Line",
+    "Quarter",
+    "Point Duration",
+    "Clock",
+    "Outcome"
+]
 
 
 #######################################################################
