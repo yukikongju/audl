@@ -82,11 +82,12 @@ AllTimePlayerStats.download_all_time_player_stats(show_message=True)
 from audl.stats.endpoints.gamestatsboxscores import GameStatsBoxScores
 from audl.stats.endpoints.gamestatsrosters import GamesStatsRosters
 from audl.stats.endpoints.gamestatslineups import GameStatsLineups
+from audl.stats.endpoints.gamestatsteamstats import GameStatsTeamStats
 
-# Fetching box scores from https://theaudl.com/stats/game/2021-06-05-RAL-ATL
+# Fetching Box Scores from https://theaudl.com/stats/game/2021-06-05-RAL-ATL
 box_scores = GameStatsBoxScores("2021-06-05-RAL-ATL").get_box_scores()
 
-# Fetching roster metadata
+# Fetching Roster Metadata
 rosters = GamesStatsRosters("2021-06-05-RAL-ATL")
 roster_home = rosters.get_roster_home_metadata()
 roster_away = rosters.get_roster_away_metadata()
@@ -95,6 +96,9 @@ roster_away = rosters.get_roster_away_metadata()
 lineups = GameStatsLineups("2021-07-16-DAL-SEA")
 lineup_home = lineups.get_home_points_by_points_lineups())
 lineup_away = lineups.get_away_points_by_points_lineups())
+
+# Fetching Team Stats
+team_stats = GameStatsTeamStats("2021-07-16-DAL-SEA").get_team_stats()
 ```
 
 

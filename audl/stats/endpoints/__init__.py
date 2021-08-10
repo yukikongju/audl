@@ -1,8 +1,12 @@
 #!/usr/bin/env/python
 
 __all__ = [
-    'alltimeplayer',
+    'alltimeplayerstats',
     'gamestats',
+    'gamestatsboxscores',
+    'gamestatslineups',
+    'gamestatsrosters',
+    'gamestatsteamstats',
     'playerprofile',
     'teamseasonplayerstats',
     'teamstats'

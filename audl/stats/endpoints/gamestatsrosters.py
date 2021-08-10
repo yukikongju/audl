@@ -4,6 +4,7 @@ import json
 import pandas as pd
 
 from audl.stats.endpoints.gamestats import GameStats
+from audl.stats.library.parameters import team_roster_columns_name
 
 
 class GameStatsRosters(GameStats):
