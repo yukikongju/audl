@@ -9,7 +9,7 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.static import players
 from audl.stats.library.parameters import TeamStatsName
 from audl.stats.library.parameters import team_stats_perc_columns_names, team_stats_row_names
-from audl.stats.library.parameters import quarters_clock_dict, box_scores_columns_names
+from audl.stats.library.parameters import quarters_clock_dict
 from audl.stats.library.parameters import HerokuPlay
 from audl.stats.library.parameters import team_points_by_points_columns_names
 from audl.stats.library.parameters import team_roster_columns_name
@@ -29,15 +29,15 @@ class GameStats(Endpoint):
     def _get_json_from_url(self):
         return requests.get(self.url).json()
 
-    def _get_game_metadata(self):
-        game = self.json['game']
-        team_season_home = game['team_season_home']
-        team_season_away = game['team_season_away']
-        score_home = game['score_home']
-        score_away = game['score_away']
-        score_times_home = game['score_times_home'][1:]
-        score_times_away = game['score_times_away'][1:]
-        pass
+    #  def _get_game_metadata(self):
+        #  game = self.json['game']
+        #  team_season_home = game['team_season_home']
+        #  team_season_away = game['team_season_away']
+        #  score_home = game['score_home']
+        #  score_away = game['score_away']
+        #  score_times_home = game['score_times_home'][1:]
+        #  score_times_away = game['score_times_away'][1:]
+        #  pass
 
     def _get_teams_full_name(self):
         game = self.json['game']
@@ -151,13 +151,11 @@ class GameStats(Endpoint):
     def _get_home_team_stats_formatted(self) -> list:
         tsgHome = self.json['tsgHome']
         df = self._get_team_stats_col_formatted(tsgHome)
-        #  df = self._get_team_stats_df_perc_from_json(tsgHome)
         return df
 
     def _get_away_team_stats_formatted(self) -> list:
         tsgAway = self.json['tsgAway']
         df = self._get_team_stats_col_formatted(tsgAway)
-        #  df = self._get_team_stats_df_perc_from_json(tsgAway)
         return df
 
     def get_team_stats(self) -> list:  # same format as audl
@@ -214,10 +212,7 @@ class GameStats(Endpoint):
         for player_id in lineup_ids:
             player_index = team_lineup_df[team_lineup_df['identification_num']
                                           == player_id].index[0]
-            #  first_name = team_lineup_df.iloc[player_index]['first_name']
             last_name = team_lineup_df.iloc[player_index]['last_name']
-            #  full_name = f"{first_name} {last_name}"
-            #  players.append(full_name)
             players.append(last_name)
         players.sort()
         return players
@@ -290,7 +285,6 @@ class GameStats(Endpoint):
             elif event['t'] == HerokuPlay.EndOfQ1 or event['t'] == HerokuPlay.EndOfQ2 or event['t'] == HerokuPlay.EndOfQ3 or event['t'] == HerokuPlay.EndOfQ4:
                 # set outcome to NA -> point not finished
                 outcome = "NA"
-                #  current_score = f"{score_home}-{score_away}"
                 # get quarter
                 quarter = GameStats._convert_time_to_quarter(last_scoring_time)
                 # get point duration
@@ -394,69 +388,12 @@ class GameStats(Endpoint):
         events = tsgAway['events']
         return events
 
-    def get_box_scores(self):
-        # get team name
-        home_team_name, away_team_name = self._get_teams_full_name()
-        # get teams score count by quarter
-        game = self.json['game']
-        home_team_row = self._get_home_team_box_scores(game)
-        away_team_row = self._get_away_team_box_scores(game)
-        # create dataframe
-        data = [away_team_row, home_team_row]
-        df = pd.DataFrame(data)
-        # add team name column to df
-        teams = [away_team_name, home_team_name]
-        df.insert(loc=0, column='Teams', value=teams)
-        df.columns = box_scores_columns_names
-        return df
-
-    def _get_home_team_box_scores(self, game: list) -> list:
-        final_score_home = game['score_home']
-        score_times_home = game['score_times_home'][1:]
-        box_scores = self._get_team_box_scores(
-            final_score_home, score_times_home)
-        return box_scores
-
-    def _get_away_team_box_scores(self, game: list) -> list:
-        final_score_away = game['score_away']
-        score_times_away = game['score_times_away'][1:]
-        box_scores = self._get_team_box_scores(
-            final_score_away, score_times_away)
-        return box_scores
-
     @staticmethod
     def _flatten_2D_to_1D(data):
         return [item for sublist in data for item in sublist]
 
-        # TODO: Fix if overtime
-    def _get_team_box_scores(self, team_final_score: int, scores_times: list) -> list:
-        # TODO: Add team name here?
-        has_overtime, quarters_scores = self._get_team_scores_count_by_quarter(
-            scores_times)
-        print(has_overtime)
-        quarters_scores.append(team_final_score)
-        return quarters_scores
-
-    # TOFIX: handle Overtime
-    def _get_team_scores_count_by_quarter(self, scores_time: list) -> [bool, list]:
-        Q1_count, Q2_count, Q3_count, Q4_count, OT1_count = 0, 0, 0, 0, 0
-        for score in scores_time:
-            if score <= quarters_clock_dict['Q1_end']:
-                Q1_count += 1
-            elif score <= quarters_clock_dict['Q2_end']:
-                Q2_count += 1
-            elif score <= quarters_clock_dict['Q3_end']:
-                Q3_count += 1
-            elif score <= quarters_clock_dict['Q4_end']:
-                Q4_count += 1
-            elif score <= quarters_clock_dict['OT1_end']:
-                OT1_count += 1
-        if OT1_count > 0:  # there was an overtime
-            return True, [Q1_count, Q2_count, Q3_count, Q4_count, OT1_count]
-        else:
-            return False, [Q1_count, Q2_count, Q3_count, Q4_count]
-
     # DUMY
+
     def _print_events(self):
         events = self._get_home_team_events()
         for _, event in enumerate(json.loads(events)):
@@ -521,6 +458,9 @@ class GameStats(Endpoint):
                 print("Throwaway from ")
             else:
                 print(f"Unknown {event['t']}")
+
+    def _download_play_by_play(self):
+        pass
 
     def _get_player_last_name_from_identification(self, identification: int, team_lineup_df: list) -> str:
         player_index = team_lineup_df[team_lineup_df['identification_num']

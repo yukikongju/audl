@@ -22,7 +22,8 @@ Download package with `` pip install audl ``
 	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
 	- [X] [Season Player Stats](https://theaudl.com/stats/player-season)
 	- [ ] [Season Schedule](https://theaudl.com/league/schedule/week)
-	- [ ] [Team Game Stats](https://theaudl.com/stats/team-game-stats)
+	- [ ] [Team Season Schedule](https://theaudl.com/hustle/schedule)
+	- [X] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
 ## [Usage](#usage)
 
@@ -72,4 +73,18 @@ AllTimePlayerStats.download_all_time_player_stats(show_message=True)
 ```
 
 #### How to download all players stats by season
+
+
+#### How to get game statistics
+
+```python
+
+from audl.stats.endpoints.gamestats import GameStats
+from audl.stats.endpoints.gamestatsboxscores import GameStatsBoxScores
+
+# Fetching data from https://theaudl.com/stats/game/2021-06-05-RAL-ATL
+box_scores = GameStatsBoxScores("2021-06-05-RAL-ATL").get_box_scores()
+
+```
+
 
