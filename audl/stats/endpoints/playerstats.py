@@ -10,7 +10,6 @@ from audl.stats.library.parameters import FileName
 
 
 class PlayerStats(Endpoint):
-
     """ class that download data from https://theaudl.com/stats/player-stats
         based on [Season], [Per], [Team]
     """
@@ -51,7 +50,11 @@ class PlayerStats(Endpoint):
         """ 
         Function that return the url by concatening the base url with its page number
         """
-        if self.team == 'all':
+        if self.season == 'career' and self.team == 'all':
+            return f"{self.base_url}&page={page_num}&per={self.per}"
+        elif self.season == 'career':
+            return f"{self.base_url}&page={page_num}&per={self.per}&team={self.team}"
+        elif self.team == 'all':
             return f"{self.base_url}&page={page_num}&year={self.season}&per={self.per}"
         return f"{self.base_url}&page={page_num}&year={self.season}&per={self.per}&team={self.team}"
 
