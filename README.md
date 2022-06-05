@@ -16,8 +16,8 @@ Download package with `` pip install audl ``
 ## [Features](#features)
 
 - [X] Fetch Data from
-	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
-	- [X] [Team Stats](https://theaudl.com/stats/team?year=1)
+	- [ ] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
+	- [ ] [Team Stats](https://theaudl.com/stats/team?year=1)
 	- [X] [Team Season Player Stats](https://theaudl.com/stats/team-season-players)
 	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
 	- [X] [Season Player Stats](https://theaudl.com/stats/player-season)
@@ -42,45 +42,26 @@ regular_season = player.get_regular_seasons_career()
 playoffs = player.get_playoffs_career()
 ```
 
-#### How to get team stats by season
+#### How to get Team Stats
 
-```python
+![image](https://user-images.githubusercontent.com/34996954/172069063-9499e31a-aab3-4a58-9345-106555f41b7a.png)
 
-from audl.stats.endpoints.teamstats import TeamStats
-
-# Fetching dataframe from https://theaudl.com/stats/team
-season = TeamStats(2021).get_teams_stats_by_season()
 ```
 
-#### How to get team season player stats
-
-```python
-
-from audl.stats.endpoints.teamseasonplayerstats import TeamSeasonPlayerStats
-
-# Fetching dataframe from https://theaudl.com/stats/team-season-players?year=1&aw_team_id=12
-royal_mtl = TeamSeasonPlayerStats("Montreal Royal", 2021).get_team_season_player_stats()
 ```
 
-#### How to download all-time player stats
+#### How to get Player Stats
+
+![image](https://user-images.githubusercontent.com/34996954/172069041-48e55c45-717c-4e99-a7aa-777658833ac6.png)
+
+Season=['career', 2022, ..., 2012]
+Per=['total', 'game', 'points', 'possessions', 'minutes']
 
 ```python
+from audl.stats.endpoints.playerstats import PlayerStats
 
-from audl.stats.endpoints.alltimeplayerstats import AllTimePlayerStats
-
-# Downloading all-time player stats from https://theaudl.com/stats/players-all-time as .csv file
-AllTimePlayerStats.download_all_time_player_stats(show_message=True)
-```
-
-#### How to download all players stats by season
-
-```python
-
-from audl.stats.endpoints.seasonplayerstats import SeasonPlayerStats
-
-# Downloading season player stats from https://theaudl.com/stats/player-season?year={all_pages}
-SeasonPlayerStats(2021).download_season_player_stats()
-
+# from https://theaudl.com/stats/player-stats
+playerstats = PlayerStats('career', 'total', 'breeze')  # PlayerStats(season, per, team)
 ```
 
 #### How to get team season schedule
