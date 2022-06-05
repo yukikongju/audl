@@ -6,5 +6,12 @@ from audl.stats.endpoints.teamstats import TeamStats
 
 class TestTeamStats(unittest.TestCase):
 
-    def test_get_teams_stats_by_season(self):
-        print(TeamStats(2021).get_teams_stats_by_season())
+    def test_get_page_results_as_dataframe(self):
+        team_stats = TeamStats('career', 'game', 'team')        # works
+        team_stats = TeamStats('career', 'total', 'team')       # works
+        team_stats = TeamStats(2019, 'total', 'team')           # works
+
+        res = team_stats.get_page_results_as_dataframe()
+
+
+

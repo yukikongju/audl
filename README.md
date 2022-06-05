@@ -15,9 +15,9 @@ Download package with `` pip install audl ``
 
 ## [Features](#features)
 
-- [X] Fetch Data from
+- [O] Fetch Data from
 	- [ ] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
-	- [ ] [Team Stats](https://theaudl.com/stats/team?year=1)
+	- [X] [Team Stats](https://theaudl.com/stats/team?year=1)
 	- [X] [Team Season Player Stats](https://theaudl.com/stats/team-season-players)
 	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
 	- [X] [Season Player Stats](https://theaudl.com/stats/player-season)
