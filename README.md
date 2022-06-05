@@ -15,8 +15,8 @@ Download package with `` pip install audl ``
 
 ## [Features](#features)
 
-- [O] Fetch Data from
-	- [ ] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
+- [X] Fetch Data from
+	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
 	- [X] [Team Stats](https://theaudl.com/stats/team?year=1)
 	- [X] [Team Season Player Stats](https://theaudl.com/stats/team-season-players)
 	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
@@ -34,12 +34,11 @@ Download package with `` pip install audl ``
 
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
-# Fetching dataframe from https://theaudl.com/league/players/mmcdonnel
-player = PlayerProfile("Rowan McDonnell")
-
-# Get player's regular season and playoffs stats
-regular_season = player.get_regular_seasons_career()
+# Fetching dataframe from https://theaudl.com/league/players/cbrock
+player = PlayerProfile('cbrock')
+reg = player.get_regular_seasons_career()
 playoffs = player.get_playoffs_career()
+season = player.get_season_stats(2019)
 ```
 
 #### How to get Team Stats

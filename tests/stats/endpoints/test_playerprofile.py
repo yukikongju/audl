@@ -6,8 +6,17 @@ from audl.stats.endpoints.playerprofile import PlayerProfile
 
 class TestPlayerProfile(unittest.TestCase):
 
-    def test_get_regular_seasons_career(self):
-        print(PlayerProfile("Rowan McDonnell").get_regular_seasons_career())
+    def test_existing_palyer(self):
+        player = PlayerProfile('cbrock')
+        reg = player.get_regular_seasons_career()
+        playoffs = player.get_playoffs_career()
+        season = player.get_season_stats(2019)
 
-    def test_is_audl_player(self):
-        print(PlayerProfile("Rowan McDonnell")._is_audl_player())
+    def test_non_existing_players(self):
+        pass
+
+    def test_non_existing_year(self):
+        pass
+
+    def test_non_existing_playoffs(self):
+        pass
