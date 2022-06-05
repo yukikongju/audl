@@ -46,8 +46,17 @@ playoffs = player.get_playoffs_career()
 
 ![image](https://user-images.githubusercontent.com/34996954/172069063-9499e31a-aab3-4a58-9345-106555f41b7a.png)
 
-```
+Season=['career', 2022, ..., 2012]
+Per=['total', 'game']
+Team=['team', 'opponent']
 
+
+```python
+from audl.stats.endpoints.teamstats import TeamStats
+
+# fetching from: https://theaudl.com/stats/team
+team_stats = TeamStats('career', 'game', 'opponent') # TeamStats(season, per, team)
+df = team_stats.get_page_results_as_dataframe()
 ```
 
 #### How to get Player Stats
