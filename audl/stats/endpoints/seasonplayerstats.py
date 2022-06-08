@@ -14,10 +14,16 @@ class SeasonPlayerStats(Endpoint):
 
     def __init__(self, year: int):
         super().__init__("https://theaudl.com/stats/team-season-players")
+        #  super().__init__("https://theaudl.com/stats/player-stats?year=")
         self.year = year
         self.season_id = get_season_id(year)
 
     def _get_season_player_stats_df(self, show_message=True):
+        """ 
+        [deprecated] 
+        Function that fetch season player stats from "https://theaudl.com/stats/player-stats?year="
+        return [df]
+        """
         dfs =[]
         page = 1
         hasPlayerLeft = True
@@ -36,6 +42,10 @@ class SeasonPlayerStats(Endpoint):
         return df_all
 
     def download_season_player_stats(self, show_message=True):
+        """ 
+        [deprecated] 
+        Function that fetch season player stats from "https://theaudl.com/stats/player-stats?year=" and download as csv
+        """
         df = self._get_season_player_stats_df(show_message)
         file_name = f"{FileName.seasonplayerstats}_{self.year}.csv"
         download_dataframe(file_name, df)

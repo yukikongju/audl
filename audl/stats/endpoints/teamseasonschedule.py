@@ -8,6 +8,9 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.static.teams import find_team_name_from_full_name
 from audl.stats.library.parameters import game_schedule_columns_name
 
+#  https://audl-stat-server.herokuapp.com/web-api/games?limit=10&years=2022&teamID=alleycats
+
+
 class TeamSeasonSchedule(Endpoint):
 
     def __init__(self, full_name: str ):
@@ -36,6 +39,11 @@ class TeamSeasonSchedule(Endpoint):
         return games_id
 
     def get_team_schedule(self):
+        """ 
+        [deprecated]
+        Function that fetch team schedule from https://theaudl.com/<team>/schedule 
+        as dataframe
+        """
         response = self._get_response()
         soup = BeautifulSoup(response.text, "lxml")
         # fetch page

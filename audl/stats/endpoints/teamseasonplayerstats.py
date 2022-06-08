@@ -21,4 +21,8 @@ class TeamSeasonPlayerStats(Endpoint):
         return f"?year={season_id}&aw_team_id={team_id}"
 
     def get_team_season_player_stats(self):
+        """ 
+        [deprecated]
+        Function that fetch team season player stats from https://theaudl.com/stats/team-season-players and download file as csv
+        """
         return self._fetch_dfs_from_url()[0]

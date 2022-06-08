@@ -42,12 +42,13 @@ class AllTimePlayerStats(Endpoint):
 
     def _get_url(self, page_num: int) -> str:
         """ 
-        Function that return the url by concatening the base url with its page number
+        [deprecated] Function that return the url by concatening the base url with its page number
         """
         return f"{self.base_url}{page_num}"
 
     def _fetch_page_players_as_json(self, page_num):
         """
+        [deprecated] 
         Function that fetch players in page as json 
         param: [page_num] url page number
         return:  result_json] players as json
@@ -66,6 +67,7 @@ class AllTimePlayerStats(Endpoint):
 
     def download_all_time_player_stats(self, show_message=True):
         """ 
+        [deprecated] 
         Function that download all time players stats as csv file
         return [flag] True if successfully downloaded, else False
         """
