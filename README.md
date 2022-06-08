@@ -19,15 +19,12 @@ Download package with `` pip install audl ``
 
 [AUDL Stats](https://theaudl.com/league/stats)
 
-- [X] Fetch Data from
+- [O] Fetch Data from
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
-	- [X] [Team Stats](https://theaudl.com/stats/team?year=1)
-	- [X] [Team Season Player Stats](https://theaudl.com/stats/team-season-players)
-	- [X] [All-Time Player Stats](https://theaudl.com/stats/players-all-time)
-	- [X] [Season Player Stats](https://theaudl.com/stats/player-season)
-	- [X] [Team Season Schedule](https://theaudl.com/hustle/schedule)
-	- [X] [Season Schedule](https://theaudl.com/league/schedule/week)
-	- [X] [Game Stats](https://theaudl.com/stats/team-game-stats)
+	- [X] [Team Stats](https://theaudl.com/stats/team)
+	- [X] [Player Stats](https://theaudl.com/stats/player-stats)
+	- [X] [Season Schedule](https://theaudl.com/league/game-search)
+	- [ ] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
 ## [Usage](#usage)
 
@@ -76,28 +73,20 @@ from audl.stats.endpoints.playerstats import PlayerStats
 playerstats = PlayerStats('career', 'total', 'breeze')  # PlayerStats(season, per, team)
 ```
 
-#### How to get team season schedule
-
-```python
-
-from audl.stats.endpoints.teamseasonschedule import TeamSeasonSchedule
-
-# fetch schedule from https://theaudl.com/hustle/schedule as Data Frame
-schedule = TeamSeasonSchedule("Atlanta Hustle").get_team_schedule()
-
-```
-
-#### How to download audl season schedule
+#### How to download season schedule
 
 ```python
 
 from audl.stats.endpoints.seasonschedule import SeasonSchedule
 
-# Fetch complete season schedule from https://theaudl.com/league/schedule/ as Data Frame
-schedule = SeasonSchedule().get_season_schedule_df()
+# Fetch complete season schedule from https://theaudl.com/league/game-search
 
-# Download season schedule as csv
-SeasonSchedule().download_season_schedule_as_csv()
+schedule = SeasonSchedule()
+games = schedule.get_all_games_ever_played()
+games = schedule.get_season_schedule(2022)
+games = schedule.get_team_season_schedule('aviators', 2022)
+games = schedule.get_team_season_schedule_against_opponent(
+	2022, 'aviators', 'growlers')
 
 ```
 
