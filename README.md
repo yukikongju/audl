@@ -7,6 +7,7 @@ Unofficial AUDL api for python users
 - [Requirements](#requirements)
 - [Features](#features)
 - [Usage](#usage)
+- [Exploration](#exploration)
 
 
 ## [Requirements](#requirements)
@@ -14,6 +15,9 @@ Unofficial AUDL api for python users
 Download package with `` pip install audl ``
 
 ## [Features](#features)
+
+
+[AUDL Stats](https://theaudl.com/league/stats)
 
 - [X] Fetch Data from
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
@@ -38,7 +42,7 @@ from audl.stats.endpoints.playerprofile import PlayerProfile
 player = PlayerProfile('cbrock')
 reg = player.get_regular_seasons_career()
 playoffs = player.get_playoffs_career()
-season = player.get_season_stats(2019)
+games = player.get_season_games_stats(2019)
 ```
 
 #### How to get Team Stats
@@ -122,3 +126,14 @@ lineup_away = lineups.get_away_points_by_points_lineups())
 # Fetching Team Stats
 team_stats = GameStatsTeamStats("2021-07-16-DAL-SEA").get_team_stats()
 ```
+
+## [Exploration](#exploration)
+
+- [ ] Proportion of touches per player on offensive points
+- [ ] Proportion of passes to teamates for each players (see connection)
+- [ ] Who is the best in the rain? (player efficiency vs temperature)
+- [ ] Most likely player to blow up
+
+
+
+

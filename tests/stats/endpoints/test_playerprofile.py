@@ -10,7 +10,8 @@ class TestPlayerProfile(unittest.TestCase):
         player = PlayerProfile('cbrock')
         reg = player.get_regular_seasons_career()
         playoffs = player.get_playoffs_career()
-        season = player.get_season_stats(2019)
+        season = player.get_season_games_stats(2019)
+        games_stats = player.get_career_games_stats()
 
     def test_non_existing_players(self):
         pass

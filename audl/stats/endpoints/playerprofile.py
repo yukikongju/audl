@@ -4,8 +4,11 @@ import pandas as pd
 import requests 
 import sys
 
+from datetime import datetime
+
 from audl.stats.endpoints._base import Endpoint
 from audl.stats.static import players
+from audl.stats.static.miscellaneous import FIRST_SEASON_YEAR
 
 #  https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
 #  https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&year=2022
@@ -33,6 +36,7 @@ class PlayerProfile(Endpoint):
     def get_regular_seasons_career(self):
         """ 
         Function that return a player's regular season stats as dataframe
+        return [df]
         """
         try: 
             # create dataframe
@@ -73,9 +77,11 @@ class PlayerProfile(Endpoint):
             print(f'An error has occured when fetching playoffs dataframe')
             sys.exit(1)
 
-    def get_season_stats(self, year):
+    def get_season_games_stats(self, year):
         """ 
         Function that returns stats per game in a given season
+        param: [year] season
+        return [df]
         """
         try:
             url = f"https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
@@ -86,4 +92,19 @@ class PlayerProfile(Endpoint):
             print(f'An error has occured when fetching season stats dataframe')
             sys.exit(1)
 
+    def get_career_games_stats(self):
+        """ 
+        Function that return dataframe of all games played by a player
+        return [df]
+        """
+        df = pd.DataFrame()
+        current_year = int(datetime.today().strftime('%Y'))
+        for year in range(FIRST_SEASON_YEAR, current_year +1):
+            df_season = self.get_season_games_stats(year)
+            df = df.append(df_season)
+        return df
+
         
+        
+        
+
