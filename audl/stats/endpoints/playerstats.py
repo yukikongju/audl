@@ -23,7 +23,7 @@ class PlayerStats(Endpoint):
         self.team = team
         super().__init__('https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20')
 
-    def fetch_all_data_as_dataframe(self, show_message=True):
+    def fetch_table(self, show_message=True):
         """
         Function that fetch query for all players as dataframe
         return [df] dataframe of all players stats
@@ -76,6 +76,7 @@ class PlayerStats(Endpoint):
         return players
 
 
+    # TODO: create Download class
     def download_stats_as_dataframe(self, file_path_name, show_message=True):
         """ 
         Function that download players stats as csv file
@@ -84,7 +85,7 @@ class PlayerStats(Endpoint):
         """
         flag = False
         try:
-            df = self.fetch_all_data_as_dataframe()
+            df = self.fetch_table()
             df.to_csv(file_path_name, sep=',', index=False)
             print(f'Downloaded csv file at {file_path_name}')
             flag = True

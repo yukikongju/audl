@@ -16,8 +16,6 @@ class Endpoint(object):
     def _get_url(self) -> str:
         return f"{self.base_url}{self.endpoint}"
 
-    #  def _get_url(self, endpoint:str) -> str:
-        #  return f"{self.base}{endpoint}"
 
     def _get_endpoint(self) -> str:
         pass

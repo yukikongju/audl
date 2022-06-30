@@ -20,15 +20,6 @@ class PlayerProfile(Endpoint):
         super().__init__("https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=")
         self.player_id = player_id
 
-    #  def _get_endpoint(self):
-    #      return players.find_player_id_from_full_name(self.full_name)
-
-    #  def _is_audl_player(self) -> bool:
-    #      player_names = players.get_list_players_by_name()
-    #      for name in player_names:
-    #          if name == self.full_name:
-    #              return True
-    #      return False
 
     def _get_url(self):
         return f"{self.base_url}{self.player_id}"
