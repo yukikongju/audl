@@ -17,7 +17,7 @@ class TeamStats(Endpoint):
         self.per = per
         self.team = team
 
-    def get_page_results_as_dataframe(self):
+    def get_table(self):
         """
         Function that return page results table as dataframe
         return [df] dataframe

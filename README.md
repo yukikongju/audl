@@ -56,7 +56,7 @@ from audl.stats.endpoints.teamstats import TeamStats
 
 # fetching from: https://theaudl.com/stats/team
 team_stats = TeamStats('career', 'game', 'opponent') # TeamStats(season, per, team)
-df = team_stats.get_page_results_as_dataframe()
+df = team_stats.get_table()
 ```
 
 #### How to get Player Stats
@@ -70,7 +70,7 @@ Per=['total', 'game', 'points', 'possessions', 'minutes']
 from audl.stats.endpoints.playerstats import PlayerStats
 
 # from https://theaudl.com/stats/player-stats
-playerstats = PlayerStats('career', 'total', 'breeze')  # PlayerStats(season, per, team)
+playerstats = PlayerStats('career', 'total', 'breeze').fetch_table()  # PlayerStats(season, per, team)
 ```
 
 #### How to fetch season schedule
