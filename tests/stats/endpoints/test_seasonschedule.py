@@ -1,25 +1,19 @@
 #!/usr/bin/env/python
 
 import unittest
-from audl.stats.endpoints.seasonschedule import SeasonSchedule
-
+from audl.stats.endpoints.seasonschedule import SeasonSchedule, TeamSeasonSchedule, AllSchedule, TeamSeasonAgainstOpponentSchedule
 
 class TestSeasonSchedule(unittest.TestCase):
 
-    def test_get_team_season_schedule_against_opponent(self, ):
-        schedule = SeasonSchedule()
-        games = schedule.get_all_games_ever_played()
-        games = schedule.get_season_schedule(2022)
-        games = schedule.get_team_season_schedule('aviators', 2022)
-        games = schedule.get_team_season_schedule_against_opponent(
-                2022, 'aviators', 'growlers')
-        
+    def test_all_schedule(self):
+        df = AllSchedule().get_schedule()
 
-    #  def test_get_schedule_df(self):
-    #      schedule = SeasonSchedule().get_season_schedule_df()
-    #      print(schedule)
+    def test_season_schedule(self):
+        df = SeasonSchedule(2022).get_schedule()
 
-    #  def test_download_team_schedule(self):
-    #      SeasonSchedule("Atlanta Hustle").download_season_schedule_as_csv()
+    def test_team_season_schedule(self):
+        df = TeamSeasonSchedule(2022, 'royal').get_schedule()
 
+    def test_team_season_against_opponent_schedule(self):
+        df = TeamSeasonAgainstOpponentSchedule(2022, 'royal', 'rush').get_schedule()
 

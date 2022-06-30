@@ -73,20 +73,18 @@ from audl.stats.endpoints.playerstats import PlayerStats
 playerstats = PlayerStats('career', 'total', 'breeze')  # PlayerStats(season, per, team)
 ```
 
-#### How to download season schedule
+#### How to fetch season schedule
 
 ```python
 
-from audl.stats.endpoints.seasonschedule import SeasonSchedule
+from audl.stats.endpoints.seasonschedule import SeasonSchedule, TeamSeasonSchedule, AllSchedule, TeamSeasonAgainstOpponentSchedule
 
 # Fetch complete season schedule from https://theaudl.com/league/game-search
 
-schedule = SeasonSchedule()
-games = schedule.get_all_games_ever_played()
-games = schedule.get_season_schedule(2022)
-games = schedule.get_team_season_schedule('aviators', 2022)
-games = schedule.get_team_season_schedule_against_opponent(
-	2022, 'aviators', 'growlers')
+df = SeasonSchedule(2022).get_schedule()
+df = TeamSeasonSchedule(2022, 'royal').get_schedule()
+df = AllSchedule().get_schedule()
+df = TeamSeasonAgainstOpponentSchedule(2022, 'royal', 'rush').get_schedule()
 
 ```
 
