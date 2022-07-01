@@ -20,6 +20,15 @@ class GameStats(Endpoint):
         super().__init__("https://audl-stat-server.herokuapp.com/stats-pages/game/")
         self.game_id = game_id
         self.json = self._get_json_from_url()
+        self.home_team = self._get_home_team()
+        self.away_team = self._get_away_team()
+
+    def _get_home_team(self):
+        return self.json['game']['team_season_home']['team']['ext_team_id']
+        
+    def _get_away_team(self):
+        return self.json['game']['team_season_away']['team']['ext_team_id']
+        pass
 
     def _get_url(self):
         return f"{self.base_url}{self.game_id}"
@@ -29,7 +38,7 @@ class GameStats(Endpoint):
         url = self._get_url()
         return requests.get(url).json()
 
-    def get_metadata(self):
+    def get_game_metadata(self):
         """ 
         Function that retrieve game metadata
         Return [df]:
@@ -48,14 +57,9 @@ class GameStats(Endpoint):
             Toronto Rush	4	6	4	7	21
             Montreal Royal	4	7	4	5	20
         """
-
         pass
         
     def get_scores(self):
-        pass
-
-
-    def get_team_stats(self):
         """ 
         Function that retrieves scores by times
         Return [df]:
@@ -65,10 +69,27 @@ class GameStats(Endpoint):
             - assist: who assisted the goal
             - hockey: who made the hockey pass
         """
+        pass
+
+
+    def get_team_stats(self):
+        """ 
+        Function that retrieves teams stats
+        Return [df]:
+           'id', 'teamSeasonId', 'gameId', 'source', 'startOnOffense',
+           'updateMoment', 'statusId', 'completionsNumer', 'completionsDenom',
+           'hucksNumer', 'hucksDenom', 'blocks', 'turnovers', 'oLineScores',
+           'oLinePoints', 'oLinePossessions', 'dLineScores', 'dLinePoints',
+           'dLinePossessions', 'redZoneScores', 'redZonePossessions', 'road',
+           'completionsPerc', 'hucksPerc', 'holdPerc', 'oLineConversionPerc',
+           'dLineConversionPerc', 'breakPerc', 'redZoneConversionPerc'
+        """
         tsg_home = self._read_teams_tsg_json(self.json['tsgHome'])
         tsg_home['road'] = 'home'
+        tsg_home['team'] = self.home_team
         tsg_away = self._read_teams_tsg_json(self.json['tsgAway'])
         tsg_away['road'] = 'away'
+        tsg_away['team'] = self.away_team
 
         # concatenate home and away dataframes
         tsg = pd.concat([tsg_home, tsg_away])
@@ -127,15 +148,15 @@ class GameStats(Endpoint):
         homeJSON = self.json['rostersHome']
         home_players = pd.json_normalize(homeJSON)
         home_players['road'] = 'home'
+        home_players['team'] = self.home_team
         awayJSON = self.json['rostersAway']
         away_players = pd.json_normalize(awayJSON)
         away_players['road'] = 'away'
+        away_players['team'] = self.away_team
 
         # concatenate dataset
         teams = pd.concat([home_players, away_players])
         return teams
-
-
 
     def get_teams_metadata(self):
         """ 
