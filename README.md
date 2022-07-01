@@ -26,6 +26,17 @@ Download package with `` pip install audl ``
 	- [X] [Season Schedule](https://theaudl.com/league/game-search)
 	- [ ] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
+TODOs:
+ - [ ] Game Stats
+     - [ ] Team Metadata
+     - [ ] Players Metadata
+     - [ ] Box Scores
+     - [ ] Scores
+     - [ ] Team Stats
+     - [ ] Print play by play by players name
+     - [ ] Disc movement
+
+
 ## [Usage](#usage)
 
 
@@ -120,6 +131,7 @@ team_stats = GameStatsTeamStats("2021-07-16-DAL-SEA").get_team_stats()
 - [ ] Proportion of passes to teamates for each players (see connection)
 - [ ] Who is the best in the rain? (player efficiency vs temperature)
 - [ ] Most likely player to blow up
+
 
 
 

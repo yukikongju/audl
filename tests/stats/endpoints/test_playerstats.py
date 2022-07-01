@@ -3,13 +3,13 @@ from audl.stats.endpoints.playerstats import PlayerStats
 
 
 def test_fetch_player_stats():
-    playerstats = PlayerStats(2022, 'points', 'breeze') # works
-    playerstats = PlayerStats(2022, 'total', 'breeze') # works
-    playerstats = PlayerStats(2022, 'total', 'all') # works
-    players_stats = PlayerStats(2019, 'game', 'all')
-    playerstats = PlayerStats('career', 'total', 'breeze')
-    players_stats = PlayerStats('career', 'total', 'all')
-    players_stats = PlayerStats('career', 'game', 'all')
+    playerstats = PlayerStats(2022, 'points', 'breeze').fetch_table()
+    playerstats = PlayerStats(2022, 'total', 'breeze').fetch_table()
+    playerstats = PlayerStats(2022, 'total', 'all') .fetch_table()
+    players_stats = PlayerStats(2019, 'game', 'all').fetch_table()
+    playerstats = PlayerStats('career', 'total', 'breeze').fetch_table()
+    players_stats = PlayerStats('career', 'total', 'all').fetch_table()
+    players_stats = PlayerStats('career', 'game', 'all').fetch_table()
 
 
 

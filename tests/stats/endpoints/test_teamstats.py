@@ -11,7 +11,7 @@ class TestTeamStats(unittest.TestCase):
         team_stats = TeamStats('career', 'total', 'team')       # works
         team_stats = TeamStats(2019, 'total', 'team')           # works
 
-        res = team_stats.get_page_results_as_dataframe()
+        res = team_stats.get_table()
 
 
 
