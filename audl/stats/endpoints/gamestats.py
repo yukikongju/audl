@@ -51,11 +51,11 @@ class GameStats(Endpoint):
 
         pass
         
-    def get_team_stats(self):
+    def get_scores(self):
         pass
 
 
-    def get_scores(self):
+    def get_team_stats(self):
         """ 
         Function that retrieves scores by times
         Return [df]:
@@ -65,7 +65,50 @@ class GameStats(Endpoint):
             - assist: who assisted the goal
             - hockey: who made the hockey pass
         """
-        pass
+        tsg_home = self._read_teams_tsg_json(self.json['tsgHome'])
+        tsg_home['road'] = 'home'
+        tsg_away = self._read_teams_tsg_json(self.json['tsgAway'])
+        tsg_away['road'] = 'away'
+
+        # concatenate home and away dataframes
+        tsg = pd.concat([tsg_home, tsg_away])
+
+        # calculate percentage columns
+        tsg['completionsPerc'] = tsg['completionsNumer'] / tsg['completionsDenom'] 
+        tsg['hucksPerc'] = tsg['hucksNumer'] / tsg['hucksDenom'] 
+        tsg['holdPerc'] = tsg['oLineScores'] / tsg['oLinePoints'] 
+        tsg['oLineConversionPerc'] = tsg['oLineScores'] / tsg['oLinePossessions'] 
+        tsg['dLineConversionPerc'] = tsg['dLineScores'] / tsg['dLinePossessions'] 
+        tsg['breakPerc'] = tsg['dLineScores'] / tsg['dLinePoints'] 
+        tsg['redZoneConversionPerc'] = tsg['redZoneScores'] / tsg['redZonePossessions'] 
+
+        return tsg
+
+
+
+    def _read_teams_tsg_json(self, team_tsg):
+        """ 
+        Function that retrieves scoring information in json.tsgHome and 
+            json.tsgAway
+        param:
+            - team_tsg: json dictionary ie json.tsgHome 
+        Return [df]:
+            
+        """
+        # read json
+        tsg = pd.json_normalize(team_tsg, max_level=1)
+
+        # drop columns
+        cols_to_drop = [
+                'events', 
+                'scoreTimesOur',
+                'scoreTimesTheir',
+                'rosterIds'
+            ]
+        tsg = tsg.drop(cols_to_drop, axis=1)
+
+        return tsg
+
 
     def get_players_metadata(self):
         """ 
@@ -116,5 +159,12 @@ class GameStats(Endpoint):
         # concatenate home and away dataframes
         teams = pd.concat([home, away])
         return teams
+        
+    def get_team_events(self):
+        """ 
+        Function that retrieves events for home and away teams
+        return [df]
+        """
+        pass
         
 
