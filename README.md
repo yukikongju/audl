@@ -2,6 +2,11 @@
 
 Unofficial AUDL api for python users
 
+What it does: 
+- [ ] Fetch Data directly from [audl website](https://theaudl.com)
+- [ ] Update database from Web Scrapping using workflow
+
+
 ## Table of Contents
 
 - [Requirements](#requirements)
@@ -13,6 +18,11 @@ Unofficial AUDL api for python users
 ## [Requirements](#requirements)
 
 Download package with `` pip install audl ``
+
+1. Install requirements ```pip install -r requirements```
+2. Having sqlite3: ```sudo apt install sqlite3```
+
+
 
 ## [Features](#features)
 
@@ -122,5 +132,16 @@ team_stats = GameStatsTeamStats("2021-07-16-DAL-SEA").get_team_stats()
 - [ ] Most likely player to blow up
 
 
+## Tree
+
+
+## How to contribute
+
+
+
+## Ressources
+
+- [Deploy pip packages](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
+- [Deployt pip package using setup.py](https://towardsdatascience.com/how-to-upload-your-python-package-to-pypi-de1b363a1b3)
 
 
