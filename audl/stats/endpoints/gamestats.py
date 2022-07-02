@@ -63,8 +63,18 @@ class GameStats(Endpoint):
             Montreal Royal	4	7	4	5	20
         """
         pass
+
+    def _get_scoring_time(self):
+        """ 
+        Function that return scoring time for each team
+        Ex: 
+                    scoring_time    quarter
+            TOR
+            MTL
+        """
+        pass
         
-    def get_scores(self):
+    def get_scores(self): # todo in sql?
         """ 
         Function that retrieves scores by times
         Return [df]:
@@ -81,7 +91,6 @@ class GameStats(Endpoint):
         Function that retrieves stats for all players that played this games
         return [df]
         """
-        #  TODO
         # get external ids for all players that played
         roster_ext_ids = self._get_roster_ext_ids()
 
