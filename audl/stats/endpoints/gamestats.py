@@ -7,6 +7,9 @@ import requests
 
 from audl.stats.endpoints._base import Endpoint
 from audl.stats.static import players
+from audl.stats.endpoints.playerprofile import PlayerProfile
+
+
 from audl.stats.library.parameters import quarters_clock_dict
 from audl.stats.library.parameters import HerokuPlay
 from audl.stats.library.parameters import team_roster_columns_name
@@ -73,13 +76,81 @@ class GameStats(Endpoint):
         """
         pass
 
-    def get_players_stats(self):
+    def get_roster_stats(self):
         """ 
-        Function that retrieves players stats
+        Function that retrieves stats for all players that played this games
+        return [df]
         """
-        # TODO: fetch game stats from each player profile
-        pass
+        #  TODO
+        # get external ids for all players that played
+        roster_ext_ids = self._get_roster_ext_ids()
+
+        roster_stats = pd.DataFrame()
+        for player_id in roster_ext_ids:
+            # get all games played in game's season
+            player = PlayerProfile(player_id)
+            year = self._get_season_from_game_id()
+            games = player.get_season_games_stats(year)
+
+            # filter by gameID and add player_id, city_id
+            player_stat = games[games['gameID'] == self.game_id]
+            player_stat['ext_player_id'] = player_id
+            # FIXME: use .iloc instead #  is_home = player_stat.at[0,'isHome']
+            is_home = player_stat['isHome'].values[0]
+            player_stat['team_abbrev'] = self._get_city_abbrev_from_game_id(is_home)
+
+            roster_stats = pd.concat([roster_stats, player_stat])
+
+        # change columns order
+        roster_stats.insert(0, 'ext_player_id', roster_stats.pop('ext_player_id'))
+        roster_stats.insert(1, 'team_abbrev', roster_stats.pop('team_abbrev'))
+
+        return roster_stats
+
+    def _get_city_abbrev_from_game_id(self, is_home):
+        """ 
+        Function that return season from game_id
+            ex: "2022-05-28-IND-DET" return IND if is_home = True, DET if is_home=False
+        param: 
+            - is_home (bool): True if home, False if away
+        return:
+            - season (int): year  ex: 2022
+        """
+        if is_home:
+            return self.game_id.split('-')[4]
+        else:
+            return self.game_id.split('-')[3]
         
+
+
+    def _get_season_from_game_id(self):
+        """ 
+        Function that return season from game_id
+            ex: "2022-05-28-IND-DET" return 2022
+        return:
+            - season (int): year  ex: 2022
+        """
+        return self.game_id.split('-')[0]
+
+
+        
+    def _get_roster_ext_ids(self):
+        """ 
+        Function that return all players that played this game (rosterIds)
+        Return [list] ext_player_id
+            ex: ['pbisson', 'thodge']
+        """
+        # get all player_id who have played as list
+        rosterHome = self.json['tsgHome']['rosterIds']
+        rosterAway= self.json['tsgAway']['rosterIds']
+        roster_ids = rosterHome + rosterAway
+
+        # get player_ext_ids
+        players = self.get_players_metadata()
+        roster_df = players[players['id'].isin(roster_ids)]
+        ext_player_ids = roster_df['player.ext_player_id'].tolist()
+
+        return ext_player_ids
 
 
     def get_team_stats(self):
@@ -99,8 +170,6 @@ class GameStats(Endpoint):
         tsg_home['team'] = self.home_team
         tsg_away = self._read_teams_tsg_json(self.json['tsgAway'])
         tsg_away['road'] = 'away'
-        tsg_away['team'] = self.away_team
-
         # concatenate home and away dataframes
         tsg = pd.concat([tsg_home, tsg_away])
 
@@ -143,7 +212,8 @@ class GameStats(Endpoint):
 
     def get_players_metadata(self):
         """ 
-        Function that retrieves players data
+        Function that retrieves all players from both team (even those who 
+        are not playing)
         Return [df] from json.rostersHome and json.rostersAway
             - player_game_id: id used in events
             - jersey_number

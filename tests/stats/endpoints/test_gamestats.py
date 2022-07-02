@@ -17,6 +17,9 @@ class TestGameStats(unittest.TestCase):
 
     def test_get_game_metadata(self):
         metadata = GameStats('2022-06-11-TOR-MTL').get_game_metadata()
+
+    def test_get_roster_stats(self):
+        roster = GameStats('2022-06-11-TOR-MTL').get_roster_stats()
         
         
 
