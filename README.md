@@ -27,6 +27,7 @@ Download package with `` pip install audl ``
 	- [ ] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
 TODOs:
+ - [ ] Create database from web scrapper (use workflow to update regularly)
  - [ ] Game Stats
      - [ ] Team Metadata
      - [ ] Players Metadata
