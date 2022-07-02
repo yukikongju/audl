@@ -1,11 +1,12 @@
 import setuptools
+import pathlib
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="audl",
-    version="0.0.3",
+    version="0.0.4",
     license='MIT',
     author="yukikongju",
     author_email="yukikongju@outlook.com",
@@ -24,7 +25,11 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"": "audl"},
-    packages=setuptools.find_packages(where="audl"),
+    packages=setuptools.find_packages(),
     python_requires=">=3.7",
+    keywords=[
+        "audl",
+        "audl.com",
+        "ultimate frisbee",
+    ],
 )
