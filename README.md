@@ -36,6 +36,18 @@ Download package with `` pip install audl ``
 	- [X] [Season Schedule](https://theaudl.com/league/game-search)
 	- [ ] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
+TODOs:
+ - [ ] Create database from web scrapper (use workflow to update regularly)
+ - [ ] Game Stats
+     - [ ] Team Metadata
+     - [ ] Players Metadata
+     - [ ] Box Scores
+     - [ ] Scores
+     - [ ] Team Stats
+     - [ ] Print play by play by players name
+     - [ ] Disc movement
+
+
 ## [Usage](#usage)
 
 
@@ -145,5 +157,6 @@ team_stats = GameStatsTeamStats("2021-07-16-DAL-SEA").get_team_stats()
 - [Deployt pip package using setup.py](https://towardsdatascience.com/how-to-upload-your-python-package-to-pypi-de1b363a1b3)
 - [Basketball Ref API](https://github.com/vishaalagartha/basketball_reference_scraper)
 - [Sample Project](https://github.com/pypa/sampleproject)
+
 
 

@@ -72,7 +72,8 @@ class PlayerProfile(Endpoint):
         """ 
         Function that returns stats per game in a given season
         param: [year] season
-        return [df]
+        return [df]:
+
         """
         try:
             url = f"https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
