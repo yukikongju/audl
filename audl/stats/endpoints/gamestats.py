@@ -47,8 +47,9 @@ class GameStats(Endpoint):
             - home_score, away_score
             - stadium_name (from location_id)
         """
-        #  TODO: json_normalize
-        pass
+        game = self.json['game']
+        df = pd.json_normalize(game)
+        return df
 
     def get_boxscores(self):
         """ 
