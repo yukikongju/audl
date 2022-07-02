@@ -275,41 +275,42 @@ class GameStats(Endpoint):
         Function that retrieves events for home and away teams
         return [df]
         """
-        home_events = json.loads(self.json['tsgHome']['events'])
-        df = pd.json_normalize(home_events, max_level=1)
+        pass
+        #  home_events = json.loads(self.json['tsgHome']['events'])
+        #  df = pd.json_normalize(home_events, max_level=1)
 
-        # FIXME: convert columns double values to int
-        cols_to_int = ['t', 'ms', 's', 'c', 'q']
-        for col in cols_to_int:
-            df[col] = df[col].astype('int', errors='ignore')
+        #  # FIXME: convert columns double values to int
+        #  cols_to_int = ['t', 'ms', 's', 'c', 'q']
+        #  for col in cols_to_int:
+        #      df[col] = df[col].astype('int', errors='ignore')
 
-        # rename columns
-        col_names_dict = {
-                "t": "type",
-                "l": "lineup",
-                "r": "receiver",
-                "x": "x",
-                "y": "y",
-                "ms": "ms",
-                "s": "s",
-                "c": "c",
-                "q": "q",
-                }
-        new_col_names = [col_names_dict.get(col) for col in df.columns.tolist()]
-        df.columns = new_col_names
+        #  # rename columns
+        #  col_names_dict = {
+        #          "t": "type",
+        #          "l": "lineup",
+        #          "r": "receiver",
+        #          "x": "x",
+        #          "y": "y",
+        #          "ms": "ms",
+        #          "s": "s",
+        #          "c": "c",
+        #          "q": "q",
+        #          }
+        #  new_col_names = [col_names_dict.get(col) for col in df.columns.tolist()]
+        #  df.columns = new_col_names
 
-        # get players_metadata
-        players = self.get_players_metadata()
-        players = players[['id', 'player.first_name', 'player.last_name']]
-        print(players)
+        #  # get players_metadata
+        #  players = self.get_players_metadata()
+        #  players = players[['id', 'player.first_name', 'player.last_name']]
+        #  print(players)
 
 
-        # get type = 3
-        tmp = df[df['type'] == 3].copy()
+        #  # get type = 3
+        #  tmp = df[df['type'] == 3].copy()
 
-        #  tmp['receiver'] = tmp['receiver'].apply(lambda x: int(x) if not pd.isna(x) else 'NaN')
-        tmp['receiver'] = tmp['receiver'].apply(lambda x: players[players['id'] == int(x)] if not pd.isna(x) else 'NaN')
-        print(tmp)
+        #  #  tmp['receiver'] = tmp['receiver'].apply(lambda x: int(x) if not pd.isna(x) else 'NaN')
+        #  tmp['receiver'] = tmp['receiver'].apply(lambda x: players[players['id'] == int(x)] if not pd.isna(x) else 'NaN')
+        #  print(tmp)
 
         
 
