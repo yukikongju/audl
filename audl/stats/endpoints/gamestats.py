@@ -23,13 +23,23 @@ class GameStats(Endpoint):
         super().__init__("https://audl-stat-server.herokuapp.com/stats-pages/game/")
         self.game_id = game_id
         self.json = self._get_json_from_url()
-        self.home_team = self._get_home_team()
-        self.away_team = self._get_away_team()
+        self.home_team = self._get_home_team_ext_id()
+        self.away_team = self._get_away_team_ext_id()
 
-    def _get_home_team(self):
+    def _get_home_team_ext_id(self):
+        """ 
+        Function that return team external id for home team
+        return: 
+            - ext_team_id (string): ie 'royal', 'rush', ...
+        """
         return self.json['game']['team_season_home']['team']['ext_team_id']
         
-    def _get_away_team(self):
+    def _get_away_team_ext_id(self):
+        """ 
+        Function that return team external id for away team
+        return: 
+            - ext_team_id (string): ie 'royal', 'rush', ...
+        """
         return self.json['game']['team_season_away']['team']['ext_team_id']
         pass
 
@@ -38,6 +48,9 @@ class GameStats(Endpoint):
     
 
     def _get_json_from_url(self):
+        """ 
+        Function that retrieves requests data as JSON document
+        """
         url = self._get_url()
         return requests.get(url).json()
 
@@ -58,21 +71,78 @@ class GameStats(Endpoint):
         """ 
         Function that return team scores by quarter
         Ex:
-                            Q1	Q2	Q3	Q4	T
-            Toronto Rush	4	6	4	7	21
-            Montreal Royal	4	7	4	5	20
+                    Q1	Q2	Q3	Q4	T
+            rush	4	6	4	7	21
+            royal	4	7	4	5	20
         """
-        pass
+        # get scoring times from json 
+        scores = self._get_scoring_time()
+
+        # pivot table
+        scores = scores.pivot_table(values='scoring_time', 
+                index='ext_team_id', columns=['quarter'], aggfunc=np.count_nonzero)
+
+        # add total column
+        scores['T'] = scores[list(scores.columns)].sum(axis=1)
+
+        return scores
 
     def _get_scoring_time(self):
         """ 
         Function that return scoring time for each team
+        return [df]:
+            - scoring_time (int): time when point was scored in second
+            - ext_team_id (string): team external id ie 'royal'
+            - quarter (string): quarter in which point has been scored ie 'Q1'
+
         Ex: 
-                    scoring_time    quarter
-            TOR
-            MTL
+                    scoring_time ext_team_id   quarter
+           rush 
+           royal 
+
         """
+        # get scoring time for both teams
+        score_times_home = self.json['game']['score_times_home'][1:]
+        score_times_away = self.json['game']['score_times_away'][1:]
+
+        # create dataframes
+        home_df = pd.DataFrame(score_times_home, columns=['scoring_time'])
+        away_df = pd.DataFrame(score_times_away, columns=['scoring_time'])
+        home_df['ext_team_id'] = self._get_home_team_ext_id()
+        away_df['ext_team_id'] = self._get_away_team_ext_id()
+        scores = pd.concat([home_df, away_df])
+        
+        # calculate quarter columns
+        scores['quarter'] = scores['scoring_time'].apply(
+                lambda x: self._get_quarter(x))
+
+        return scores
+
+
         pass
+
+    @staticmethod
+    def _get_quarter(scoring_time):
+        """ 
+        Function that returns quarter based on scoring time
+        Remark: Games are timed with four-quarters of 12 minutes each, 
+            including a 15-minute halftime. If the score is tied, a five 
+            minutes overtime period is played. If the score remains tied after
+            overtime, a second overtime is played in which the first team 
+            to score wins.
+        param: 
+            - scoring_time (int): time when point was scored in second
+        return:
+            - quarter (string): 'Q1', 'Q2', 'Q3', 'Q4', 'OT1', 'OT2'
+        """
+        quarter_end = { 'Q1': 720, 'Q2': 1440, 'Q3': 2160, 'Q4': 2880, 'OT1': 3180 }
+
+        for quarter, end_time in quarter_end.items():
+            if scoring_time < end_time:
+                return quarter
+
+        return 'OT2'
+
         
     def get_scores(self): # todo in sql?
         """ 
