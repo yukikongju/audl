@@ -349,22 +349,80 @@ class GameStats(Endpoint):
             - point (int): ith point played
             - team_on_off (string): team on offense (ext_team_id)
             - team_on_def (string): team on defense (ext_team_id)
-            - lineup_def (list): lineup in def (7 players)
-            - lineup_off (list): lineup in off (7 players)
+            - lineup_off (list): lineup in off (7 players) (t:1)
+            - lineup_def (list): lineup in def (7 players) (t:2)
             - result (string): ext_team_id of team who won the point
-            - scorer (string): ext_player_id of person who scored the point
-            - assist (string): ext_player_id of person who assisted
-            - hockey (string): ext_player_id of person who made the hockey assist
+            - scorer (string): ext_player_id of person who scored the point (t:22)
+            - assist (string): ext_player_id of person who assisted (prev t:20)
+            - hockey (string): ext_player_id of person who made the hockey assist 
+            - timeout_called (bool): True if timeout was called
+        Remark: 
+            - what if there is a timeout -> stop and start another point
+            - 
         """
         pass
+
+    def get_events_by_points(self):
+        """ 
+        Function that return events separated by points
+        :return events_by_points [list of docs]: json document separated by points 
+        How: everytime we see lineup for offense (t:1) or for def (t:2), we 
+            know a new points has started
+        Ex: 
+            {
+                'homeEvents': [
+                    {'point': 1, 'events':{...}},
+                    {'point': 2, 'events':{...}},
+                ], 
+                'awayEvents': [
+                    {'point': 1, 'events':{...}},
+                    {'point': 2, 'events':{...}},
+                ], 
+            }
+        """
+        homeEvents = self._get_events_by_points(self.json['tsgHome']['events'])
+        awayEvents = self._get_events_by_points(self.json['tsgAway']['events'])
+        events = {
+                'homeEvents': homeEvents, 
+                'awayEvents': awayEvents
+            }
+        return events
+
+    def _get_events_by_points(self, events):
+        """ 
+        Function that return json doc of events by points 
+        :param events: json['tsgHome']['events'] or json['tsgAway']['events']
+        :return events_by_points (json)
+        Ex:
+            [
+                {'point': 1, 'events':{...}},
+                {'point': 2, 'events':{...}},
+            ]
+        """
+        events_by_points = []
+        events_in_point = []
+        point_counter = 0
+
+        # creating dict
+        for _, row in enumerate(json.loads(events)):
+            t = row['t']
+            if t in [1,2]: # new point occurs when event type is off/def lineup
+                events_by_points.append({'point': point_counter, 'events': events_in_point})
+                events_in_point = []
+                point_counter += 1
+            events_in_point.append(row)
+
+        return events_by_points
+        
+    
 
     def get_events(self):
         """ 
         Function that return the event of each points in sequential order
         return [df]:
             - point (int): ith point played
-            - event_type_id (int): id of the event
             - description (string): type of event
+            - t (int): id of the event
             - l
             - r
             - x
@@ -401,21 +459,18 @@ class GameStats(Endpoint):
         # print all events
         for _, row in enumerate(json.loads(events)):
             t = row['t']
-            if t in [1,2, 40, 41]:
-                # print lineup
+            if t in [1,2, 40, 41]: # print lineup
                 l = row['l']
                 lineup = [players[players['id'] == int(player_id)]['player.ext_player_id'].tolist()[0] for player_id in l
 ]
                 print(f"t: {t}; lineup: {lineup}")
-            elif t in [3,5,19,20,22]:
-                # print receiver
+            elif t in [3,5,19,20,22]: # print receiver
                 try:
                     receiver = players[players['id'] == int(row['r'])]['player.ext_player_id'].tolist()[0]
                 except: 
                     receiver = 'NaN'
                 print(f"t: {t}; r: {receiver}")
-            elif t in [14, 15, 42, 43]:
-                # print s
+            elif t in [14, 15, 42, 43]: # print s
                 print(f"t: {t}; s: {row['s']}")
             else: 
                 print(f"t: {t}")
