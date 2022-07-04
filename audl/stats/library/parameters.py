@@ -178,22 +178,6 @@ team_roster_columns_name = [
 # \s: ???
 
 
-class HerokuPlay:
-    OLineIndex = 1
-    DLineIndex = 2
-    Pull = 3
-    Block = 5
-    ThrowawayCaused = 8
-    Throwaway = 9
-    EndOfQ1 = 23
-    EndOfQ2 = 24
-    EndOfQ3 = 25
-    EndOfQ4 = 26
-    PassCompleted = 20
-    ScoredOn = 21
-    Goal = 22
-    TimeoutDefense = 40
-    TimeoutOffense = 41
 
 
 team_points_by_points_columns_names = [
@@ -216,6 +200,63 @@ play_by_play_columns_names = [
     "Clock",
     "Outcome"
 ]
+
+class HerokuPlay:
+    OLineIndex = 1
+    DLineIndex = 2
+    Pull = 3
+    Block = 5
+    ThrowawayCaused = 8
+    Throwaway = 9
+    EndOfQ1 = 23
+    EndOfQ2 = 24
+    EndOfQ3 = 25
+    EndOfQ4 = 26
+    PassCompleted = 20
+    ScoredOn = 21
+    Goal = 22
+    TimeoutDefense = 40
+    TimeoutOffense = 41
+
+game_event_dict = {
+    1: 'Offensive Point', # l is the lineup: list of player_id
+    2: 'Defensive Point', # l is the lineup: list of player_id
+    3: 'Pull', # r is the person who performed the pull
+    5: 'Block', # r is the person who made the block
+    8: 'Throw away',  # check previous player
+    9: 'Throwaway Caused', # check 13
+    #  10: '', 
+    #  11: '', # always between 8,9
+    12: 'call on the field?', # c is call type?
+    13: 'switch from off to def?', # check 9
+    14: 'Time Out called (we are on off)', # s is 
+    15: 'Time Out called (we are on def)', # s is ? (not the time)
+    19: 'Pass dropped', # r is the person who dropped the catch (thrower is prev)
+    20: 'Pass Completed', # r is the person who caught the catch (thrower is prev)
+    21: 'They score', # s is 
+    22: 'We Score', # r is the person who scored the point
+    23: 'End of Q1', 
+    24: 'End of Q2', 
+    25: 'End of Q3', 
+    26: 'End of Q4', 
+    #  27: 'End of OT1', 
+    #  28: 'End of OT2', 
+    40: 'Timeout: defense unit comes to the field', # l is lineup
+    41: 'Timeout: offense unit comes to the field', # l is lineup
+    #  42: '', # s is 
+    #  43: '', # s is 
+    44: 'Offside', # r is the person who made the offside (if we don't know who it is, then we dont have row['r'])
+    50: 'Start Game', 
+}
+
+
+# sequence: 13, 54, 53, 21 (we)
+        
+        
+
+
+
+
 
 
 #######################################################################

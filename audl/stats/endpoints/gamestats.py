@@ -9,6 +9,8 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.static import players
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
+from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
+
 
 from audl.stats.library.parameters import quarters_clock_dict
 from audl.stats.library.parameters import HerokuPlay
@@ -23,13 +25,23 @@ class GameStats(Endpoint):
         super().__init__("https://audl-stat-server.herokuapp.com/stats-pages/game/")
         self.game_id = game_id
         self.json = self._get_json_from_url()
-        self.home_team = self._get_home_team()
-        self.away_team = self._get_away_team()
+        self.home_team = self._get_home_team_ext_id()
+        self.away_team = self._get_away_team_ext_id()
 
-    def _get_home_team(self):
+    def _get_home_team_ext_id(self):
+        """ 
+        Function that return team external id for home team
+        return: 
+            - ext_team_id (string): ie 'royal', 'rush', ...
+        """
         return self.json['game']['team_season_home']['team']['ext_team_id']
         
-    def _get_away_team(self):
+    def _get_away_team_ext_id(self):
+        """ 
+        Function that return team external id for away team
+        return: 
+            - ext_team_id (string): ie 'royal', 'rush', ...
+        """
         return self.json['game']['team_season_away']['team']['ext_team_id']
         pass
 
@@ -38,6 +50,9 @@ class GameStats(Endpoint):
     
 
     def _get_json_from_url(self):
+        """ 
+        Function that retrieves requests data as JSON document
+        """
         url = self._get_url()
         return requests.get(url).json()
 
@@ -58,21 +73,78 @@ class GameStats(Endpoint):
         """ 
         Function that return team scores by quarter
         Ex:
-                            Q1	Q2	Q3	Q4	T
-            Toronto Rush	4	6	4	7	21
-            Montreal Royal	4	7	4	5	20
+                    Q1	Q2	Q3	Q4	T
+            rush	4	6	4	7	21
+            royal	4	7	4	5	20
         """
-        pass
+        # get scoring times from json 
+        scores = self._get_scoring_time()
+
+        # pivot table
+        scores = scores.pivot_table(values='scoring_time', 
+                index='ext_team_id', columns=['quarter'], aggfunc=np.count_nonzero)
+
+        # add total column
+        scores['T'] = scores[list(scores.columns)].sum(axis=1)
+
+        return scores
 
     def _get_scoring_time(self):
         """ 
         Function that return scoring time for each team
+        return [df]:
+            - scoring_time (int): time when point was scored in second
+            - ext_team_id (string): team external id ie 'royal'
+            - quarter (string): quarter in which point has been scored ie 'Q1'
+
         Ex: 
-                    scoring_time    quarter
-            TOR
-            MTL
+                    scoring_time ext_team_id   quarter
+           rush 
+           royal 
+
         """
+        # get scoring time for both teams
+        score_times_home = self.json['game']['score_times_home'][1:]
+        score_times_away = self.json['game']['score_times_away'][1:]
+
+        # create dataframes
+        home_df = pd.DataFrame(score_times_home, columns=['scoring_time'])
+        away_df = pd.DataFrame(score_times_away, columns=['scoring_time'])
+        home_df['ext_team_id'] = self._get_home_team_ext_id()
+        away_df['ext_team_id'] = self._get_away_team_ext_id()
+        scores = pd.concat([home_df, away_df])
+        
+        # calculate quarter columns
+        scores['quarter'] = scores['scoring_time'].apply(
+                lambda x: self._get_quarter(x))
+
+        return scores
+
+
         pass
+
+    @staticmethod
+    def _get_quarter(scoring_time):
+        """ 
+        Function that returns quarter based on scoring time
+        Remark: Games are timed with four-quarters of 12 minutes each, 
+            including a 15-minute halftime. If the score is tied, a five 
+            minutes overtime period is played. If the score remains tied after
+            overtime, a second overtime is played in which the first team 
+            to score wins.
+        param: 
+            - scoring_time (int): time when point was scored in second
+        return:
+            - quarter (string): 'Q1', 'Q2', 'Q3', 'Q4', 'OT1', 'OT2'
+        """
+        quarter_end = { 'Q1': 720, 'Q2': 1440, 'Q3': 2160, 'Q4': 2880, 'OT1': 3180 }
+
+        for quarter, end_time in quarter_end.items():
+            if scoring_time < end_time:
+                return quarter
+
+        return 'OT2'
+
         
     def get_scores(self): # todo in sql?
         """ 
@@ -269,48 +341,76 @@ class GameStats(Endpoint):
         # concatenate home and away dataframes
         teams = pd.concat([home, away])
         return teams
-        
-    def get_teams_events(self):
+
+    def get_lineup_by_points(self):
         """ 
-        Function that retrieves events for home and away teams
-        return [df]
+        Function that returns lineup for each point played
+        return [df]:
+            - point (int): ith point played
+            - team_on_off (string): team on offense (ext_team_id)
+            - team_on_def (string): team on defense (ext_team_id)
+            - lineup_def (list): lineup in def (7 players)
+            - lineup_off (list): lineup in off (7 players)
+            - result (string): ext_team_id of team who won the point
+            - scorer (string): ext_player_id of person who scored the point
+            - assist (string): ext_player_id of person who assisted
+            - hockey (string): ext_player_id of person who made the hockey assist
         """
         pass
-        #  home_events = json.loads(self.json['tsgHome']['events'])
-        #  df = pd.json_normalize(home_events, max_level=1)
 
-        #  # FIXME: convert columns double values to int
-        #  cols_to_int = ['t', 'ms', 's', 'c', 'q']
-        #  for col in cols_to_int:
-        #      df[col] = df[col].astype('int', errors='ignore')
+    def get_events(self):
+        """ 
+        Function that return the event of each points in sequential order
+        return [df]:
+            - point (int): ith point played
+            - team_on_off (string): team on offense
+            - team_on_def (string): team on defense
+            - lineup_def (list): lineup in def (7 players)
+            - lineup_off (list): lineup in off (7 players)
+        """
+        pass
 
-        #  # rename columns
-        #  col_names_dict = {
-        #          "t": "type",
-        #          "l": "lineup",
-        #          "r": "receiver",
-        #          "x": "x",
-        #          "y": "y",
-        #          "ms": "ms",
-        #          "s": "s",
-        #          "c": "c",
-        #          "q": "q",
-        #          }
-        #  new_col_names = [col_names_dict.get(col) for col in df.columns.tolist()]
-        #  df.columns = new_col_names
-
-        #  # get players_metadata
-        #  players = self.get_players_metadata()
-        #  players = players[['id', 'player.first_name', 'player.last_name']]
-        #  print(players)
-
-
-        #  # get type = 3
-        #  tmp = df[df['type'] == 3].copy()
-
-        #  #  tmp['receiver'] = tmp['receiver'].apply(lambda x: int(x) if not pd.isna(x) else 'NaN')
-        #  tmp['receiver'] = tmp['receiver'].apply(lambda x: players[players['id'] == int(x)] if not pd.isna(x) else 'NaN')
-        #  print(tmp)
 
         
+    def print_team_events(self, is_home): 
+        """ 
+        Function that print events for home and away teams
+        param:
+            - is_home (bool): True if we print events of home team, else false
+        """
+        events = self.json['tsgHome']['events'] if is_home else self.json['tsgAway']['events']
+
+        # FIXME: convert columns double values to int
+        #  cols_to_int = ['t', 'ms', 's', 'c']
+        #  for col in cols_to_int:
+        #      events[col] = events[col].astype('int', errors='ignore')
+
+        # get players_metadata
+        players = self.get_players_metadata()
+        players = players[['id', 'player.first_name', 'player.last_name', 
+            'player.ext_player_id']]
+
+
+        # print all events
+        for _, row in enumerate(json.loads(events)):
+            t = row['t']
+            if t in [1,2, 40, 41]:
+                # print lineup
+                l = row['l']
+                lineup = [players[players['id'] == int(player_id)]['player.ext_player_id'].tolist()[0] for player_id in l
+]
+                print(f"t: {t}; lineup: {lineup}")
+            elif t in [3,5,19,20,22]:
+                # print receiver
+                try:
+                    receiver = players[players['id'] == int(row['r'])]['player.ext_player_id'].tolist()[0]
+                except: 
+                    receiver = 'NaN'
+                print(f"t: {t}; r: {receiver}")
+            elif t in [14, 15, 42, 43]:
+                # print s
+                print(f"t: {t}; s: {row['s']}")
+            else: 
+                print(f"t: {t}")
+
 

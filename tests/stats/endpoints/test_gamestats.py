@@ -21,5 +21,28 @@ class TestGameStats(unittest.TestCase):
     def test_get_roster_stats(self):
         roster = GameStats('2022-06-11-TOR-MTL').get_roster_stats()
         
+
+    def test_get_quarter(self):
+        self.assertEqual(GameStats._get_quarter(243), 'Q1')
+        self.assertEqual(GameStats._get_quarter(720), 'Q2')
+        self.assertEqual(GameStats._get_quarter(1324), 'Q3')
         
+
+    def test_get_scoring_time(self):
+        game = GameStats('2022-06-11-TOR-MTL')._get_scoring_time()
+
+
+    def test_get_boxscores(self):
+        game = GameStats('2022-06-11-TOR-MTL').get_boxscores()
+
+
+    def test_print_events(self):
+        game = GameStats('2022-06-11-TOR-MTL')
+        events = game.print_team_events(True)
+        events = game.print_team_events(False)
+        
+
+    def test_team_events(self):
+        pass
+
 
