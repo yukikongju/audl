@@ -31,21 +31,28 @@ Download package with `` pip install audl ``
 
 - [O] Fetch Data from
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
+	    - [X] get regular season stats
+	    - [X] get playoffs stats
+	    - [X] get stats by game
 	- [X] [Team Stats](https://theaudl.com/stats/team)
 	- [X] [Player Stats](https://theaudl.com/stats/player-stats)
 	- [X] [Season Schedule](https://theaudl.com/league/game-search)
-	- [o] [Game Stats](https://theaudl.com/stats/team-game-stats)
+	- [O] [Game Stats](https://theaudl.com/stats/team-game-stats)
+	    - [X] Team Metadata
+	    - [X] Players Metadata
+	    - [X] Box Scores
+	    - [X] Team Stats
+	    - [X] Print play by play by players name
+	    - [ ] Scores
+	    - [ ] Disc movement: thrower, receiver, blocks
 
 TODOs:
  - [ ] Create database from web scrapper (use workflow to update regularly)
- - [ ] Game Stats
-     - [ ] Team Metadata
-     - [ ] Players Metadata
-     - [ ] Box Scores
-     - [ ] Scores
-     - [ ] Team Stats
-     - [ ] Print play by play by players name
-     - [ ] Disc movement
+     - [ ] Schedule table
+     - [ ] player game stats
+     - [ ] player
+     - [ ] player stats per <total, game, 10pts, 10poss, 100min>
+     - [ ] team stats per <><>
 
 
 ## [Usage](#usage)
