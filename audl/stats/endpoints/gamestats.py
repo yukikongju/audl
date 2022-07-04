@@ -363,11 +363,18 @@ class GameStats(Endpoint):
         Function that return the event of each points in sequential order
         return [df]:
             - point (int): ith point played
-            - team_on_off (string): team on offense
-            - team_on_def (string): team on defense
-            - lineup_def (list): lineup in def (7 players)
-            - lineup_off (list): lineup in off (7 players)
+            - event_type_id (int): id of the event
+            - description (string): type of event
+            - l
+            - r
+            - x
+            - y
+            - ms
+            - s
+            - c
         """
+        #  events_home = json.loads(self.json['tsgHome']['events'])
+        #  df_home = pd.json_normalize(events_home, max_level=1)
         pass
 
 
