@@ -9,6 +9,8 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.static import players
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
+from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
+
 
 from audl.stats.library.parameters import quarters_clock_dict
 from audl.stats.library.parameters import HerokuPlay
@@ -339,20 +341,49 @@ class GameStats(Endpoint):
         # concatenate home and away dataframes
         teams = pd.concat([home, away])
         return teams
+
+    def get_lineup_by_points(self):
+        """ 
+        Function that returns lineup for each point played
+        return [df]:
+            - point (int): ith point played
+            - team_on_off (string): team on offense (ext_team_id)
+            - team_on_def (string): team on defense (ext_team_id)
+            - lineup_def (list): lineup in def (7 players)
+            - lineup_off (list): lineup in off (7 players)
+            - result (string): ext_team_id of team who won the point
+            - scorer (string): ext_player_id of person who scored the point
+            - assist (string): ext_player_id of person who assisted
+            - hockey (string): ext_player_id of person who made the hockey assist
+        """
+        pass
+
+    def get_events(self):
+        """ 
+        Function that return the event of each points in sequential order
+        return [df]:
+            - point (int): ith point played
+            - team_on_off (string): team on offense
+            - team_on_def (string): team on defense
+            - lineup_def (list): lineup in def (7 players)
+            - lineup_off (list): lineup in off (7 players)
+        """
+        pass
+
+
         
-    def get_teams_events(self):
+    def print_team_events(self): # FIXME
         """ 
         Function that retrieves events for home and away teams
         return [df]
         """
-        pass
-        #  home_events = json.loads(self.json['tsgHome']['events'])
-        #  df = pd.json_normalize(home_events, max_level=1)
+        home_events = json.loads(self.json['tsgHome']['events'])
+        df = pd.json_normalize(home_events, max_level=1)
 
         #  # FIXME: convert columns double values to int
-        #  cols_to_int = ['t', 'ms', 's', 'c', 'q']
-        #  for col in cols_to_int:
-        #      df[col] = df[col].astype('int', errors='ignore')
+        cols_to_int = ['t', 'ms', 's', 'c', 'q']
+        for col in cols_to_int:
+            df[col] = df[col].astype('int', errors='ignore')
 
         #  # rename columns
         #  col_names_dict = {
@@ -370,17 +401,40 @@ class GameStats(Endpoint):
         #  df.columns = new_col_names
 
         #  # get players_metadata
-        #  players = self.get_players_metadata()
-        #  players = players[['id', 'player.first_name', 'player.last_name']]
-        #  print(players)
+        players = self.get_players_metadata()
+        players = players[['id', 'player.first_name', 'player.last_name', 
+            'player.ext_player_id']]
 
-
-        #  # get type = 3
-        #  tmp = df[df['type'] == 3].copy()
-
-        #  #  tmp['receiver'] = tmp['receiver'].apply(lambda x: int(x) if not pd.isna(x) else 'NaN')
-        #  tmp['receiver'] = tmp['receiver'].apply(lambda x: players[players['id'] == int(x)] if not pd.isna(x) else 'NaN')
+        # PRINT TYPE
+        #  tmp = df[df['t'] == 50].copy()
+        #  tmp['receiver'] = tmp['r'].apply(lambda x: players[players['id'] == int(x)]['player.ext_player_id'].tolist()[0] if not pd.isna(x) else 'NaN')
+        #  tmp['lineup'] = tmp['r'].apply(
+        #      lambda x: players[players['id'] == int(x)]['player.ext_player_id'].tolist()[0] if not pd.isna(x) else 'NaN')
         #  print(tmp)
+
+        # print all events
+        home_events = self.json['tsgHome']['events']
+        for _, row in enumerate(json.loads(home_events)):
+            t = row['t']
+            if t in [1,2, 40, 41]:
+                # print lineup
+                l = row['l']
+                lineup = [players[players['id'] == int(player_id)]['player.ext_player_id'].tolist()[0] for player_id in l
+]
+                print(f"t: {t}; lineup: {lineup}")
+            elif t in [3,5,19,20,22]:
+                # print receiver
+                try:
+                    receiver = players[players['id'] == int(row['r'])]['player.ext_player_id'].tolist()[0]
+                except: 
+                    receiver = 'NaN'
+                print(f"t: {t}; r: {receiver}")
+            elif t in [14, 15, 42, 43]:
+                # print s
+                print(f"t: {t}; s: {row['s']}")
+            else: 
+                print(f"t: {t}")
+
 
         
 
