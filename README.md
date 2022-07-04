@@ -127,7 +127,7 @@ scoring_time = game._get_scoring_time()
 boxscores = game.get_boxscores()
 home_events = game.print_team_events(True)
 away_events = game.print_team_events(False)
-events = game.get_events_by_points()
+events = game.get_team_events()
 
 ```
 

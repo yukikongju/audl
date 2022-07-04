@@ -42,7 +42,7 @@ class TestGameStats(unittest.TestCase):
         events = game.print_team_events(False)
 
     def test_get_events_by_points(self):
-        events = GameStats('2022-06-11-TOR-MTL').get_events_by_points()
+        events = GameStats('2022-06-11-TOR-MTL').get_team_events()
 
 
     def test_team_events(self):
