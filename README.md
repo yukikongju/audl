@@ -149,7 +149,7 @@ events = game.get_team_events()
 ## Ressources
 
 - [Deploy pip packages](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
-- [Deployt pip package using setup.py](https://towardsdatascience.com/how-to-upload-your-python-package-to-pypi-de1b363a1b3)
+- [Deploy pip package using setup.py](https://towardsdatascience.com/how-to-upload-your-python-package-to-pypi-de1b363a1b3)
 - [Basketball Ref API](https://github.com/vishaalagartha/basketball_reference_scraper)
 - [Sample Project](https://github.com/pypa/sampleproject)
 
