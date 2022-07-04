@@ -35,6 +35,13 @@ class TestGameStats(unittest.TestCase):
     def test_get_boxscores(self):
         game = GameStats('2022-06-11-TOR-MTL').get_boxscores()
 
+
+    def test_print_events(self):
+        game = GameStats('2022-06-11-TOR-MTL')
+        events = game.print_team_events(True)
+        events = game.print_team_events(False)
+        
+
     def test_team_events(self):
         pass
 

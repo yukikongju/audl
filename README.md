@@ -24,7 +24,7 @@ Download package with `` pip install audl ``
 	- [X] [Team Stats](https://theaudl.com/stats/team)
 	- [X] [Player Stats](https://theaudl.com/stats/player-stats)
 	- [X] [Season Schedule](https://theaudl.com/league/game-search)
-	- [ ] [Game Stats](https://theaudl.com/stats/team-game-stats)
+	- [o] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
 TODOs:
  - [ ] Create database from web scrapper (use workflow to update regularly)
@@ -104,26 +104,20 @@ df = TeamSeasonAgainstOpponentSchedule(2022, 'royal', 'rush').get_schedule()
 
 ```python
 
-from audl.stats.endpoints.gamestatsboxscores import GameStatsBoxScores
-from audl.stats.endpoints.gamestatsrosters import GamesStatsRosters
-from audl.stats.endpoints.gamestatslineups import GameStatsLineups
-from audl.stats.endpoints.gamestatsteamstats import GameStatsTeamStats
+from audl.stats.endpoints.gamestats import GameStats
 
 # Fetching Box Scores from https://theaudl.com/stats/game/2021-06-05-RAL-ATL
-box_scores = GameStatsBoxScores("2021-06-05-RAL-ATL").get_box_scores()
+game = GameStats("2021-06-05-RAL-ATL")
+teams = game.get_teams_metadata()
+players = game.get_players_metadata()
+game_metadata = game.get_game_metadata()
+team_stats = game.get_team_stats()
+roster = game.get_roster_stats()
+scoring_time = game._get_scoring_time()
+boxscores = game.get_boxscores()
+home_events = game.print_team_events(True)
+away.events = game.print_team_events(False)
 
-# Fetching Roster Metadata
-rosters = GamesStatsRosters("2021-06-05-RAL-ATL")
-roster_home = rosters.get_roster_home_metadata()
-roster_away = rosters.get_roster_away_metadata()
-
-# Fetching Lineups Points by Points
-lineups = GameStatsLineups("2021-07-16-DAL-SEA")
-lineup_home = lineups.get_home_points_by_points_lineups())
-lineup_away = lineups.get_away_points_by_points_lineups())
-
-# Fetching Team Stats
-team_stats = GameStatsTeamStats("2021-07-16-DAL-SEA").get_team_stats()
 ```
 
 ## [Exploration](#exploration)

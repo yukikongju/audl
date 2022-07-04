@@ -372,49 +372,27 @@ class GameStats(Endpoint):
 
 
         
-    def print_team_events(self): # FIXME
+    def print_team_events(self, is_home): 
         """ 
-        Function that retrieves events for home and away teams
-        return [df]
+        Function that print events for home and away teams
+        param:
+            - is_home (bool): True if we print events of home team, else false
         """
-        home_events = json.loads(self.json['tsgHome']['events'])
-        df = pd.json_normalize(home_events, max_level=1)
+        events = self.json['tsgHome']['events'] if is_home else self.json['tsgAway']['events']
 
-        #  # FIXME: convert columns double values to int
-        cols_to_int = ['t', 'ms', 's', 'c', 'q']
-        for col in cols_to_int:
-            df[col] = df[col].astype('int', errors='ignore')
+        # FIXME: convert columns double values to int
+        #  cols_to_int = ['t', 'ms', 's', 'c']
+        #  for col in cols_to_int:
+        #      events[col] = events[col].astype('int', errors='ignore')
 
-        #  # rename columns
-        #  col_names_dict = {
-        #          "t": "type",
-        #          "l": "lineup",
-        #          "r": "receiver",
-        #          "x": "x",
-        #          "y": "y",
-        #          "ms": "ms",
-        #          "s": "s",
-        #          "c": "c",
-        #          "q": "q",
-        #          }
-        #  new_col_names = [col_names_dict.get(col) for col in df.columns.tolist()]
-        #  df.columns = new_col_names
-
-        #  # get players_metadata
+        # get players_metadata
         players = self.get_players_metadata()
         players = players[['id', 'player.first_name', 'player.last_name', 
             'player.ext_player_id']]
 
-        # PRINT TYPE
-        #  tmp = df[df['t'] == 50].copy()
-        #  tmp['receiver'] = tmp['r'].apply(lambda x: players[players['id'] == int(x)]['player.ext_player_id'].tolist()[0] if not pd.isna(x) else 'NaN')
-        #  tmp['lineup'] = tmp['r'].apply(
-        #      lambda x: players[players['id'] == int(x)]['player.ext_player_id'].tolist()[0] if not pd.isna(x) else 'NaN')
-        #  print(tmp)
 
         # print all events
-        home_events = self.json['tsgHome']['events']
-        for _, row in enumerate(json.loads(home_events)):
+        for _, row in enumerate(json.loads(events)):
             t = row['t']
             if t in [1,2, 40, 41]:
                 # print lineup
@@ -435,6 +413,4 @@ class GameStats(Endpoint):
             else: 
                 print(f"t: {t}")
 
-
-        
 
