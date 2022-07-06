@@ -3,8 +3,9 @@
 Unofficial AUDL api for python users
 
 What it does: 
-- [ ] Fetch Data directly from [audl website](https://theaudl.com)
+- [X] Fetch Data directly from [audl website](https://theaudl.com)
 - [ ] Update database from Web Scrapping using workflow
+- [ ] Generate pdf reports for player, team and games
 
 
 ## Table of Contents
@@ -17,10 +18,10 @@ What it does:
 
 ## [Requirements](#requirements)
 
-Download package with `` pip install audl ``
-
 1. Install requirements ```pip install -r requirements```
 2. Having sqlite3: ```sudo apt install sqlite3```
+
+Download package with `` pip install audl ``
 
 
 
@@ -37,15 +38,19 @@ Download package with `` pip install audl ``
 	- [o] [Game Stats](https://theaudl.com/stats/team-game-stats)
 
 TODOs:
- - [ ] Create database from web scrapper (use workflow to update regularly)
- - [ ] Game Stats
-     - [ ] Team Metadata
-     - [ ] Players Metadata
-     - [ ] Box Scores
-     - [ ] Scores
-     - [ ] Team Stats
-     - [ ] Print play by play by players name
-     - [ ] Disc movement
+ - [ ] Create database from web scrapper (sql, database, workflows)
+     - [ ] Teams
+     - [ ] Players
+     - [ ] Schedule
+     - [ ] Player Game Stats
+     - [ ] Team Game Stats
+     - [ ] 
+ - [ ] Write Scripts to fetch data daily/weekly/monthly
+ - [ ] Write examples in notebook
+ - [ ] Generate Reports
+     - [ ] Game Report
+     - [ ] Player Report
+     - [ ] Team Report
 
 
 ## [Usage](#usage)
@@ -137,6 +142,7 @@ events = game.get_team_events()
 - [ ] Proportion of passes to teamates for each players (see connection)
 - [ ] Who is the best in the rain? (player efficiency vs temperature)
 - [ ] Most likely player to blow up
+- [ ] Player Report
 
 
 ## Tree
@@ -152,6 +158,7 @@ events = game.get_team_events()
 - [Deploy pip package using setup.py](https://towardsdatascience.com/how-to-upload-your-python-package-to-pypi-de1b363a1b3)
 - [Basketball Ref API](https://github.com/vishaalagartha/basketball_reference_scraper)
 - [Sample Project](https://github.com/pypa/sampleproject)
+- [Sports Analytics Project](https://github.com/wyattowalsh/sports-analytics)
 
 
 

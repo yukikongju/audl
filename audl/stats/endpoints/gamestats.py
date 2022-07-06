@@ -390,6 +390,8 @@ class GameStats(Endpoint):
             - scorer (string): ext_player_id of person who scored the point (t:22)
             - assist (string): ext_player_id of person who assisted (prev t:20)
             - hockey (string): ext_player_id of person who made the hockey assist 
+            - catcher (string): ext_player_id of player who caught the pull
+            - center (string): ext_player_id of player who caught the second pass
             - scoring_time (int):
             - timeout_called (bool): True if timeout was called
         """
