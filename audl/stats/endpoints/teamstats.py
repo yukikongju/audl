@@ -11,7 +11,24 @@ from audl.stats.endpoints._base import Endpoint
 class TeamStats(Endpoint):
 
     def __init__(self, season, per, team):
-        #  super().__init__("https://theaudl.com/stats/team?year=")
+        """ 
+        Parameters
+        ----------
+        season: string or int
+            choices: ['career', 2022, 2019, ..., 2012]
+        per: string
+            choices: ['total', 'game']
+        team: string
+            choices: ['team', 'opponent']
+
+
+        Examples
+        --------
+        >>> TeamStats('career', 'total', 'team')
+        >>> TeamStats(2022, 'game', 'opponent')
+
+        """
+
         super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50")
         self.season = season
         self.per = per
@@ -20,7 +37,22 @@ class TeamStats(Endpoint):
     def get_table(self):
         """
         Function that return page results table as dataframe
-        return [df] dataframe
+
+        Returns
+        -------
+        df: pandas.DataFrame
+            dataframe of all team stats
+
+
+        Raises
+        ------
+
+
+
+        Examples
+        --------
+        >>> TeamStats(2019, 'game', 'opponent').get_table()
+            
         """
         try:
             url = self._get_url()
@@ -35,6 +67,20 @@ class TeamStats(Endpoint):
 
 
     def _get_url(self):
+        """ 
+        Function that return complete url
+
+        Returns
+        -------
+        url: string
+            url of the heroku API request
+        
+        Examples
+        --------
+        >>> TeamStats(2019, 'game', 'opponent')._get_url()
+        >>> https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&year=2019&perGame=true&opponent=true
+
+        """
         is_per_game = 'true' if self.per == 'game' else 'false' 
         is_opponent = 'true' if self.team == 'opponent' else 'false'
         if self.season == 'career':

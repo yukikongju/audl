@@ -8,3 +8,4 @@ pandas
 numpy
 BeautifulSoup4
 requests
+pdoc3

@@ -18,6 +18,23 @@ class PlayerStats(Endpoint):
 #  https://theaudl.com/stats/player-stats?page=2&per=possessions&team=aviators&year=2019
 
     def __init__(self, season, per, team):
+        """ 
+        Parameters
+        ----------
+        season: string or int
+            choices: ['career', 2022, 2019, ..., 2012]
+        per: string
+            choices: ['total', 'game']
+        team: string
+            choices: ['all', 'aviators', ..., '<ext_team_id>']
+
+
+        Examples
+        --------
+        >>> PlayerStats('career', 'total', 'all')
+        >>> PlayerStats(2022, 'minutes', 'breeze')
+
+        """
         self.season = season
         self.per = per
         self.team = team
@@ -25,8 +42,17 @@ class PlayerStats(Endpoint):
 
     def fetch_table(self, show_message=True):
         """
-        Function that fetch query for all players as dataframe
-        return [df] dataframe of all players stats
+        Function that fetch stats for all players as dataframe
+
+        Returns
+        -------
+        players_df: pandas.DataFrame
+            dataframe with all players stats for given season, per, team param
+
+        Examples
+        --------
+        >>> PlayerStats('career', 'total', 'all').fetch_table()
+
         """
         hasPlayerLeft = True
         all_players = []
@@ -49,6 +75,23 @@ class PlayerStats(Endpoint):
     def _get_url(self, page_num: int) -> str:
         """ 
         Function that return the url by concatening the base url with its page number
+
+        Parameters
+        ----------
+        page_num: int
+            page number of the url
+
+        Returns
+        -------
+        url: string
+            complete url of herodoku database requests
+
+        Examples
+        --------
+        >>> PlayerStats(2019, 'possessions', 'aviators')._get_url(3)
+        >>> https://theaudl.com/stats/player-stats?page=3&per=possessions&team=aviators&year=2019
+
+
         """
         if self.season == 'career' and self.team == 'all':
             return f"{self.base_url}&page={page_num}&per={self.per}"
@@ -61,8 +104,21 @@ class PlayerStats(Endpoint):
     def _fetch_page_players_as_json(self, page_num):
         """
         Function that fetch players in page as json 
-        param: [page_num] url page number
-        return:  result_json] players as json
+
+        Parameters
+        ----------
+        page_num: int
+            page number of the url
+
+        Returns
+        -------
+        player_json: json
+            json document of player page request
+
+        Examples
+        --------
+        >>> PlayerStats(2019, 'possessions', 'aviators')._fetch_page_players_as_json(3)
+
         """
         try:
             url = self._get_url(page_num)
@@ -80,8 +136,23 @@ class PlayerStats(Endpoint):
     def download_stats_as_dataframe(self, file_path_name, show_message=True):
         """ 
         Function that download players stats as csv file
-        param [file_path_name] output file name     *.csv
-        return [flag] True if successfully downloaded, else False
+
+        Parameters
+        ----------
+        file_path_name: string 
+            path were the file should be downloaded
+        show_message: bool
+            True by default. Print message when page has been fetched
+
+        Returns
+        -------
+        flag: bool
+            True is file has been downloaded successfully, else False
+
+        Examples
+        --------
+        >>> PlayerStats(2019, 'possessions', 'aviators').download_stats_as_dataframe('../database/filename.csv')
+
         """
         flag = False
         try:

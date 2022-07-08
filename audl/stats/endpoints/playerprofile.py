@@ -22,12 +22,35 @@ class PlayerProfile(Endpoint):
 
 
     def _get_url(self):
+        """ 
+        Function that return complete url
+
+        Returns
+        -------
+        url: string
+            url of the heroku API request
+        
+        Examples
+        --------
+        >>> PlayerProfile('cbrock')._get_url()
+
+        """
         return f"{self.base_url}{self.player_id}"
 
     def get_regular_seasons_career(self):
         """ 
         Function that return a player's regular season stats as dataframe
-        return [df]
+
+        Returns
+        -------
+        regular_season: pandas.DataFrame
+            dataframe with player regular season stats
+            
+
+        Examples
+        --------
+        >>> PlayerProfile('cbrock').get_regular_seasons_career()
+
         """
         try: 
             # create dataframe
@@ -50,6 +73,17 @@ class PlayerProfile(Endpoint):
     def get_playoffs_career(self):
         """ 
         Function that returns a player's playoff stats as dataframe
+
+        Returns
+        -------
+        playoffs: pandas.DataFrame
+            dataframe with player playoffs stats
+            
+
+        Examples
+        --------
+        >>> PlayerProfile('cbrock').get_playoffs_career()
+
         """
         try: 
             # create dataframe
@@ -71,8 +105,20 @@ class PlayerProfile(Endpoint):
     def get_season_games_stats(self, year):
         """ 
         Function that returns stats per game in a given season
-        param: [year] season
-        return [df]:
+
+        Parameters
+        ----------
+        year: int
+            season
+
+        Returns
+        -------
+        season_games: pandas.DataFrame
+
+
+        Examples
+        --------
+        >>> PlayerProfile('cbrock').get_season_games_stats(2022)
 
         """
         try:
@@ -87,7 +133,16 @@ class PlayerProfile(Endpoint):
     def get_career_games_stats(self):
         """ 
         Function that return dataframe of all games played by a player
-        return [df]
+
+        Returns
+        -------
+        career_games: pandas.DataFrame
+            dataframe with all games played
+
+        Examples
+        --------
+        >>> PlayerProfile('cbrock').get_career_games_stats()
+
         """
         df = pd.DataFrame()
         current_year = int(datetime.today().strftime('%Y'))

@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>audl.stats.library.parameters API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>audl.stats.library.parameters</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env/python
+
+class Division:
+    altantic = &#39;Atlantic&#39;
+    central = &#39;Central&#39;
+    west = &#39;West&#39;
+    canada = &#39;Canada Cup&#39;
+
+
+class StatisticsDescription:
+    YR = &#39;Year&#39;
+    G = &#39;Games Played&#39;
+    PP = &#39;Points Played&#39;
+    TM = &#39;Team&#39;
+    AST = &#39;Assists&#39;
+    GLS = &#39;Goals&#39;
+    BLK = &#39;Blocks&#39;
+    PLUS_MINUS = &#39;Plus Minus&#39;
+    CMP = &#39;Completions&#39;
+    CMP_PERC = &#39;Completion Percentage&#39;
+    TY = &#39;Throwing Yards&#39;
+    RY = &#39;Receiving Yards&#39;
+    HA = &#39;Hockey Assists&#39;
+    T = &#39;Throwaways&#39;
+    S = &#39;Stall&#39;
+    C = &#39;Callahan&#39;
+    D = &#39;Drops&#39;
+    OPP = &#39;Offensive Points Played&#39;
+    DPP = &#39;Defensive Points Played&#39;
+    P = &#39;Pulls&#39;
+
+
+class StatisticAbbreviation:
+    stat_col_year = &#39;YR&#39;
+    stat_col_games_played = &#39;G&#39;
+    stat_col_points_played = &#39;PP&#39;
+    stat_col_team = &#39;TM&#39;
+    stat_col_assists = &#39;AST&#39;
+    stat_col_goals = &#39;GLS&#39;
+    stat_col_blocks = &#39;BLK&#39;
+    stat_col_plus_minus = &#39;+/-&#39;
+    stat_col_completions = &#39;CMP&#39;
+    stat_col_completion_perc = &#39;CMP%&#39;
+    stat_col_throwing_yards = &#39;TY&#39;
+    stat_col_receiving_yards = &#39;RY&#39;
+    stat_col_hockey_assists = &#39;HA&#39;
+    stat_col_throwaways = &#39;T&#39;
+    stat_col_stalls = &#39;S&#39;
+    stat_col_callahans = &#39;C&#39;
+    stat_col_drops = &#39;D&#39;
+    stat_col_offensive_points_played = &#39;OPP&#39;
+    stat_col_defensive_points_played = &#39;DPP&#39;
+    stat_col_pulls = &#39;P&#39;
+
+
+class FileName:
+    alltimeplayer = &#39;AllTimePlayerStats&#39;
+    seasonplayerstats = &#39;SeasonPlayerStats&#39;
+    seasonschedule = &#39;SeasonSchedule&#39;
+
+#######################################################################
+#                         TeamSeasonSchedule                          #
+#######################################################################
+
+team_season_schedule_index_away  = 0
+team_season_schedule_index_home  = 1
+team_season_schedule_index_time = 2
+team_season_schedule_index_stadium = 3
+team_season_schedule_index_game_id = 4
+team_season_schedule_index_home_score = 5
+team_season_schedule_index_away_score = 6
+
+game_schedule_columns_name = [
+    &#34;Away&#34;,
+    &#34;Home&#34;,
+    &#34;Time&#34;,
+    &#34;Stadium&#34;,
+    &#34;Game ID&#34;,
+    &#34;Away Score&#34;,
+    &#34;Home Score&#34;
+]
+
+#######################################################################
+#                           Season Schedule                           #
+#######################################################################
+
+NUM_WEEKS_IN_SEASON = 12
+
+
+#######################################################################
+#                             Box Scores                              #
+#######################################################################
+
+box_scores_columns_names = [&#34;Team&#34;, &#34;Q1&#34;, &#34;Q2&#34;, &#34;Q3&#34;, &#34;Q4&#34;, &#34;T&#34;]
+
+# Absolute time in seconds for each quarter
+# Regular time: 12 min per quarter
+# 1rst OT: 5 minutes
+# 2nd OT: sudden death
+quarters_clock_dict = {
+    &#34;Q1_start&#34;: 1,      # 0 min
+    &#34;Q1_end&#34;: 720,      # 12 min
+    &#34;Q2_start&#34;: 721,    # 12 min
+    &#34;Q2_end&#34;: 1440,     # 24 min
+    &#34;Q3_start&#34;: 1441,   # 24 min
+    &#34;Q3_end&#34;: 2160,     # 36 min
+    &#34;Q4_start&#34;: 2161,   # 36 min
+    &#34;Q4_end&#34;: 2880,        # 48 min
+    &#34;OT1_start&#34;: 2881,     # 48 min
+    &#34;OT1_end&#34;: 3180,       # 53 min
+    &#34;OT2_start&#34;: 3181,     # 53 min
+    #  &#34;OT2_end&#34;: 0,       # ? min
+}
+
+#######################################################################
+#                          Games Parameters                           #
+#######################################################################
+
+# Types of throws and their id :\t on heroku server
+
+
+class GameEventAction:
+    # Types of events defined on heroku server
+    # Block
+    # Dish
+    # Dump
+    # Huck throwaway
+    # Pass
+    # Pull
+    # Score
+    # Swing
+    pass
+
+
+class TeamStatsName:
+    Completions = &#39;Completions&#39;
+    Hucks = &#39;Hucks&#39;
+    Offensive_holds = &#39;Offensive Holds&#39;
+    Defensive_breaks = &#39;Defensive Breaks&#39;
+    Red_zone_possessions = &#39;Red Zone Posessions&#39;
+    Hucks = &#39;Hucks&#39;
+    Turnovers = &#39;Turnovers&#39;
+    Blocks = &#39;Blocks&#39;
+    Turnovers = &#39;Turnovers&#39;
+
+
+team_stats_row_names = [
+    TeamStatsName.Completions,
+    TeamStatsName.Hucks,
+    TeamStatsName.Offensive_holds,
+    TeamStatsName.Defensive_breaks,
+    TeamStatsName.Red_zone_possessions,
+    TeamStatsName.Blocks,
+    TeamStatsName.Turnovers,
+]
+
+team_stats_perc_columns_names = [
+    &#34;&#34;,
+    &#34;Successful&#34;,
+    &#34;Opportunities&#34;,
+    &#34;Percentage&#34;
+]
+
+team_roster_columns_name = [
+    &#34;identification_num&#34;,
+    &#34;first_name&#34;,
+    &#34;last_name&#34;,
+    &#34;jersey_number&#34;,
+    &#34;player_id&#34;
+
+]
+
+# \t: number mapings
+# \r: receiver
+# \l: lineup
+# \x: disc absolute position in x
+# \y: disc absolut position in y
+# \s: ???
+
+
+
+
+team_points_by_points_columns_names = [
+    &#34;Current Score&#34;,
+    &#34;Line&#34;,
+    &#34;Clock&#34;,
+    &#34;Point Duration&#34;,
+    &#34;Quarter&#34;,
+    &#34;Lineup&#34;
+]
+
+play_by_play_columns_names = [
+    &#34;Score&#34;,
+    &#34;Offensive Team&#34;,
+    &#34;Defensive Team&#34;,
+    &#34;O-Line&#34;,
+    &#34;D-Line&#34;,
+    &#34;Quarter&#34;,
+    &#34;Point Duration&#34;,
+    &#34;Clock&#34;,
+    &#34;Outcome&#34;
+]
+
+class HerokuPlay:
+    OLineIndex = 1
+    DLineIndex = 2
+    Pull = 3
+    Block = 5
+    ThrowawayCaused = 8
+    Throwaway = 9
+    EndOfQ1 = 23
+    EndOfQ2 = 24
+    EndOfQ3 = 25
+    EndOfQ4 = 26
+    PassCompleted = 20
+    ScoredOn = 21
+    Goal = 22
+    TimeoutDefense = 40
+    TimeoutOffense = 41
+
+game_event_dict = {
+    1: &#39;Offensive Point&#39;, # l is the lineup: list of player_id
+    2: &#39;Defensive Point&#39;, # l is the lineup: list of player_id
+    3: &#39;Pull&#39;, # r is the person who performed the pull
+    5: &#39;Block&#39;, # r is the person who made the block
+    8: &#39;Throw away&#39;,  # check previous player
+    9: &#39;Throwaway Caused&#39;, # check 13
+    #  10: &#39;&#39;, 
+    #  11: &#39;&#39;, # always between 8,9
+    12: &#39;call on the field?&#39;, # c is call type?
+    13: &#39;switch from off to def?&#39;, # check 9
+    14: &#39;Time Out called (we are on off)&#39;, # s is 
+    15: &#39;Time Out called (we are on def)&#39;, # s is ? (not the time)
+    19: &#39;Pass dropped&#39;, # r is the person who dropped the catch (thrower is prev)
+    20: &#39;Pass Completed&#39;, # r is the person who caught the catch (thrower is prev)
+    21: &#39;They score&#39;, # s is 
+    22: &#39;We Score&#39;, # r is the person who scored the point
+    23: &#39;End of Q1&#39;, 
+    24: &#39;End of Q2&#39;, 
+    25: &#39;End of Q3&#39;, 
+    26: &#39;End of Q4&#39;, 
+    #  27: &#39;End of OT1&#39;, 
+    #  28: &#39;End of OT2&#39;, 
+    40: &#39;Timeout: defense unit comes to the field&#39;, # l is lineup
+    41: &#39;Timeout: offense unit comes to the field&#39;, # l is lineup
+    #  42: &#39;&#39;, # s is 
+    #  43: &#39;&#39;, # s is 
+    44: &#39;Offside&#39;, # r is the person who made the offside (if we don&#39;t know who it is, then we dont have row[&#39;r&#39;])
+    50: &#39;Start Game&#39;, 
+}
+
+
+# sequence: 13, 54, 53, 21 (we)
+        
+        
+
+
+
+
+
+
+#######################################################################
+#                            Miscellaneous                            #
+#######################################################################
+season_dict = {
+    2021: &#39;1&#39;,
+    2019: &#39;2&#39;,
+    2018: &#39;3&#39;,
+    2017: &#39;4&#39;,
+    2015: &#39;5&#39;,
+    2016: &#39;6&#39;,
+    2014: &#39;7&#39;,
+    2013: &#39;8&#39;,
+    2012: &#39;9&#39;,
+}</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="audl.stats.library.parameters.Division"><code class="flex name class">
+<span>class <span class="ident">Division</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Division:
+    altantic = &#39;Atlantic&#39;
+    central = &#39;Central&#39;
+    west = &#39;West&#39;
+    canada = &#39;Canada Cup&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="audl.stats.library.parameters.Division.altantic"><code class="name">var <span class="ident">altantic</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.Division.canada"><code class="name">var <span class="ident">canada</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.Division.central"><code class="name">var <span class="ident">central</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.Division.west"><code class="name">var <span class="ident">west</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="audl.stats.library.parameters.FileName"><code class="flex name class">
+<span>class <span class="ident">FileName</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FileName:
+    alltimeplayer = &#39;AllTimePlayerStats&#39;
+    seasonplayerstats = &#39;SeasonPlayerStats&#39;
+    seasonschedule = &#39;SeasonSchedule&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="audl.stats.library.parameters.FileName.alltimeplayer"><code class="name">var <span class="ident">alltimeplayer</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.FileName.seasonplayerstats"><code class="name">var <span class="ident">seasonplayerstats</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.FileName.seasonschedule"><code class="name">var <span class="ident">seasonschedule</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="audl.stats.library.parameters.GameEventAction"><code class="flex name class">
+<span>class <span class="ident">GameEventAction</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GameEventAction:
+    # Types of events defined on heroku server
+    # Block
+    # Dish
+    # Dump
+    # Huck throwaway
+    # Pass
+    # Pull
+    # Score
+    # Swing
+    pass</code></pre>
+</details>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay"><code class="flex name class">
+<span>class <span class="ident">HerokuPlay</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HerokuPlay:
+    OLineIndex = 1
+    DLineIndex = 2
+    Pull = 3
+    Block = 5
+    ThrowawayCaused = 8
+    Throwaway = 9
+    EndOfQ1 = 23
+    EndOfQ2 = 24
+    EndOfQ3 = 25
+    EndOfQ4 = 26
+    PassCompleted = 20
+    ScoredOn = 21
+    Goal = 22
+    TimeoutDefense = 40
+    TimeoutOffense = 41</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="audl.stats.library.parameters.HerokuPlay.Block"><code class="name">var <span class="ident">Block</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.DLineIndex"><code class="name">var <span class="ident">DLineIndex</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.EndOfQ1"><code class="name">var <span class="ident">EndOfQ1</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.EndOfQ2"><code class="name">var <span class="ident">EndOfQ2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.EndOfQ3"><code class="name">var <span class="ident">EndOfQ3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.EndOfQ4"><code class="name">var <span class="ident">EndOfQ4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.Goal"><code class="name">var <span class="ident">Goal</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.OLineIndex"><code class="name">var <span class="ident">OLineIndex</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.PassCompleted"><code class="name">var <span class="ident">PassCompleted</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.Pull"><code class="name">var <span class="ident">Pull</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.ScoredOn"><code class="name">var <span class="ident">ScoredOn</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.Throwaway"><code class="name">var <span class="ident">Throwaway</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.ThrowawayCaused"><code class="name">var <span class="ident">ThrowawayCaused</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.TimeoutDefense"><code class="name">var <span class="ident">TimeoutDefense</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.HerokuPlay.TimeoutOffense"><code class="name">var <span class="ident">TimeoutOffense</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation"><code class="flex name class">
+<span>class <span class="ident">StatisticAbbreviation</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StatisticAbbreviation:
+    stat_col_year = &#39;YR&#39;
+    stat_col_games_played = &#39;G&#39;
+    stat_col_points_played = &#39;PP&#39;
+    stat_col_team = &#39;TM&#39;
+    stat_col_assists = &#39;AST&#39;
+    stat_col_goals = &#39;GLS&#39;
+    stat_col_blocks = &#39;BLK&#39;
+    stat_col_plus_minus = &#39;+/-&#39;
+    stat_col_completions = &#39;CMP&#39;
+    stat_col_completion_perc = &#39;CMP%&#39;
+    stat_col_throwing_yards = &#39;TY&#39;
+    stat_col_receiving_yards = &#39;RY&#39;
+    stat_col_hockey_assists = &#39;HA&#39;
+    stat_col_throwaways = &#39;T&#39;
+    stat_col_stalls = &#39;S&#39;
+    stat_col_callahans = &#39;C&#39;
+    stat_col_drops = &#39;D&#39;
+    stat_col_offensive_points_played = &#39;OPP&#39;
+    stat_col_defensive_points_played = &#39;DPP&#39;
+    stat_col_pulls = &#39;P&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_assists"><code class="name">var <span class="ident">stat_col_assists</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_blocks"><code class="name">var <span class="ident">stat_col_blocks</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_callahans"><code class="name">var <span class="ident">stat_col_callahans</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_completion_perc"><code class="name">var <span class="ident">stat_col_completion_perc</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_completions"><code class="name">var <span class="ident">stat_col_completions</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_defensive_points_played"><code class="name">var <span class="ident">stat_col_defensive_points_played</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_drops"><code class="name">var <span class="ident">stat_col_drops</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_games_played"><code class="name">var <span class="ident">stat_col_games_played</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_goals"><code class="name">var <span class="ident">stat_col_goals</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_hockey_assists"><code class="name">var <span class="ident">stat_col_hockey_assists</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_offensive_points_played"><code class="name">var <span class="ident">stat_col_offensive_points_played</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_plus_minus"><code class="name">var <span class="ident">stat_col_plus_minus</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_points_played"><code class="name">var <span class="ident">stat_col_points_played</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_pulls"><code class="name">var <span class="ident">stat_col_pulls</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_receiving_yards"><code class="name">var <span class="ident">stat_col_receiving_yards</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_stalls"><code class="name">var <span class="ident">stat_col_stalls</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_team"><code class="name">var <span class="ident">stat_col_team</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_throwaways"><code class="name">var <span class="ident">stat_col_throwaways</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_throwing_yards"><code class="name">var <span class="ident">stat_col_throwing_yards</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticAbbreviation.stat_col_year"><code class="name">var <span class="ident">stat_col_year</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription"><code class="flex name class">
+<span>class <span class="ident">StatisticsDescription</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StatisticsDescription:
+    YR = &#39;Year&#39;
+    G = &#39;Games Played&#39;
+    PP = &#39;Points Played&#39;
+    TM = &#39;Team&#39;
+    AST = &#39;Assists&#39;
+    GLS = &#39;Goals&#39;
+    BLK = &#39;Blocks&#39;
+    PLUS_MINUS = &#39;Plus Minus&#39;
+    CMP = &#39;Completions&#39;
+    CMP_PERC = &#39;Completion Percentage&#39;
+    TY = &#39;Throwing Yards&#39;
+    RY = &#39;Receiving Yards&#39;
+    HA = &#39;Hockey Assists&#39;
+    T = &#39;Throwaways&#39;
+    S = &#39;Stall&#39;
+    C = &#39;Callahan&#39;
+    D = &#39;Drops&#39;
+    OPP = &#39;Offensive Points Played&#39;
+    DPP = &#39;Defensive Points Played&#39;
+    P = &#39;Pulls&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="audl.stats.library.parameters.StatisticsDescription.AST"><code class="name">var <span class="ident">AST</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.BLK"><code class="name">var <span class="ident">BLK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.C"><code class="name">var <span class="ident">C</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.CMP"><code class="name">var <span class="ident">CMP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.CMP_PERC"><code class="name">var <span class="ident">CMP_PERC</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.D"><code class="name">var <span class="ident">D</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.DPP"><code class="name">var <span class="ident">DPP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.G"><code class="name">var <span class="ident">G</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.GLS"><code class="name">var <span class="ident">GLS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.HA"><code class="name">var <span class="ident">HA</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.OPP"><code class="name">var <span class="ident">OPP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.P"><code class="name">var <span class="ident">P</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.PLUS_MINUS"><code class="name">var <span class="ident">PLUS_MINUS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.PP"><code class="name">var <span class="ident">PP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.RY"><code class="name">var <span class="ident">RY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.S"><code class="name">var <span class="ident">S</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.T"><code class="name">var <span class="ident">T</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.TM"><code class="name">var <span class="ident">TM</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.TY"><code class="name">var <span class="ident">TY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.StatisticsDescription.YR"><code class="name">var <span class="ident">YR</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="audl.stats.library.parameters.TeamStatsName"><code class="flex name class">
+<span>class <span class="ident">TeamStatsName</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TeamStatsName:
+    Completions = &#39;Completions&#39;
+    Hucks = &#39;Hucks&#39;
+    Offensive_holds = &#39;Offensive Holds&#39;
+    Defensive_breaks = &#39;Defensive Breaks&#39;
+    Red_zone_possessions = &#39;Red Zone Posessions&#39;
+    Hucks = &#39;Hucks&#39;
+    Turnovers = &#39;Turnovers&#39;
+    Blocks = &#39;Blocks&#39;
+    Turnovers = &#39;Turnovers&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="audl.stats.library.parameters.TeamStatsName.Blocks"><code class="name">var <span class="ident">Blocks</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.TeamStatsName.Completions"><code class="name">var <span class="ident">Completions</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.TeamStatsName.Defensive_breaks"><code class="name">var <span class="ident">Defensive_breaks</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.TeamStatsName.Hucks"><code class="name">var <span class="ident">Hucks</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.TeamStatsName.Offensive_holds"><code class="name">var <span class="ident">Offensive_holds</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.TeamStatsName.Red_zone_possessions"><code class="name">var <span class="ident">Red_zone_possessions</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="audl.stats.library.parameters.TeamStatsName.Turnovers"><code class="name">var <span class="ident">Turnovers</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="audl.stats.library" href="index.html">audl.stats.library</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="audl.stats.library.parameters.Division" href="#audl.stats.library.parameters.Division">Division</a></code></h4>
+<ul class="">
+<li><code><a title="audl.stats.library.parameters.Division.altantic" href="#audl.stats.library.parameters.Division.altantic">altantic</a></code></li>
+<li><code><a title="audl.stats.library.parameters.Division.canada" href="#audl.stats.library.parameters.Division.canada">canada</a></code></li>
+<li><code><a title="audl.stats.library.parameters.Division.central" href="#audl.stats.library.parameters.Division.central">central</a></code></li>
+<li><code><a title="audl.stats.library.parameters.Division.west" href="#audl.stats.library.parameters.Division.west">west</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="audl.stats.library.parameters.FileName" href="#audl.stats.library.parameters.FileName">FileName</a></code></h4>
+<ul class="">
+<li><code><a title="audl.stats.library.parameters.FileName.alltimeplayer" href="#audl.stats.library.parameters.FileName.alltimeplayer">alltimeplayer</a></code></li>
+<li><code><a title="audl.stats.library.parameters.FileName.seasonplayerstats" href="#audl.stats.library.parameters.FileName.seasonplayerstats">seasonplayerstats</a></code></li>
+<li><code><a title="audl.stats.library.parameters.FileName.seasonschedule" href="#audl.stats.library.parameters.FileName.seasonschedule">seasonschedule</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="audl.stats.library.parameters.GameEventAction" href="#audl.stats.library.parameters.GameEventAction">GameEventAction</a></code></h4>
+</li>
+<li>
+<h4><code><a title="audl.stats.library.parameters.HerokuPlay" href="#audl.stats.library.parameters.HerokuPlay">HerokuPlay</a></code></h4>
+<ul class="two-column">
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.Block" href="#audl.stats.library.parameters.HerokuPlay.Block">Block</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.DLineIndex" href="#audl.stats.library.parameters.HerokuPlay.DLineIndex">DLineIndex</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.EndOfQ1" href="#audl.stats.library.parameters.HerokuPlay.EndOfQ1">EndOfQ1</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.EndOfQ2" href="#audl.stats.library.parameters.HerokuPlay.EndOfQ2">EndOfQ2</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.EndOfQ3" href="#audl.stats.library.parameters.HerokuPlay.EndOfQ3">EndOfQ3</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.EndOfQ4" href="#audl.stats.library.parameters.HerokuPlay.EndOfQ4">EndOfQ4</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.Goal" href="#audl.stats.library.parameters.HerokuPlay.Goal">Goal</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.OLineIndex" href="#audl.stats.library.parameters.HerokuPlay.OLineIndex">OLineIndex</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.PassCompleted" href="#audl.stats.library.parameters.HerokuPlay.PassCompleted">PassCompleted</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.Pull" href="#audl.stats.library.parameters.HerokuPlay.Pull">Pull</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.ScoredOn" href="#audl.stats.library.parameters.HerokuPlay.ScoredOn">ScoredOn</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.Throwaway" href="#audl.stats.library.parameters.HerokuPlay.Throwaway">Throwaway</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.ThrowawayCaused" href="#audl.stats.library.parameters.HerokuPlay.ThrowawayCaused">ThrowawayCaused</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.TimeoutDefense" href="#audl.stats.library.parameters.HerokuPlay.TimeoutDefense">TimeoutDefense</a></code></li>
+<li><code><a title="audl.stats.library.parameters.HerokuPlay.TimeoutOffense" href="#audl.stats.library.parameters.HerokuPlay.TimeoutOffense">TimeoutOffense</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="audl.stats.library.parameters.StatisticAbbreviation" href="#audl.stats.library.parameters.StatisticAbbreviation">StatisticAbbreviation</a></code></h4>
+<ul class="">
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_assists" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_assists">stat_col_assists</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_blocks" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_blocks">stat_col_blocks</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_callahans" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_callahans">stat_col_callahans</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_completion_perc" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_completion_perc">stat_col_completion_perc</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_completions" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_completions">stat_col_completions</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_defensive_points_played" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_defensive_points_played">stat_col_defensive_points_played</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_drops" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_drops">stat_col_drops</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_games_played" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_games_played">stat_col_games_played</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_goals" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_goals">stat_col_goals</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_hockey_assists" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_hockey_assists">stat_col_hockey_assists</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_offensive_points_played" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_offensive_points_played">stat_col_offensive_points_played</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_plus_minus" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_plus_minus">stat_col_plus_minus</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_points_played" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_points_played">stat_col_points_played</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_pulls" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_pulls">stat_col_pulls</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_receiving_yards" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_receiving_yards">stat_col_receiving_yards</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_stalls" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_stalls">stat_col_stalls</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_team" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_team">stat_col_team</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_throwaways" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_throwaways">stat_col_throwaways</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_throwing_yards" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_throwing_yards">stat_col_throwing_yards</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticAbbreviation.stat_col_year" href="#audl.stats.library.parameters.StatisticAbbreviation.stat_col_year">stat_col_year</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="audl.stats.library.parameters.StatisticsDescription" href="#audl.stats.library.parameters.StatisticsDescription">StatisticsDescription</a></code></h4>
+<ul class="two-column">
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.AST" href="#audl.stats.library.parameters.StatisticsDescription.AST">AST</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.BLK" href="#audl.stats.library.parameters.StatisticsDescription.BLK">BLK</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.C" href="#audl.stats.library.parameters.StatisticsDescription.C">C</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.CMP" href="#audl.stats.library.parameters.StatisticsDescription.CMP">CMP</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.CMP_PERC" href="#audl.stats.library.parameters.StatisticsDescription.CMP_PERC">CMP_PERC</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.D" href="#audl.stats.library.parameters.StatisticsDescription.D">D</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.DPP" href="#audl.stats.library.parameters.StatisticsDescription.DPP">DPP</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.G" href="#audl.stats.library.parameters.StatisticsDescription.G">G</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.GLS" href="#audl.stats.library.parameters.StatisticsDescription.GLS">GLS</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.HA" href="#audl.stats.library.parameters.StatisticsDescription.HA">HA</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.OPP" href="#audl.stats.library.parameters.StatisticsDescription.OPP">OPP</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.P" href="#audl.stats.library.parameters.StatisticsDescription.P">P</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.PLUS_MINUS" href="#audl.stats.library.parameters.StatisticsDescription.PLUS_MINUS">PLUS_MINUS</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.PP" href="#audl.stats.library.parameters.StatisticsDescription.PP">PP</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.RY" href="#audl.stats.library.parameters.StatisticsDescription.RY">RY</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.S" href="#audl.stats.library.parameters.StatisticsDescription.S">S</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.T" href="#audl.stats.library.parameters.StatisticsDescription.T">T</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.TM" href="#audl.stats.library.parameters.StatisticsDescription.TM">TM</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.TY" href="#audl.stats.library.parameters.StatisticsDescription.TY">TY</a></code></li>
+<li><code><a title="audl.stats.library.parameters.StatisticsDescription.YR" href="#audl.stats.library.parameters.StatisticsDescription.YR">YR</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="audl.stats.library.parameters.TeamStatsName" href="#audl.stats.library.parameters.TeamStatsName">TeamStatsName</a></code></h4>
+<ul class="">
+<li><code><a title="audl.stats.library.parameters.TeamStatsName.Blocks" href="#audl.stats.library.parameters.TeamStatsName.Blocks">Blocks</a></code></li>
+<li><code><a title="audl.stats.library.parameters.TeamStatsName.Completions" href="#audl.stats.library.parameters.TeamStatsName.Completions">Completions</a></code></li>
+<li><code><a title="audl.stats.library.parameters.TeamStatsName.Defensive_breaks" href="#audl.stats.library.parameters.TeamStatsName.Defensive_breaks">Defensive_breaks</a></code></li>
+<li><code><a title="audl.stats.library.parameters.TeamStatsName.Hucks" href="#audl.stats.library.parameters.TeamStatsName.Hucks">Hucks</a></code></li>
+<li><code><a title="audl.stats.library.parameters.TeamStatsName.Offensive_holds" href="#audl.stats.library.parameters.TeamStatsName.Offensive_holds">Offensive_holds</a></code></li>
+<li><code><a title="audl.stats.library.parameters.TeamStatsName.Red_zone_possessions" href="#audl.stats.library.parameters.TeamStatsName.Red_zone_possessions">Red_zone_possessions</a></code></li>
+<li><code><a title="audl.stats.library.parameters.TeamStatsName.Turnovers" href="#audl.stats.library.parameters.TeamStatsName.Turnovers">Turnovers</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

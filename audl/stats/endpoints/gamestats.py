@@ -31,27 +31,65 @@ class GameStats(Endpoint):
     def _get_home_team_ext_id(self):
         """ 
         Function that return team external id for home team
-        return: 
-            - ext_team_id (string): ie 'royal', 'rush', ...
+
+        Returns
+        -------
+        ext_team_id: string
+            External Team ID (ex: 'royal', 'rush', ...)
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._get_home_team_ext_id()
+
         """
         return self.json['game']['team_season_home']['team']['ext_team_id']
         
     def _get_away_team_ext_id(self):
         """ 
         Function that return team external id for away team
-        return: 
-            - ext_team_id (string): ie 'royal', 'rush', ...
+
+        Returns
+        -------
+        ext_team_id: string
+            External Team ID (ex: 'royal', 'rush', ...)
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._get_away_team_ext_id()
+
         """
         return self.json['game']['team_season_away']['team']['ext_team_id']
-        pass
 
     def _get_url(self):
+        """ 
+        Function that return complete url
+
+        Returns
+        -------
+        url: string
+            url of the heroku API request
+        
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._get_url()
+
+        """
         return f"{self.base_url}{self.game_id}"
     
 
     def _get_json_from_url(self):
         """ 
         Function that retrieves requests data as JSON document
+
+        Returns 
+        -------
+        json_doc: json
+            json document from the get requests
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._get_json_from_url()
+
         """
         url = self._get_url()
         return requests.get(url).json()
@@ -59,11 +97,20 @@ class GameStats(Endpoint):
     def get_game_metadata(self):
         """ 
         Function that retrieve game metadata
-        Return [df]:
-            - is_regular_season (bool)
-            - home_team, away_team
-            - home_score, away_score
-            - stadium_name (from location_id)
+
+        Returns
+        ------- 
+        game_metadata: pandas.Dataframe
+            Dataframe with the following columns
+                - is_regular_season (bool)
+                - home_team, away_team
+                - home_score, away_score
+                - stadium_name (from location_id)
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_game_metadata()
+
         """
         game = self.json['game']
         df = pd.json_normalize(game)
@@ -72,10 +119,23 @@ class GameStats(Endpoint):
     def get_boxscores(self):
         """ 
         Function that return team scores by quarter
-        Ex:
+        
+        Returns
+        -------
+        df_boxscores: pandas.DataFrame
+            Dataframe with team goals by quarter 
+
+
+        Examples
+        --------
+        The dataframe should look like this
+
                     Q1	Q2	Q3	Q4	T
             rush	4	6	4	7	21
             royal	4	7	4	5	20
+
+        >>> GameStats('2022-06-11-TB-ATL').get_boxscores()
+
         """
         # get scoring times from json 
         scores = self._get_scoring_time()
@@ -92,15 +152,25 @@ class GameStats(Endpoint):
     def _get_scoring_time(self):
         """ 
         Function that return scoring time for each team
-        return [df]:
-            - scoring_time (int): time when point was scored in second
-            - ext_team_id (string): team external id ie 'royal'
-            - quarter (string): quarter in which point has been scored ie 'Q1'
 
-        Ex: 
+        Returns 
+        -------
+        scorin_time: pandas.DataFrame   
+            Dataframe with the following columns:
+                - scoring_time (int): time when point was scored in second
+                - ext_team_id (string): team external id ie 'royal'
+                - quarter (string): quarter in which point has been scored ie 'Q1'
+
+        Examples
+        --------
+        The dataframe should look like this
+
                     scoring_time ext_team_id   quarter
-           rush 
-           royal 
+           rush             353         231         Q1
+           rush             586         231         Q1
+           royal            786         231         Q2
+
+        >>> GameStats('2022-06-11-TB-ATL')._get_scoring_time()
 
         """
         # get scoring time for both teams
@@ -121,21 +191,31 @@ class GameStats(Endpoint):
         return scores
 
 
-        pass
-
     @staticmethod
     def _get_quarter(scoring_time):
         """ 
         Function that returns quarter based on scoring time
+
         Remark: Games are timed with four-quarters of 12 minutes each, 
             including a 15-minute halftime. If the score is tied, a five 
             minutes overtime period is played. If the score remains tied after
             overtime, a second overtime is played in which the first team 
             to score wins.
-        param: 
-            - scoring_time (int): time when point was scored in second
-        return:
-            - quarter (string): 'Q1', 'Q2', 'Q3', 'Q4', 'OT1', 'OT2'
+
+        Parameters 
+        ----------
+        scoring_time: int
+            time when point was scored in second
+
+        Returns
+        -------
+        quarter: string 
+            ex: 'Q1', 'Q2', 'Q3', 'Q4', 'OT1', 'OT2'
+            
+        Examples
+        --------
+        >>> GameStats()._get_quarter(456)
+
         """
         quarter_end = { 'Q1': 720, 'Q2': 1440, 'Q3': 2160, 'Q4': 2880, 'OT1': 3180 }
 
@@ -146,22 +226,41 @@ class GameStats(Endpoint):
         return 'OT2'
 
         
-    def get_scores(self): # todo in sql?
+    def get_scores(self):
         """ 
         Function that retrieves scores by times
-        Return [df]:
-            - team: "home" or "away"
-            - time: time when the team scored
-            - goal: who scored the goal
-            - assist: who assisted the goal
-            - hockey: who made the hockey pass
+
+        Returns
+        -------
+        scores_df: pandas.DataFrame 
+            Dataframe with the following columns:
+                - team: "home" or "away"
+                - time: time when the team scored
+                - goal: who scored the goal
+                - assist: who assisted the goal
+                - hockey: who made the hockey pass
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_scores()
+
         """
+        raise NotImplementedError("This function hasn't been implemented yet!")
         pass
 
     def get_roster_stats(self):
         """ 
         Function that retrieves stats for all players that played this games
-        return [df]
+        
+        Returns
+        -------
+        roster_df: pandas.Dataframe
+            Dataframe with roster stats
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_roster_stats()
+
         """
         # get external ids for all players that played
         roster_ext_ids = self._get_roster_ext_ids()
@@ -191,11 +290,26 @@ class GameStats(Endpoint):
     def _get_city_abbrev_from_game_id(self, is_home):
         """ 
         Function that return season from game_id
-            ex: "2022-05-28-IND-DET" return IND if is_home = True, DET if is_home=False
-        param: 
-            - is_home (bool): True if home, False if away
-        return:
-            - season (int): year  ex: 2022
+
+        Parameters
+        ----------
+        is_home: bool 
+            True if home, False if away
+
+
+        Returns
+        -------
+        season : int 
+            season year (ex: 2022)
+
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._get_city_abbrev_from_game_id(True)
+        >>> IND
+        >>> GameStats('2022-06-11-TB-ATL')._get_city_abbrev_from_game_id(False)
+        >>> ATL
+
         """
         if is_home:
             return self.game_id.split('-')[4]
@@ -206,10 +320,19 @@ class GameStats(Endpoint):
 
     def _get_season_from_game_id(self):
         """ 
-        Function that return season from game_id
-            ex: "2022-05-28-IND-DET" return 2022
-        return:
-            - season (int): year  ex: 2022
+        Function that return season from game_id 
+
+        Returns
+        -------
+        season : int
+            season year 
+
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._get_season_from_game_id()
+        >>> 2022
+
         """
         return self.game_id.split('-')[0]
 
@@ -218,8 +341,17 @@ class GameStats(Endpoint):
     def _get_roster_ext_ids(self):
         """ 
         Function that return all players that played this game (rosterIds)
-        Return [list] ext_player_id
-            ex: ['pbisson', 'thodge']
+
+        Returns
+        -------
+        roster_ext_ids: list
+            List of ext_player_id 
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._get_roster_ext_ids()
+        >>> ['pbisson', 'thodge']
+
         """
         # get all player_id who have played as list
         rosterHome = self.json['tsgHome']['rosterIds']
@@ -237,7 +369,12 @@ class GameStats(Endpoint):
     def get_team_stats(self):
         """ 
         Function that retrieves teams stats
-        Return [df]:
+
+        Returns
+        -------
+        team_stats: pandas.DataFrame
+            Dataframe with the following columns:
+
            'id', 'teamSeasonId', 'gameId', 'source', 'startOnOffense',
            'updateMoment', 'statusId', 'completionsNumer', 'completionsDenom',
            'hucksNumer', 'hucksDenom', 'blocks', 'turnovers', 'oLineScores',
@@ -245,6 +382,11 @@ class GameStats(Endpoint):
            'dLinePossessions', 'redZoneScores', 'redZonePossessions', 'road',
            'completionsPerc', 'hucksPerc', 'holdPerc', 'oLineConversionPerc',
            'dLineConversionPerc', 'breakPerc', 'redZoneConversionPerc'
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_team_stats()
+
         """
         tsg_home = self._read_teams_tsg_json(self.json['tsgHome'])
         tsg_home['road'] = 'home'
@@ -266,15 +408,25 @@ class GameStats(Endpoint):
         return tsg
 
 
-
     def _read_teams_tsg_json(self, team_tsg):
         """ 
-        Function that retrieves scoring information in json.tsgHome and 
-            json.tsgAway
-        param:
-            - team_tsg: json dictionary ie json.tsgHome 
-        Return [df]:
+        Function that retrieves scoring information in json.tsgHome or json.tsgAway
+
+        Parameters
+        ----------
+        team_tsg: json 
+            json dictionary of tsgHome or tsgAway
+
+        Returns
+        -------
+        tsg_df: pandas.DataFrame
+            dataframe of the tsg
             
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL')._read_teams_tsg_json(self.json['tsgHome'])
+        >>> GameStats('2022-06-11-TB-ATL')._read_teams_tsg_json(self.json['tsgAway'])
+
         """
         # read json
         tsg = pd.json_normalize(team_tsg, max_level=1)
@@ -295,15 +447,24 @@ class GameStats(Endpoint):
         """ 
         Function that retrieves all players from both team (even those who 
         are not playing)
-        Return [df] from json.rostersHome and json.rostersAway
-            - player_game_id: id used in events
-            - jersey_number
-            - player_id
-            - first_name:
-            - last_name
-            - ext_player_id: 'pbisson'
-            - ext_team_id: 'royal'
-            - city
+
+        Returns
+        -------
+        players_metadata: pandas.DataFrame
+            Dataframe with all data from json.rostersHome and json.rostersAway
+                - player_game_id: id used in events
+                - jersey_number
+                - player_id
+                - first_name:
+                - last_name
+                - ext_player_id: 'pbisson'
+                - ext_team_id: 'royal'
+                - city
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_players_metadata()
+
         """
         # get home and away roster
         homeJSON = self.json['rostersHome']
@@ -322,14 +483,22 @@ class GameStats(Endpoint):
     def get_teams_metadata(self):
         """ 
         Function that retrieve team and city name for home and away team
-        Return [df] from games.team_season_home games.team_season_away
-            - team_season_id
-            - team_id
-            - city: 'Monteal'
-            - city_abbrev: 'MTL'
-            - name: 'Royal'
-            - ext_team_id: 'royal'
-            - stadium? TODO
+
+        Returns
+        -------
+        teams_metadata: pandas.DataFrame
+            Datafram with all data from games.team_season_home and games.team_season_away
+                - team_season_id
+                - team_id
+                - city: 'Monteal'
+                - city_abbrev: 'MTL'
+                - name: 'Royal'
+                - ext_team_id: 'royal'
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_teams_metadata()
+
         """
         # retrieve df from home and away team
         game = self.json['game']
@@ -342,46 +511,52 @@ class GameStats(Endpoint):
         teams = pd.concat([home, away])
         return teams
 
-
     def get_lineup_by_points(self):
         """ 
         Function that returns lineup for each point played
-        return [df]:
+
+        Returns
+        -------
+        lineup: pandas.DataFrame
+            Dataframe with the following columns
             - point (int): ith point played
             - team_on_off (string): team on offense (ext_team_id)
             - team_on_def (string): team on defense (ext_team_id)
-            - lineup_off (list): lineup in off (7 players) (t:1)
-            - lineup_def (list): lineup in def (7 players) (t:2)
+            - lineup_def (list): lineup in def (7 players)
+            - lineup_off (list): lineup in off (7 players)
             - result (string): ext_team_id of team who won the point
-            - scorer (string): ext_player_id of person who scored the point (t:22)
-            - assist (string): ext_player_id of person who assisted (prev t:20)
-            - hockey (string): ext_player_id of person who made the hockey assist 
-            - scoring_time (int):
-            - timeout_called (bool): True if timeout was called
-        Remark: 
-            - what if there is a timeout -> stop and start another point
-            - 
-        """
+            - scorer (string): ext_player_id of person who scored the point
+            - assist (string): ext_player_id of person who assisted
+            - hockey (string): ext_player_id of person who made the hockey assist
 
-        events = self.get_team_events()
-        # iterate through each point events
-        for home_row, away_row in zip(events['homeEvents'], events['awayEvents']): 
-            home_events = home_row['events']
-            away_events = away_row['events']
-            self._get_point_results(home_events)
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_lineup_by_points()
+        """
+        raise NotImplementedError("This function hasn't been implemented yet!")
         pass
 
-    def _get_point_results(self, point_events):
+    def get_point_results(self, point_events):
         """ 
         Function that returns (events) in a given point for a given team
-        :param point_events (json): events in a given point
+
+        Parameters
+        ----------
+        point_events: json
+            json document with all events in a point
             [
                 {'t': 20, 'r': 10266, 'x': 3.86, 'y': 66.18},
                 {'t': 20, 'r': 10264, 'x': 7.21, 'y': 77.11},
                 {'t': 20, 'r': 10255, 'x': -3.07, 'y': 95.77},
             ], 
-        :return results (json):
-        Ex: 
+
+        See Also
+        --------
+
+        Returns
+        -------
+        points_results: json
+            json doc with the following information
             - team_on_off (string): team on offense (ext_team_id)
             - team_on_def (string): team on defense (ext_team_id)
             - lineup_off (list): lineup in off (7 players) (t:1)
@@ -394,87 +569,50 @@ class GameStats(Endpoint):
             - center (string): ext_player_id of player who caught the second pass
             - scoring_time (int):
             - timeout_called (bool): True if timeout was called
+
         """
+        raise NotImplementedError("This function hasn't been implemented yet!")
         pass
 
-
-
-    def _get_point_events_in_sequential_order(self, home_events, away_events):
+    def get_events(self):
         """ 
-        Function that return events from home and away team in sequential order
-        :param home_events (list): all home team events for a given point
-        :param away_events (list): all away team events for a given point
-        :return json_dict
-        Ex: 
-            [
-                {'order': 1, 'event': {...}},
-                {'order': 2, 'event': {...}},
-            ]
-        How: 
-            - pull (t:3), success pass (t:20) until score (t:22), def (t:),
-              throwaway (t:8)
-        """
-        pass
+        Function that return the event of each points in sequential order
 
+        Returns
+        -------
+        events_df: pandas.DataFrame
+            Dataframe with the following columns:
+                - point (int): ith point played
+                - team_on_off (string): team on offense
+                - team_on_def (string): team on defense
+                - lineup_def (list): lineup in def (7 players)
+                - lineup_off (list): lineup in off (7 players)
 
-    def get_team_events(self):
-        """ 
-        Function that return events separated by points
-        :return events_by_points [list of docs]: json document separated by points 
-        How: everytime we see lineup for offense (t:1) or for def (t:2), we 
-            know a new points has started
-        Ex: 
-            {
-                'homeEvents': [
-                    {'point': 1, 'events':[{...}, {...}]},
-                    {'point': 2, 'events':[{...}, {...}]},
-                ], 
-                'awayEvents': [
-                    {'point': 1, 'events':[{...}, {...}]},
-                    {'point': 2, 'events':[{...}, {...}]},
-                ], 
-            }
-        """
-        homeEvents = self._get_events_by_points(self.json['tsgHome']['events'])
-        awayEvents = self._get_events_by_points(self.json['tsgAway']['events'])
-        events = {
-                'homeEvents': homeEvents, 
-                'awayEvents': awayEvents
-            }
-        return events
-
-    def _get_events_by_points(self, events):
-        """ 
-        Function that return json doc of events by points 
-        :param events: json['tsgHome']['events'] or json['tsgAway']['events']
-        :return events_by_points (json)
-        Ex:
-            [
-                {'point': 1, 'events':{...}},
-                {'point': 2, 'events':{...}},
-            ]
-        """
-        events_by_points = []
-        events_in_point = []
-        point_counter = 0
-
-        # creating dict
-        for _, row in enumerate(json.loads(events)):
-            t = row['t']
-            if t in [1,2]: # new point occurs when event type is off/def lineup
-                events_by_points.append({'point': point_counter, 'events': events_in_point})
-                events_in_point = []
-                point_counter += 1
-            events_in_point.append(row)
-
-        return events_by_points
         
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').get_events()
+
+        """
+        raise NotImplementedError("This function hasn't been implemented yet!")
+        pass
+
+
         
     def print_team_events(self, is_home): 
         """ 
         Function that print events for home and away teams
-        param:
-            - is_home (bool): True if we print events of home team, else false
+
+        Parameters
+        ----------
+        is_home : bool
+            True if we print events of home team, else false
+
+        Examples
+        --------
+        >>> GameStats('2022-06-11-TB-ATL').print_team_events(True)
+        >>> GameStats('2022-06-11-TB-ATL').print_team_events(False)
+
         """
         events = self.json['tsgHome']['events'] if is_home else self.json['tsgAway']['events']
 
@@ -492,18 +630,21 @@ class GameStats(Endpoint):
         # print all events
         for _, row in enumerate(json.loads(events)):
             t = row['t']
-            if t in [1,2, 40, 41]: # print lineup
+            if t in [1,2, 40, 41]:
+                # print lineup
                 l = row['l']
                 lineup = [players[players['id'] == int(player_id)]['player.ext_player_id'].tolist()[0] for player_id in l
 ]
                 print(f"t: {t}; lineup: {lineup}")
-            elif t in [3,5,19,20,22]: # print receiver
+            elif t in [3,5,19,20,22]:
+                # print receiver
                 try:
                     receiver = players[players['id'] == int(row['r'])]['player.ext_player_id'].tolist()[0]
                 except: 
                     receiver = 'NaN'
                 print(f"t: {t}; r: {receiver}")
-            elif t in [14, 15, 42, 43]: # print s
+            elif t in [14, 15, 42, 43]:
+                # print s
                 print(f"t: {t}; s: {row['s']}")
             else: 
                 print(f"t: {t}")
