@@ -144,14 +144,29 @@ events = game.get_team_events()
 
 ## How to contribute
 
+**How to deploy pip package**
+
+
+```bash
+python -m build
+python3 -m twine upload --repository testpypi dist/*
+twine upload dist/*
+```
+
+**How to generate documentation with pdoc3**
+
+```bash 
+pdoc --html audl
+```
 
 
 ## Ressources
 
 - [Deploy pip packages](https://packaging.python.org/en/latest/tutorials/packaging-projects/)
-- [Deployt pip package using setup.py](https://towardsdatascience.com/how-to-upload-your-python-package-to-pypi-de1b363a1b3)
+- [Deploy pip package using setup.py](https://towardsdatascience.com/how-to-upload-your-python-package-to-pypi-de1b363a1b3)
 - [Basketball Ref API](https://github.com/vishaalagartha/basketball_reference_scraper)
 - [Sample Project](https://github.com/pypa/sampleproject)
+- [Generating Documentation with Docstring using pdoc3](https://pdoc3.github.io/pdoc/)
 
 
 
