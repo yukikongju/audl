@@ -39,7 +39,7 @@ class GameStats(Endpoint):
 
         Examples
         --------
-        >>> GameStats()._get_home_team_ext_id()
+        >>> GameStats('2022-06-11-TB-ATL')._get_home_team_ext_id()
 
         """
         return self.json['game']['team_season_home']['team']['ext_team_id']
@@ -55,7 +55,7 @@ class GameStats(Endpoint):
 
         Examples
         --------
-        >>> GameStats()._get_away_team_ext_id()
+        >>> GameStats('2022-06-11-TB-ATL')._get_away_team_ext_id()
 
         """
         return self.json['game']['team_season_away']['team']['ext_team_id']
@@ -71,7 +71,7 @@ class GameStats(Endpoint):
         
         Examples
         --------
-        >>> GameStats()._get_url()
+        >>> GameStats('2022-06-11-TB-ATL')._get_url()
 
         """
         return f"{self.base_url}{self.game_id}"
@@ -88,7 +88,7 @@ class GameStats(Endpoint):
 
         Examples
         --------
-        >>> GameStats()._get_json_from_url()
+        >>> GameStats('2022-06-11-TB-ATL')._get_json_from_url()
 
         """
         url = self._get_url()
