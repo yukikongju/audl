@@ -21,3 +21,6 @@ class TestPlayerProfile(unittest.TestCase):
 
     def test_non_existing_playoffs(self):
         pass
+
+if __name__ == "__main__":
+    unittest.main()

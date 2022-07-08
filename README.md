@@ -148,7 +148,7 @@ events = game.get_team_events()
 ## Tree
 
 
-## How to contribute
+## How to ...
 
 **How to deploy pip package**
 
@@ -165,6 +165,9 @@ twine upload dist/*
 pdoc --html audl
 mv html/ docs/
 ```
+
+
+## How to contribute
 
 
 ## Ressources
