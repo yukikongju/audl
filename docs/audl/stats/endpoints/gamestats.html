@@ -273,6 +273,7 @@ class GameStats(Endpoint):
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_scores()
 
         &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
         pass
 
     def get_roster_stats(self):
@@ -559,8 +560,46 @@ class GameStats(Endpoint):
         Examples
         --------
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_lineup_by_points()
+        &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
+        pass
+
+    def get_point_results(self, point_events):
+        &#34;&#34;&#34; 
+        Function that returns (events) in a given point for a given team
+
+        Parameters
+        ----------
+        point_events: json
+            json document with all events in a point
+            [
+                {&#39;t&#39;: 20, &#39;r&#39;: 10266, &#39;x&#39;: 3.86, &#39;y&#39;: 66.18},
+                {&#39;t&#39;: 20, &#39;r&#39;: 10264, &#39;x&#39;: 7.21, &#39;y&#39;: 77.11},
+                {&#39;t&#39;: 20, &#39;r&#39;: 10255, &#39;x&#39;: -3.07, &#39;y&#39;: 95.77},
+            ], 
+
+        See Also
+        --------
+
+        Returns
+        -------
+        points_results: json
+            json doc with the following information
+            - team_on_off (string): team on offense (ext_team_id)
+            - team_on_def (string): team on defense (ext_team_id)
+            - lineup_off (list): lineup in off (7 players) (t:1)
+            - lineup_def (list): lineup in def (7 players) (t:2)
+            - result (string): ext_team_id of team who won the point
+            - scorer (string): ext_player_id of person who scored the point (t:22)
+            - assist (string): ext_player_id of person who assisted (prev t:20)
+            - hockey (string): ext_player_id of person who made the hockey assist 
+            - catcher (string): ext_player_id of player who caught the pull
+            - center (string): ext_player_id of player who caught the second pass
+            - scoring_time (int):
+            - timeout_called (bool): True if timeout was called
 
         &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
         pass
 
     def get_events(self):
@@ -583,6 +622,7 @@ class GameStats(Endpoint):
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_events()
 
         &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
         pass
 
 
@@ -883,6 +923,7 @@ class GameStats(Endpoint):
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_scores()
 
         &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
         pass
 
     def get_roster_stats(self):
@@ -1169,8 +1210,46 @@ class GameStats(Endpoint):
         Examples
         --------
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_lineup_by_points()
+        &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
+        pass
+
+    def get_point_results(self, point_events):
+        &#34;&#34;&#34; 
+        Function that returns (events) in a given point for a given team
+
+        Parameters
+        ----------
+        point_events: json
+            json document with all events in a point
+            [
+                {&#39;t&#39;: 20, &#39;r&#39;: 10266, &#39;x&#39;: 3.86, &#39;y&#39;: 66.18},
+                {&#39;t&#39;: 20, &#39;r&#39;: 10264, &#39;x&#39;: 7.21, &#39;y&#39;: 77.11},
+                {&#39;t&#39;: 20, &#39;r&#39;: 10255, &#39;x&#39;: -3.07, &#39;y&#39;: 95.77},
+            ], 
+
+        See Also
+        --------
+
+        Returns
+        -------
+        points_results: json
+            json doc with the following information
+            - team_on_off (string): team on offense (ext_team_id)
+            - team_on_def (string): team on defense (ext_team_id)
+            - lineup_off (list): lineup in off (7 players) (t:1)
+            - lineup_def (list): lineup in def (7 players) (t:2)
+            - result (string): ext_team_id of team who won the point
+            - scorer (string): ext_player_id of person who scored the point (t:22)
+            - assist (string): ext_player_id of person who assisted (prev t:20)
+            - hockey (string): ext_player_id of person who made the hockey assist 
+            - catcher (string): ext_player_id of player who caught the pull
+            - center (string): ext_player_id of player who caught the second pass
+            - scoring_time (int):
+            - timeout_called (bool): True if timeout was called
 
         &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
         pass
 
     def get_events(self):
@@ -1193,6 +1272,7 @@ class GameStats(Endpoint):
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_events()
 
         &#34;&#34;&#34;
+        raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
         pass
 
 
@@ -1351,6 +1431,7 @@ royal       4       7       4       5       20
     &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_events()
 
     &#34;&#34;&#34;
+    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
     pass</code></pre>
 </details>
 </dd>
@@ -1443,8 +1524,8 @@ Dataframe with the following columns
     Examples
     --------
     &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_lineup_by_points()
-
     &#34;&#34;&#34;
+    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
     pass</code></pre>
 </details>
 </dd>
@@ -1510,6 +1591,82 @@ are not playing)</p>
     # concatenate dataset
     players = pd.concat([home_players, away_players])
     return players </code></pre>
+</details>
+</dd>
+<dt id="audl.stats.endpoints.gamestats.GameStats.get_point_results"><code class="name flex">
+<span>def <span class="ident">get_point_results</span></span>(<span>self, point_events)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function that returns (events) in a given point for a given team</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>point_events</code></strong> :&ensp;<code>json</code></dt>
+<dd>json document with all events in a point
+[
+{'t': 20, 'r': 10266, 'x': 3.86, 'y': 66.18},
+{'t': 20, 'r': 10264, 'x': 7.21, 'y': 77.11},
+{'t': 20, 'r': 10255, 'x': -3.07, 'y': 95.77},
+],</dd>
+</dl>
+<h2 id="see-also">See Also</h2>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>points_results</code></strong> :&ensp;<code>json</code></dt>
+<dd>json doc with the following information
+- team_on_off (string): team on offense (ext_team_id)
+- team_on_def (string): team on defense (ext_team_id)
+- lineup_off (list): lineup in off (7 players) (t:1)
+- lineup_def (list): lineup in def (7 players) (t:2)
+- result (string): ext_team_id of team who won the point
+- scorer (string): ext_player_id of person who scored the point (t:22)
+- assist (string): ext_player_id of person who assisted (prev t:20)
+- hockey (string): ext_player_id of person who made the hockey assist
+- catcher (string): ext_player_id of player who caught the pull
+- center (string): ext_player_id of player who caught the second pass
+- scoring_time (int):
+- timeout_called (bool): True if timeout was called</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_point_results(self, point_events):
+    &#34;&#34;&#34; 
+    Function that returns (events) in a given point for a given team
+
+    Parameters
+    ----------
+    point_events: json
+        json document with all events in a point
+        [
+            {&#39;t&#39;: 20, &#39;r&#39;: 10266, &#39;x&#39;: 3.86, &#39;y&#39;: 66.18},
+            {&#39;t&#39;: 20, &#39;r&#39;: 10264, &#39;x&#39;: 7.21, &#39;y&#39;: 77.11},
+            {&#39;t&#39;: 20, &#39;r&#39;: 10255, &#39;x&#39;: -3.07, &#39;y&#39;: 95.77},
+        ], 
+
+    See Also
+    --------
+
+    Returns
+    -------
+    points_results: json
+        json doc with the following information
+        - team_on_off (string): team on offense (ext_team_id)
+        - team_on_def (string): team on defense (ext_team_id)
+        - lineup_off (list): lineup in off (7 players) (t:1)
+        - lineup_def (list): lineup in def (7 players) (t:2)
+        - result (string): ext_team_id of team who won the point
+        - scorer (string): ext_player_id of person who scored the point (t:22)
+        - assist (string): ext_player_id of person who assisted (prev t:20)
+        - hockey (string): ext_player_id of person who made the hockey assist 
+        - catcher (string): ext_player_id of player who caught the pull
+        - center (string): ext_player_id of player who caught the second pass
+        - scoring_time (int):
+        - timeout_called (bool): True if timeout was called
+
+    &#34;&#34;&#34;
+    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
+    pass</code></pre>
 </details>
 </dd>
 <dt id="audl.stats.endpoints.gamestats.GameStats.get_roster_stats"><code class="name flex">
@@ -1610,6 +1767,7 @@ are not playing)</p>
     &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_scores()
 
     &#34;&#34;&#34;
+    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
     pass</code></pre>
 </details>
 </dd>
@@ -1829,6 +1987,7 @@ are not playing)</p>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_game_metadata" href="#audl.stats.endpoints.gamestats.GameStats.get_game_metadata">get_game_metadata</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_lineup_by_points" href="#audl.stats.endpoints.gamestats.GameStats.get_lineup_by_points">get_lineup_by_points</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_players_metadata" href="#audl.stats.endpoints.gamestats.GameStats.get_players_metadata">get_players_metadata</a></code></li>
+<li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_point_results" href="#audl.stats.endpoints.gamestats.GameStats.get_point_results">get_point_results</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_roster_stats" href="#audl.stats.endpoints.gamestats.GameStats.get_roster_stats">get_roster_stats</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_scores" href="#audl.stats.endpoints.gamestats.GameStats.get_scores">get_scores</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_team_stats" href="#audl.stats.endpoints.gamestats.GameStats.get_team_stats">get_team_stats</a></code></li>

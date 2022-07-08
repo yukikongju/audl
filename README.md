@@ -163,6 +163,7 @@ twine upload dist/*
 
 ```bash 
 pdoc --html audl
+mv html/ docs/
 ```
 
 
