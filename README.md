@@ -7,6 +7,8 @@ What it does:
 - [ ] Update database from Web Scrapping using workflow
 - [ ] Generate pdf reports for player, team and games
 
+[See Documentation](https://htmlpreview.github.io/?https://github.com/yukikongju/audl/blob/master/docs/audl/index.html)
+
 
 ## Table of Contents
 
@@ -108,10 +110,14 @@ from audl.stats.endpoints.seasonschedule import SeasonSchedule, TeamSeasonSchedu
 
 # Fetch complete season schedule from https://theaudl.com/league/game-search
 
-df = SeasonSchedule(2022).get_schedule()
-df = TeamSeasonSchedule(2022, 'royal').get_schedule()
-df = AllSchedule().get_schedule()
-df = TeamSeasonAgainstOpponentSchedule(2022, 'royal', 'rush').get_schedule()
+from audl.stats.endpoints.seasonschedule import SeasonSchedule, TeamSeasonSchedule, AllSchedule, TeamSeasonAgainstOpponentSchedule
+
+# Fetch complete season schedule from https://theaudl.com/league/game-search
+
+season_schedule = SeasonSchedule(2022).get_schedule()
+team_season_schedule = TeamSeasonSchedule(2022, 'royal').get_schedule()
+all_schedule = AllSchedule().get_schedule()
+team_season_against_opponent = TeamSeasonAgainstOpponentSchedule(2022, 'royal', 'rush').get_schedule()
 
 ```
 
@@ -130,9 +136,12 @@ team_stats = game.get_team_stats()
 roster = game.get_roster_stats()
 scoring_time = game._get_scoring_time()
 boxscores = game.get_boxscores()
-home_events = game.print_team_events(True)
-away_events = game.print_team_events(False)
 events = game.get_team_events()
+
+# print game events
+game.print_team_events(True)
+game.print_team_events(False)
+
 
 ```
 
@@ -149,6 +158,10 @@ events = game.get_team_events()
 
 
 ## How to ...
+
+
+
+
 
 **How to deploy pip package**
 

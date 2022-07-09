@@ -68,9 +68,14 @@ class PlayerStats(Endpoint):
         self.team = team
         super().__init__(&#39;https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&#39;)
 
-    def fetch_table(self, show_message=True):
+    def fetch_table(self, show_message=False):
         &#34;&#34;&#34;
         Function that fetch stats for all players as dataframe
+
+        Parameters
+        ----------
+        show_message: bool
+            False by default. Print page number when fetching
 
         Returns
         -------
@@ -79,7 +84,7 @@ class PlayerStats(Endpoint):
 
         Examples
         --------
-        &gt;&gt;&gt; PlayerStats(&#39;career&#39;, &#39;total&#39;, &#39;all&#39;).fetch_table()
+        &gt;&gt;&gt; PlayerStats(&#39;career&#39;, &#39;total&#39;, &#39;all&#39;).fetch_table(show_message=True)
 
         &#34;&#34;&#34;
         hasPlayerLeft = True
@@ -88,7 +93,8 @@ class PlayerStats(Endpoint):
         # add all players 
         while(hasPlayerLeft):
             players = self._fetch_page_players_as_json(page)
-            print(page)
+            if show_message:
+                print(page)
             if not players:
                 break
             all_players = all_players + players     # concatenating
@@ -257,9 +263,14 @@ based on [Season], [Per], [Team]</p>
         self.team = team
         super().__init__(&#39;https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&#39;)
 
-    def fetch_table(self, show_message=True):
+    def fetch_table(self, show_message=False):
         &#34;&#34;&#34;
         Function that fetch stats for all players as dataframe
+
+        Parameters
+        ----------
+        show_message: bool
+            False by default. Print page number when fetching
 
         Returns
         -------
@@ -268,7 +279,7 @@ based on [Season], [Per], [Team]</p>
 
         Examples
         --------
-        &gt;&gt;&gt; PlayerStats(&#39;career&#39;, &#39;total&#39;, &#39;all&#39;).fetch_table()
+        &gt;&gt;&gt; PlayerStats(&#39;career&#39;, &#39;total&#39;, &#39;all&#39;).fetch_table(show_message=True)
 
         &#34;&#34;&#34;
         hasPlayerLeft = True
@@ -277,7 +288,8 @@ based on [Season], [Per], [Team]</p>
         # add all players 
         while(hasPlayerLeft):
             players = self._fetch_page_players_as_json(page)
-            print(page)
+            if show_message:
+                print(page)
             if not players:
                 break
             all_players = all_players + players     # concatenating
@@ -444,25 +456,35 @@ based on [Season], [Per], [Team]</p>
 </details>
 </dd>
 <dt id="audl.stats.endpoints.playerstats.PlayerStats.fetch_table"><code class="name flex">
-<span>def <span class="ident">fetch_table</span></span>(<span>self, show_message=True)</span>
+<span>def <span class="ident">fetch_table</span></span>(<span>self, show_message=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Function that fetch stats for all players as dataframe</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>show_message</code></strong> :&ensp;<code>bool</code></dt>
+<dd>False by default. Print page number when fetching</dd>
+</dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><strong><code>players_df</code></strong> :&ensp;<code>pandas.DataFrame</code></dt>
 <dd>dataframe with all players stats for given season, per, team param</dd>
 </dl>
 <h2 id="examples">Examples</h2>
-<pre><code class="python-repl">&gt;&gt;&gt; PlayerStats('career', 'total', 'all').fetch_table()
+<pre><code class="python-repl">&gt;&gt;&gt; PlayerStats('career', 'total', 'all').fetch_table(show_message=True)
 </code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def fetch_table(self, show_message=True):
+<pre><code class="python">def fetch_table(self, show_message=False):
     &#34;&#34;&#34;
     Function that fetch stats for all players as dataframe
+
+    Parameters
+    ----------
+    show_message: bool
+        False by default. Print page number when fetching
 
     Returns
     -------
@@ -471,7 +493,7 @@ based on [Season], [Per], [Team]</p>
 
     Examples
     --------
-    &gt;&gt;&gt; PlayerStats(&#39;career&#39;, &#39;total&#39;, &#39;all&#39;).fetch_table()
+    &gt;&gt;&gt; PlayerStats(&#39;career&#39;, &#39;total&#39;, &#39;all&#39;).fetch_table(show_message=True)
 
     &#34;&#34;&#34;
     hasPlayerLeft = True
@@ -480,7 +502,8 @@ based on [Season], [Per], [Team]</p>
     # add all players 
     while(hasPlayerLeft):
         players = self._fetch_page_players_as_json(page)
-        print(page)
+        if show_message:
+            print(page)
         if not players:
             break
         all_players = all_players + players     # concatenating

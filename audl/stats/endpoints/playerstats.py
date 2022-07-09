@@ -40,9 +40,14 @@ class PlayerStats(Endpoint):
         self.team = team
         super().__init__('https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20')
 
-    def fetch_table(self, show_message=True):
+    def fetch_table(self, show_message=False):
         """
         Function that fetch stats for all players as dataframe
+
+        Parameters
+        ----------
+        show_message: bool
+            False by default. Print page number when fetching
 
         Returns
         -------
@@ -51,7 +56,7 @@ class PlayerStats(Endpoint):
 
         Examples
         --------
-        >>> PlayerStats('career', 'total', 'all').fetch_table()
+        >>> PlayerStats('career', 'total', 'all').fetch_table(show_message=True)
 
         """
         hasPlayerLeft = True
@@ -60,7 +65,8 @@ class PlayerStats(Endpoint):
         # add all players 
         while(hasPlayerLeft):
             players = self._fetch_page_players_as_json(page)
-            print(page)
+            if show_message:
+                print(page)
             if not players:
                 break
             all_players = all_players + players     # concatenating
