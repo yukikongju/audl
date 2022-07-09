@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="audl",
-    version="0.0.5",
+    version="0.0.6",
     license='MIT',
     author="yukikongju",
     author_email="yukikongju@outlook.com",
@@ -18,7 +18,8 @@ setuptools.setup(
         'pandas',
         'requests',
         'lxml',
-        'html5lib'
+        'html5lib',
+        'pdoc3'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

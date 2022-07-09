@@ -175,7 +175,6 @@ game.print_team_events(False)
 #### How to get Team Game Stats
 
 ```python
-
 from audl.stats.endpoints.teamgamestats import AllTeamGameStats, SeasonGameStats, TeamSeasonGameStats
 
 team_season = TeamSeasonGameStats(2022, 'royal').get_game_stats()
@@ -206,7 +205,7 @@ season_games = SeasonGameStats(2022).get_game_stats()
 
 
 ```bash
-python -m build
+python3 -m build
 python3 -m twine upload --repository testpypi dist/*
 twine upload dist/*
 ```
