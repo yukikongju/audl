@@ -32,12 +32,13 @@ Download package with `` pip install audl ``
 
 [AUDL Stats](https://theaudl.com/league/stats)
 
-- [O] Fetch Data from
+- [X] Fetch Data from
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
 	- [X] [Team Stats](https://theaudl.com/stats/team)
 	- [X] [Player Stats](https://theaudl.com/stats/player-stats)
 	- [X] [Season Schedule](https://theaudl.com/league/game-search)
-	- [o] [Game Stats](https://theaudl.com/stats/team-game-stats)
+	- [X] [Game Stats](https://theaudl.com/stats/team-game-stats)
+	- [X] [Team Game Stats](https://theaudl.com/stats/team-game-stats)
 
 TODOs:
  - [ ] Create database from web scrapper (sql, database, workflows)
@@ -51,8 +52,34 @@ TODOs:
  - [ ] Write examples in notebook
  - [ ] Generate Reports
      - [ ] Game Report
+	 - [ ] Stadium
+	 - [ ] Temperature
+	 - [ ] Roster
+	 - [ ] Box Scores, Player Stats, Team Stats
+	 - [ ] More: Injury Report
+	 - [ ] More: Points events (point duration, number of TO/pass, throws 
+		choices)
+	 - [ ] More: Outstanding performance
+	 - [ ] More: Point differential graph
      - [ ] Player Report
+	 - [ ] Biography: height, weight, nickname, college, position, number
+	 - [ ] Team History
+	 - [ ] More: Teamate connection by season
+	 - [ ] More: points distribution and efficiency
+	 - [ ] More: Favorite throws
+	 - [ ] More: Favorite cuts
+	 - [ ] More: Stats Projection
+	 - [ ] More: quick facts (performance vs league/team average)
+	 - [ ] More: Injury Report
      - [ ] Team Report
+	 - [ ] Biography: Stadium, city, year founded
+	 - [ ] Roster by season
+	 - [ ] More: Current Injuries
+	 - [ ] More: Wins/Loss home/road
+	 - [ ] More: Who are the team handler, dump, cutter, mid
+	 - [ ] More: What game play?
+	 - [ ] More: How the team rank vs other teams
+	 - [ ] More: Best Lineups (and predictions)
 
 
 ## [Usage](#usage)
@@ -142,6 +169,18 @@ events = game.get_team_events()
 game.print_team_events(True)
 game.print_team_events(False)
 
+
+```
+
+#### How to get Team Game Stats
+
+```python
+
+from audl.stats.endpoints.teamgamestats import AllTeamGameStats, SeasonGameStats, TeamSeasonGameStats
+
+team_season = TeamSeasonGameStats(2022, 'royal').get_game_stats()
+all_games = AllTeamGameStats().get_game_stats()
+season_games = SeasonGameStats(2022).get_game_stats()
 
 ```
 
