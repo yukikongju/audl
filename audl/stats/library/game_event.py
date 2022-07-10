@@ -6,9 +6,12 @@ class GameEvent(ABC):
 
     def __init__(self, row, description):
         """ 
-        param: 
-            - description (string): description of event
-            - row (json): json document [t,l,r,x,y,s,c,q]
+        Parameters 
+        ----------
+        description: string
+            description of event
+        row: json 
+            json document [t,l,r,x,y,s,c,q]
         """
         self.row = row
         self.description = description

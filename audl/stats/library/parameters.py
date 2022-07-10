@@ -53,45 +53,10 @@ class StatisticAbbreviation:
     stat_col_pulls = 'P'
 
 
-class FileName:
-    alltimeplayer = 'AllTimePlayerStats'
-    seasonplayerstats = 'SeasonPlayerStats'
-    seasonschedule = 'SeasonSchedule'
-
-#######################################################################
-#                         TeamSeasonSchedule                          #
-#######################################################################
-
-team_season_schedule_index_away	 = 0
-team_season_schedule_index_home	 = 1
-team_season_schedule_index_time = 2
-team_season_schedule_index_stadium = 3
-team_season_schedule_index_game_id = 4
-team_season_schedule_index_home_score = 5
-team_season_schedule_index_away_score = 6
-
-game_schedule_columns_name = [
-    "Away",
-    "Home",
-    "Time",
-    "Stadium",
-    "Game ID",
-    "Away Score",
-    "Home Score"
-]
-
-#######################################################################
-#                           Season Schedule                           #
-#######################################################################
-
-NUM_WEEKS_IN_SEASON = 12
-
 
 #######################################################################
 #                             Box Scores                              #
 #######################################################################
-
-box_scores_columns_names = ["Team", "Q1", "Q2", "Q3", "Q4", "T"]
 
 # Absolute time in seconds for each quarter
 # Regular time: 12 min per quarter
@@ -132,44 +97,6 @@ class GameEventAction:
     pass
 
 
-class TeamStatsName:
-    Completions = 'Completions'
-    Hucks = 'Hucks'
-    Offensive_holds = 'Offensive Holds'
-    Defensive_breaks = 'Defensive Breaks'
-    Red_zone_possessions = 'Red Zone Posessions'
-    Hucks = 'Hucks'
-    Turnovers = 'Turnovers'
-    Blocks = 'Blocks'
-    Turnovers = 'Turnovers'
-
-
-team_stats_row_names = [
-    TeamStatsName.Completions,
-    TeamStatsName.Hucks,
-    TeamStatsName.Offensive_holds,
-    TeamStatsName.Defensive_breaks,
-    TeamStatsName.Red_zone_possessions,
-    TeamStatsName.Blocks,
-    TeamStatsName.Turnovers,
-]
-
-team_stats_perc_columns_names = [
-    "",
-    "Successful",
-    "Opportunities",
-    "Percentage"
-]
-
-team_roster_columns_name = [
-    "identification_num",
-    "first_name",
-    "last_name",
-    "jersey_number",
-    "player_id"
-
-]
-
 # \t: number mapings
 # \r: receiver
 # \l: lineup
@@ -180,26 +107,6 @@ team_roster_columns_name = [
 
 
 
-team_points_by_points_columns_names = [
-    "Current Score",
-    "Line",
-    "Clock",
-    "Point Duration",
-    "Quarter",
-    "Lineup"
-]
-
-play_by_play_columns_names = [
-    "Score",
-    "Offensive Team",
-    "Defensive Team",
-    "O-Line",
-    "D-Line",
-    "Quarter",
-    "Point Duration",
-    "Clock",
-    "Outcome"
-]
 
 class HerokuPlay:
     OLineIndex = 1
@@ -252,24 +159,4 @@ game_event_dict = {
 
 # sequence: 13, 54, 53, 21 (we)
         
-        
 
-
-
-
-
-
-#######################################################################
-#                            Miscellaneous                            #
-#######################################################################
-season_dict = {
-    2021: '1',
-    2019: '2',
-    2018: '3',
-    2017: '4',
-    2015: '5',
-    2016: '6',
-    2014: '7',
-    2013: '8',
-    2012: '9',
-}

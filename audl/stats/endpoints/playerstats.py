@@ -6,7 +6,7 @@ import requests
 import sys
 
 from audl.stats.endpoints._base import Endpoint
-from audl.stats.library.parameters import FileName
+#  from audl.stats.library.parameters import FileName
 
 
 class PlayerStats(Endpoint):

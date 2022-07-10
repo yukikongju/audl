@@ -8,11 +8,8 @@ import sys
 from bs4 import BeautifulSoup
 
 from audl.stats.endpoints._base import Endpoint
-from audl.stats.library.parameters import game_schedule_columns_name
-from audl.stats.library.parameters import FileName
 
 #  https://audl-stat-server.herokuapp.com/web-api/games?limit=10&years=2022&teamID=alleycats
-
 
 
 class ScheduleEndpoint(Endpoint):

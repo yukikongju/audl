@@ -7,8 +7,7 @@ import sys
 from datetime import datetime
 
 from audl.stats.endpoints._base import Endpoint
-from audl.stats.static import players
-from audl.stats.static.miscellaneous import FIRST_SEASON_YEAR
+from audl.stats.static.constants import FIRST_SEASON_YEAR
 
 #  https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
 #  https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&year=2022
@@ -150,8 +149,4 @@ class PlayerProfile(Endpoint):
             df_season = self.get_season_games_stats(year)
             df = df.append(df_season)
         return df
-
-        
-        
-        
 
