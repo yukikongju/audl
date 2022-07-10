@@ -78,6 +78,7 @@ class PlayerProfile(Endpoint):
 
         """
         df = self.get_career_stats()
+        df['player_ext_id'] = self.player_id
         regular_season = df[df['regSeason'] == True]
         return regular_season
 
