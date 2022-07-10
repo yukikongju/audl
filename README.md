@@ -131,6 +131,9 @@ playerstats = PlayerStats('career', 'total', 'breeze').fetch_table()  # PlayerSt
 
 #### How to fetch season schedule
 
+![image](https://user-images.githubusercontent.com/34996954/178094543-d6c57f95-6f1f-4aae-a7a4-a6687ab46afb.png)
+
+
 ```python
 
 from audl.stats.endpoints.seasonschedule import SeasonSchedule, TeamSeasonSchedule, AllSchedule, TeamSeasonAgainstOpponentSchedule
@@ -168,11 +171,12 @@ events = game.get_team_events()
 # print game events
 game.print_team_events(True)
 game.print_team_events(False)
-
-
 ```
 
 #### How to get Team Game Stats
+
+![image](https://user-images.githubusercontent.com/34996954/178094574-43272b29-8d47-4d15-8207-0536dd2ca30c.png)
+
 
 ```python
 from audl.stats.endpoints.teamgamestats import AllTeamGameStats, SeasonGameStats, TeamSeasonGameStats
