@@ -8,6 +8,10 @@ clean:
 	rm -r dist/
 	rm -r audl.egg-info/ 
 
+.PHONY: tests
+tests:
+	python3 -m unittests tests/stats/endpoints/*
+
 pip: 
 	rm -r dist/
 	rm -r audl.egg-info/ 
