@@ -97,9 +97,11 @@ from audl.stats.endpoints.playerprofile import PlayerProfile
 
 # Fetching dataframe from https://theaudl.com/league/players/cbrock
 player = PlayerProfile('cbrock')
+career = player.get_career_stats()
 reg = player.get_regular_seasons_career()
 playoffs = player.get_playoffs_career()
-games = player.get_season_games_stats(2019)
+season = player.get_season_games_stats(2019)
+games_stats = player.get_career_games_stats()
 ```
 
 #### How to get Team Stats

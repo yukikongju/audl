@@ -125,6 +125,7 @@ class PlayerProfile(Endpoint):
             url = f"https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
             results = requests.get(url).json()
             df = pd.DataFrame(results['stats'])
+            df['player_ext_id'] = self.player_id
             return df
         except:
             print(f'An error has occured when fetching season stats dataframe')
@@ -149,5 +150,6 @@ class PlayerProfile(Endpoint):
         for year in range(FIRST_SEASON_YEAR, current_year +1):
             df_season = self.get_season_games_stats(year)
             df = df.append(df_season)
+        df['player_ext_id'] = self.player_id
         return df
 
