@@ -12,6 +12,8 @@ from audl.stats.static.constants import FIRST_SEASON_YEAR
 #  https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
 #  https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&year=2022
 
+#  TODO: refractor into class
+
 
 class PlayerProfile(Endpoint):
 

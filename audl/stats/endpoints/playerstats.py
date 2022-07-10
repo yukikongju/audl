@@ -12,6 +12,15 @@ from audl.stats.endpoints._base import Endpoint
 class PlayerStats(Endpoint):
     """ class that download data from https://theaudl.com/stats/player-stats
         based on [Season], [Per], [Team]
+
+        Parameters
+        ----------
+        season: string or int
+            choices: ['career', 2022, 2019, ..., 2012]
+        per: string
+            choices: ['total', 'game']
+        team: string
+            choices: ['all', 'aviators', ..., '<ext_team_id>']
     """
 
 #  https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&year=2019&per=possessions&team=aviators
@@ -64,9 +73,7 @@ class PlayerStats(Endpoint):
         page = 1
         # add all players 
         while(hasPlayerLeft):
-            players = self._fetch_page_players_as_json(page)
-            if show_message:
-                print(page)
+            players = self._fetch_page_players_as_json(page, show_message)
             if not players:
                 break
             all_players = all_players + players     # concatenating
@@ -107,7 +114,7 @@ class PlayerStats(Endpoint):
             return f"{self.base_url}&page={page_num}&year={self.season}&per={self.per}"
         return f"{self.base_url}&page={page_num}&year={self.season}&per={self.per}&team={self.team}"
 
-    def _fetch_page_players_as_json(self, page_num):
+    def _fetch_page_players_as_json(self, page_num, show_message=False):
         """
         Function that fetch players in page as json 
 
@@ -115,6 +122,8 @@ class PlayerStats(Endpoint):
         ----------
         page_num: int
             page number of the url
+        show_message: bool
+            False by default. True if we print message
 
         Returns
         -------
@@ -131,6 +140,8 @@ class PlayerStats(Endpoint):
             page = requests.get(url)
             results = page.json()
             players = results['stats']
+            if show_message:
+                print(f"Fetching from {url}")
         except: 
             print(f'An error has occured when fetching the data from {url}')
             sys.exit(1)

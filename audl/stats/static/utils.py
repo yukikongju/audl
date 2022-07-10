@@ -1,8 +1,3 @@
-
-
-def get_all_players():
-    pass
-    
 def get_quarter(scoring_time):
     """ 
     Function that returns quarter based on scoring time
