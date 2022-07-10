@@ -65,7 +65,8 @@ class TeamGameStatsEndpoint(Endpoint):
         dfs = pd.DataFrame()
         while(has_games):
             url = f"{self.base_url}&page={i}{suffix_url}"
-            #  print(url)
+            if show_message:
+                print(url)
             try:
                 page = requests.get(url)
             except:

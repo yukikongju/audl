@@ -32,13 +32,17 @@ Download package with `` pip install audl ``
 
 [AUDL Stats](https://theaudl.com/league/stats)
 
-- [X] Fetch Data from
+- [O] Fetch Data from
 	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
 	- [X] [Team Stats](https://theaudl.com/stats/team)
+	    - [ ] Merge team and opponent columns into single df
 	- [X] [Player Stats](https://theaudl.com/stats/player-stats)
 	- [X] [Season Schedule](https://theaudl.com/league/game-search)
 	- [X] [Game Stats](https://theaudl.com/stats/team-game-stats)
 	- [X] [Team Game Stats](https://theaudl.com/stats/team-game-stats)
+- [ ] Utils
+    - [ ] Get Type of throw from x, y coordinates
+    - [ ] Get previous thrower
 
 TODOs:
  - [ ] Create database from web scrapper (sql, database, workflows)

@@ -38,6 +38,30 @@ class PlayerProfile(Endpoint):
         """
         return f"{self.base_url}{self.player_id}"
 
+    def get_career_stats(self):
+        """ 
+        Function that return player regular and playoffs stats as a dataframe
+
+        Returns
+        -------
+        career_stats: pandas.DataFrame
+            dataframe with player regular and playoffs season stats
+
+        Examples
+        --------
+        >>> PlayerProfile('cbrock').get_career_stats()
+        """
+        try: 
+            # create dataframe
+            url = self._get_url()
+            results = requests.get(url).json()
+            df = pd.DataFrame(results['stats'])
+            return df
+        except:
+            print(f'An error has occured when fetching regular season dataframe')
+            sys.exit(1)
+
+
     def get_regular_seasons_career(self):
         """ 
         Function that return a player's regular season stats as dataframe
@@ -53,22 +77,9 @@ class PlayerProfile(Endpoint):
         >>> PlayerProfile('cbrock').get_regular_seasons_career()
 
         """
-        try: 
-            # create dataframe
-            url = self._get_url()
-            results = requests.get(url).json()
-            df = pd.DataFrame(results['stats'])
-
-            #  sort by regSeason
-            regular_season = df[df['regSeason'] == True]
-
-            # drop regSeason column
-            #  regular_season = regular_season.drop(columns=['regSeason'], axis=1)
-
-            return regular_season
-        except: 
-            print(f'An error has occured when fetching regular season dataframe')
-            sys.exit(1)
+        df = self.get_career_stats()
+        regular_season = df[df['regSeason'] == True]
+        return regular_season
 
 
     def get_playoffs_career(self):
@@ -86,22 +97,9 @@ class PlayerProfile(Endpoint):
         >>> PlayerProfile('cbrock').get_playoffs_career()
 
         """
-        try: 
-            # create dataframe
-            url = self._get_url()
-            results = requests.get(url).json()
-            df = pd.DataFrame(results['stats'])
-
-            #  sort by regSeason
-            playoffs = df[df['regSeason'] == False]
-
-            # drop regSeason column
-            #  playoffs = playoffs.drop(columns=['regSeason'], axis=1)
-
-            return playoffs 
-        except: 
-            print(f'An error has occured when fetching playoffs dataframe')
-            sys.exit(1)
+        df = self.get_career_stats()
+        playoffs = df[df['regSeason'] == True]
+        return playoffs 
 
     def get_season_games_stats(self, year):
         """ 
