@@ -172,7 +172,7 @@ team_stats = game.get_team_stats()
 roster = game.get_roster_stats()
 scoring_time = game._get_scoring_time()
 boxscores = game.get_boxscores()
-events = game.get_team_events()
+events = game.get_events()
 
 # print game events
 game.print_team_events(True)

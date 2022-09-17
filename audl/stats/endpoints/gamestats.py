@@ -499,7 +499,6 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL').get_lineup_by_points()
         """
         raise NotImplementedError("This function hasn't been implemented yet!")
-        pass
 
     def get_point_results(self, point_events):
         """ 
@@ -537,9 +536,8 @@ class GameStats(Endpoint):
 
         """
         raise NotImplementedError("This function hasn't been implemented yet!")
-        pass
 
-    def get_events(self):
+    def get_events_sequential(self):
         """ 
         Function that return the event of each points in sequential order
 
@@ -560,9 +558,61 @@ class GameStats(Endpoint):
 
         """
         raise NotImplementedError("This function hasn't been implemented yet!")
-        pass
 
+    def get_events(self):
+        """ 
+        Function that fetch all events for all points for each team
 
+        """
+
+        # retrieve events from json
+        home_events = json.loads(self.json['tsgHome']['events'])
+        away_events = json.loads(self.json['tsgAway']['events'])
+
+        # get events by points
+        home_points = self._get_team_events_by_points(home_events)
+        away_points = self._get_team_events_by_points(away_events)
+
+        events_dict = {'homeEvents': home_points, 'awayEvents': away_points}
+
+        return events_dict
+
+        
+    def _get_team_events_by_points(self, events):
+        """ 
+        Function that return a list of dict with all points events
+
+        Parameters
+        ----------
+        events: json dict
+            self.json['tsgHome']['events'] or self.json['tsgAway']['events']
+
+        Examples
+        --------
+        >>> 
+        >>> [{'point': 0, 'events': []},
+        >>>  {'point': 1,
+        >>>    'events': [{'t': 1, 'l': [9246, 9237, 9323, 9262, 9241, 9568, 9242]},
+        >>>     {'t': 20, 'r': 9262, 'x': 12.89, 'y': 18.93},
+        >>>     {'t': 20, 'r': 9246, 'x': 4, 'y': 33.13},
+        >>>     {'t': 20, 'r': 9323, 'x': 20.47, 'y': 47.18},
+        >>>     {'t': 20, 'r': 9262, 'x': 0.94, 'y': 43.83},
+        >>>     ...
+
+        """
+        point_played = 0
+        all_events, point_events = [], []
+        for i, event in enumerate(events):
+            event_type = int(event['t'])
+            if event_type not in [1,2]:
+                point_events.append(event)
+            else:
+                all_events.append({'point': point_played, 'events': point_events})
+                point_events = []
+                point_played += 1
+
+        return all_events
+        
         
     def print_team_events(self, is_home): 
         """ 
