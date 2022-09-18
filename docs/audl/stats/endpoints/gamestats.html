@@ -34,15 +34,15 @@ import numpy as np
 import requests
 
 from audl.stats.endpoints._base import Endpoint
-from audl.stats.static import players
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
 from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
+from audl.stats.static.utils import get_quarter
 
 
-from audl.stats.library.parameters import quarters_clock_dict
-from audl.stats.library.parameters import HerokuPlay
-from audl.stats.library.parameters import team_roster_columns_name
+#  from audl.stats.library.parameters import quarters_clock_dict
+#  from audl.stats.library.parameters import team_roster_columns_name
+#  from audl.stats.library.parameters import HerokuPlay
 
 #  https://audl-stat-server.herokuapp.com/stats-pages/game/2022-06-11-TOR-MTL
 
@@ -214,44 +214,9 @@ class GameStats(Endpoint):
         
         # calculate quarter columns
         scores[&#39;quarter&#39;] = scores[&#39;scoring_time&#39;].apply(
-                lambda x: self._get_quarter(x))
+                lambda x: get_quarter(x))
 
         return scores
-
-
-    @staticmethod
-    def _get_quarter(scoring_time):
-        &#34;&#34;&#34; 
-        Function that returns quarter based on scoring time
-
-        Remark: Games are timed with four-quarters of 12 minutes each, 
-            including a 15-minute halftime. If the score is tied, a five 
-            minutes overtime period is played. If the score remains tied after
-            overtime, a second overtime is played in which the first team 
-            to score wins.
-
-        Parameters 
-        ----------
-        scoring_time: int
-            time when point was scored in second
-
-        Returns
-        -------
-        quarter: string 
-            ex: &#39;Q1&#39;, &#39;Q2&#39;, &#39;Q3&#39;, &#39;Q4&#39;, &#39;OT1&#39;, &#39;OT2&#39;
-            
-        Examples
-        --------
-        &gt;&gt;&gt; GameStats()._get_quarter(456)
-
-        &#34;&#34;&#34;
-        quarter_end = { &#39;Q1&#39;: 720, &#39;Q2&#39;: 1440, &#39;Q3&#39;: 2160, &#39;Q4&#39;: 2880, &#39;OT1&#39;: 3180 }
-
-        for quarter, end_time in quarter_end.items():
-            if scoring_time &lt; end_time:
-                return quarter
-
-        return &#39;OT2&#39;
 
         
     def get_scores(self):
@@ -864,44 +829,9 @@ class GameStats(Endpoint):
         
         # calculate quarter columns
         scores[&#39;quarter&#39;] = scores[&#39;scoring_time&#39;].apply(
-                lambda x: self._get_quarter(x))
+                lambda x: get_quarter(x))
 
         return scores
-
-
-    @staticmethod
-    def _get_quarter(scoring_time):
-        &#34;&#34;&#34; 
-        Function that returns quarter based on scoring time
-
-        Remark: Games are timed with four-quarters of 12 minutes each, 
-            including a 15-minute halftime. If the score is tied, a five 
-            minutes overtime period is played. If the score remains tied after
-            overtime, a second overtime is played in which the first team 
-            to score wins.
-
-        Parameters 
-        ----------
-        scoring_time: int
-            time when point was scored in second
-
-        Returns
-        -------
-        quarter: string 
-            ex: &#39;Q1&#39;, &#39;Q2&#39;, &#39;Q3&#39;, &#39;Q4&#39;, &#39;OT1&#39;, &#39;OT2&#39;
-            
-        Examples
-        --------
-        &gt;&gt;&gt; GameStats()._get_quarter(456)
-
-        &#34;&#34;&#34;
-        quarter_end = { &#39;Q1&#39;: 720, &#39;Q2&#39;: 1440, &#39;Q3&#39;: 2160, &#39;Q4&#39;: 2880, &#39;OT1&#39;: 3180 }
-
-        for quarter, end_time in quarter_end.items():
-            if scoring_time &lt; end_time:
-                return quarter
-
-        return &#39;OT2&#39;
 
         
     def get_scores(self):

@@ -26,9 +26,38 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_all_players():
-    pass
-    </code></pre>
+<pre><code class="python">def get_quarter(scoring_time):
+    &#34;&#34;&#34; 
+    Function that returns quarter based on scoring time
+
+    Remark: Games are timed with four-quarters of 12 minutes each, 
+        including a 15-minute halftime. If the score is tied, a five 
+        minutes overtime period is played. If the score remains tied after
+        overtime, a second overtime is played in which the first team 
+        to score wins.
+
+    Parameters 
+    ----------
+    scoring_time: int
+        time when point was scored in second
+
+    Returns
+    -------
+    quarter: string 
+        ex: &#39;Q1&#39;, &#39;Q2&#39;, &#39;Q3&#39;, &#39;Q4&#39;, &#39;OT1&#39;, &#39;OT2&#39;
+        
+    Examples
+    --------
+    &gt;&gt;&gt; GameStats()._get_quarter(456)
+
+    &#34;&#34;&#34;
+    quarter_end = { &#39;Q1&#39;: 720, &#39;Q2&#39;: 1440, &#39;Q3&#39;: 2160, &#39;Q4&#39;: 2880, &#39;OT1&#39;: 3180 }
+
+    for quarter, end_time in quarter_end.items():
+        if scoring_time &lt; end_time:
+            return quarter
+
+    return &#39;OT2&#39;</code></pre>
 </details>
 </section>
 <section>
@@ -38,17 +67,63 @@
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="audl.stats.static.utils.get_all_players"><code class="name flex">
-<span>def <span class="ident">get_all_players</span></span>(<span>)</span>
+<dt id="audl.stats.static.utils.get_quarter"><code class="name flex">
+<span>def <span class="ident">get_quarter</span></span>(<span>scoring_time)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Function that returns quarter based on scoring time</p>
+<p>Remark: Games are timed with four-quarters of 12 minutes each,
+including a 15-minute halftime. If the score is tied, a five
+minutes overtime period is played. If the score remains tied after
+overtime, a second overtime is played in which the first team
+to score wins.</p>
+<h2 id="parameters">Parameters</h2>
+<p>scoring_time: int
+time when point was scored in second</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>quarter</code></strong> :&ensp;<code>string </code></dt>
+<dd>ex: 'Q1', 'Q2', 'Q3', 'Q4', 'OT1', 'OT2'</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; GameStats()._get_quarter(456)
+</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_all_players():
-    pass</code></pre>
+<pre><code class="python">def get_quarter(scoring_time):
+    &#34;&#34;&#34; 
+    Function that returns quarter based on scoring time
+
+    Remark: Games are timed with four-quarters of 12 minutes each, 
+        including a 15-minute halftime. If the score is tied, a five 
+        minutes overtime period is played. If the score remains tied after
+        overtime, a second overtime is played in which the first team 
+        to score wins.
+
+    Parameters 
+    ----------
+    scoring_time: int
+        time when point was scored in second
+
+    Returns
+    -------
+    quarter: string 
+        ex: &#39;Q1&#39;, &#39;Q2&#39;, &#39;Q3&#39;, &#39;Q4&#39;, &#39;OT1&#39;, &#39;OT2&#39;
+        
+    Examples
+    --------
+    &gt;&gt;&gt; GameStats()._get_quarter(456)
+
+    &#34;&#34;&#34;
+    quarter_end = { &#39;Q1&#39;: 720, &#39;Q2&#39;: 1440, &#39;Q3&#39;: 2160, &#39;Q4&#39;: 2880, &#39;OT1&#39;: 3180 }
+
+    for quarter, end_time in quarter_end.items():
+        if scoring_time &lt; end_time:
+            return quarter
+
+    return &#39;OT2&#39;</code></pre>
 </details>
 </dd>
 </dl>
@@ -69,7 +144,7 @@
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="audl.stats.static.utils.get_all_players" href="#audl.stats.static.utils.get_all_players">get_all_players</a></code></li>
+<li><code><a title="audl.stats.static.utils.get_quarter" href="#audl.stats.static.utils.get_quarter">get_quarter</a></code></li>
 </ul>
 </li>
 </ul>

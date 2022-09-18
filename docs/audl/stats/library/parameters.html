@@ -81,45 +81,10 @@ class StatisticAbbreviation:
     stat_col_pulls = &#39;P&#39;
 
 
-class FileName:
-    alltimeplayer = &#39;AllTimePlayerStats&#39;
-    seasonplayerstats = &#39;SeasonPlayerStats&#39;
-    seasonschedule = &#39;SeasonSchedule&#39;
-
-#######################################################################
-#                         TeamSeasonSchedule                          #
-#######################################################################
-
-team_season_schedule_index_away  = 0
-team_season_schedule_index_home  = 1
-team_season_schedule_index_time = 2
-team_season_schedule_index_stadium = 3
-team_season_schedule_index_game_id = 4
-team_season_schedule_index_home_score = 5
-team_season_schedule_index_away_score = 6
-
-game_schedule_columns_name = [
-    &#34;Away&#34;,
-    &#34;Home&#34;,
-    &#34;Time&#34;,
-    &#34;Stadium&#34;,
-    &#34;Game ID&#34;,
-    &#34;Away Score&#34;,
-    &#34;Home Score&#34;
-]
-
-#######################################################################
-#                           Season Schedule                           #
-#######################################################################
-
-NUM_WEEKS_IN_SEASON = 12
-
 
 #######################################################################
 #                             Box Scores                              #
 #######################################################################
-
-box_scores_columns_names = [&#34;Team&#34;, &#34;Q1&#34;, &#34;Q2&#34;, &#34;Q3&#34;, &#34;Q4&#34;, &#34;T&#34;]
 
 # Absolute time in seconds for each quarter
 # Regular time: 12 min per quarter
@@ -160,44 +125,6 @@ class GameEventAction:
     pass
 
 
-class TeamStatsName:
-    Completions = &#39;Completions&#39;
-    Hucks = &#39;Hucks&#39;
-    Offensive_holds = &#39;Offensive Holds&#39;
-    Defensive_breaks = &#39;Defensive Breaks&#39;
-    Red_zone_possessions = &#39;Red Zone Posessions&#39;
-    Hucks = &#39;Hucks&#39;
-    Turnovers = &#39;Turnovers&#39;
-    Blocks = &#39;Blocks&#39;
-    Turnovers = &#39;Turnovers&#39;
-
-
-team_stats_row_names = [
-    TeamStatsName.Completions,
-    TeamStatsName.Hucks,
-    TeamStatsName.Offensive_holds,
-    TeamStatsName.Defensive_breaks,
-    TeamStatsName.Red_zone_possessions,
-    TeamStatsName.Blocks,
-    TeamStatsName.Turnovers,
-]
-
-team_stats_perc_columns_names = [
-    &#34;&#34;,
-    &#34;Successful&#34;,
-    &#34;Opportunities&#34;,
-    &#34;Percentage&#34;
-]
-
-team_roster_columns_name = [
-    &#34;identification_num&#34;,
-    &#34;first_name&#34;,
-    &#34;last_name&#34;,
-    &#34;jersey_number&#34;,
-    &#34;player_id&#34;
-
-]
-
 # \t: number mapings
 # \r: receiver
 # \l: lineup
@@ -208,26 +135,6 @@ team_roster_columns_name = [
 
 
 
-team_points_by_points_columns_names = [
-    &#34;Current Score&#34;,
-    &#34;Line&#34;,
-    &#34;Clock&#34;,
-    &#34;Point Duration&#34;,
-    &#34;Quarter&#34;,
-    &#34;Lineup&#34;
-]
-
-play_by_play_columns_names = [
-    &#34;Score&#34;,
-    &#34;Offensive Team&#34;,
-    &#34;Defensive Team&#34;,
-    &#34;O-Line&#34;,
-    &#34;D-Line&#34;,
-    &#34;Quarter&#34;,
-    &#34;Point Duration&#34;,
-    &#34;Clock&#34;,
-    &#34;Outcome&#34;
-]
 
 class HerokuPlay:
     OLineIndex = 1
@@ -279,28 +186,7 @@ game_event_dict = {
 
 
 # sequence: 13, 54, 53, 21 (we)
-        
-        
-
-
-
-
-
-
-#######################################################################
-#                            Miscellaneous                            #
-#######################################################################
-season_dict = {
-    2021: &#39;1&#39;,
-    2019: &#39;2&#39;,
-    2018: &#39;3&#39;,
-    2017: &#39;4&#39;,
-    2015: &#39;5&#39;,
-    2016: &#39;6&#39;,
-    2014: &#39;7&#39;,
-    2013: &#39;8&#39;,
-    2012: &#39;9&#39;,
-}</code></pre>
+        </code></pre>
 </details>
 </section>
 <section>
@@ -342,36 +228,6 @@ season_dict = {
 <div class="desc"></div>
 </dd>
 <dt id="audl.stats.library.parameters.Division.west"><code class="name">var <span class="ident">west</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-</dd>
-<dt id="audl.stats.library.parameters.FileName"><code class="flex name class">
-<span>class <span class="ident">FileName</span></span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class FileName:
-    alltimeplayer = &#39;AllTimePlayerStats&#39;
-    seasonplayerstats = &#39;SeasonPlayerStats&#39;
-    seasonschedule = &#39;SeasonSchedule&#39;</code></pre>
-</details>
-<h3>Class variables</h3>
-<dl>
-<dt id="audl.stats.library.parameters.FileName.alltimeplayer"><code class="name">var <span class="ident">alltimeplayer</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.FileName.seasonplayerstats"><code class="name">var <span class="ident">seasonplayerstats</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.FileName.seasonschedule"><code class="name">var <span class="ident">seasonschedule</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -719,58 +575,6 @@ season_dict = {
 </dd>
 </dl>
 </dd>
-<dt id="audl.stats.library.parameters.TeamStatsName"><code class="flex name class">
-<span>class <span class="ident">TeamStatsName</span></span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class TeamStatsName:
-    Completions = &#39;Completions&#39;
-    Hucks = &#39;Hucks&#39;
-    Offensive_holds = &#39;Offensive Holds&#39;
-    Defensive_breaks = &#39;Defensive Breaks&#39;
-    Red_zone_possessions = &#39;Red Zone Posessions&#39;
-    Hucks = &#39;Hucks&#39;
-    Turnovers = &#39;Turnovers&#39;
-    Blocks = &#39;Blocks&#39;
-    Turnovers = &#39;Turnovers&#39;</code></pre>
-</details>
-<h3>Class variables</h3>
-<dl>
-<dt id="audl.stats.library.parameters.TeamStatsName.Blocks"><code class="name">var <span class="ident">Blocks</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.TeamStatsName.Completions"><code class="name">var <span class="ident">Completions</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.TeamStatsName.Defensive_breaks"><code class="name">var <span class="ident">Defensive_breaks</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.TeamStatsName.Hucks"><code class="name">var <span class="ident">Hucks</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.TeamStatsName.Offensive_holds"><code class="name">var <span class="ident">Offensive_holds</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.TeamStatsName.Red_zone_possessions"><code class="name">var <span class="ident">Red_zone_possessions</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="audl.stats.library.parameters.TeamStatsName.Turnovers"><code class="name">var <span class="ident">Turnovers</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-</dd>
 </dl>
 </section>
 </article>
@@ -794,14 +598,6 @@ season_dict = {
 <li><code><a title="audl.stats.library.parameters.Division.canada" href="#audl.stats.library.parameters.Division.canada">canada</a></code></li>
 <li><code><a title="audl.stats.library.parameters.Division.central" href="#audl.stats.library.parameters.Division.central">central</a></code></li>
 <li><code><a title="audl.stats.library.parameters.Division.west" href="#audl.stats.library.parameters.Division.west">west</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="audl.stats.library.parameters.FileName" href="#audl.stats.library.parameters.FileName">FileName</a></code></h4>
-<ul class="">
-<li><code><a title="audl.stats.library.parameters.FileName.alltimeplayer" href="#audl.stats.library.parameters.FileName.alltimeplayer">alltimeplayer</a></code></li>
-<li><code><a title="audl.stats.library.parameters.FileName.seasonplayerstats" href="#audl.stats.library.parameters.FileName.seasonplayerstats">seasonplayerstats</a></code></li>
-<li><code><a title="audl.stats.library.parameters.FileName.seasonschedule" href="#audl.stats.library.parameters.FileName.seasonschedule">seasonschedule</a></code></li>
 </ul>
 </li>
 <li>
@@ -875,18 +671,6 @@ season_dict = {
 <li><code><a title="audl.stats.library.parameters.StatisticsDescription.TM" href="#audl.stats.library.parameters.StatisticsDescription.TM">TM</a></code></li>
 <li><code><a title="audl.stats.library.parameters.StatisticsDescription.TY" href="#audl.stats.library.parameters.StatisticsDescription.TY">TY</a></code></li>
 <li><code><a title="audl.stats.library.parameters.StatisticsDescription.YR" href="#audl.stats.library.parameters.StatisticsDescription.YR">YR</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="audl.stats.library.parameters.TeamStatsName" href="#audl.stats.library.parameters.TeamStatsName">TeamStatsName</a></code></h4>
-<ul class="">
-<li><code><a title="audl.stats.library.parameters.TeamStatsName.Blocks" href="#audl.stats.library.parameters.TeamStatsName.Blocks">Blocks</a></code></li>
-<li><code><a title="audl.stats.library.parameters.TeamStatsName.Completions" href="#audl.stats.library.parameters.TeamStatsName.Completions">Completions</a></code></li>
-<li><code><a title="audl.stats.library.parameters.TeamStatsName.Defensive_breaks" href="#audl.stats.library.parameters.TeamStatsName.Defensive_breaks">Defensive_breaks</a></code></li>
-<li><code><a title="audl.stats.library.parameters.TeamStatsName.Hucks" href="#audl.stats.library.parameters.TeamStatsName.Hucks">Hucks</a></code></li>
-<li><code><a title="audl.stats.library.parameters.TeamStatsName.Offensive_holds" href="#audl.stats.library.parameters.TeamStatsName.Offensive_holds">Offensive_holds</a></code></li>
-<li><code><a title="audl.stats.library.parameters.TeamStatsName.Red_zone_possessions" href="#audl.stats.library.parameters.TeamStatsName.Red_zone_possessions">Red_zone_possessions</a></code></li>
-<li><code><a title="audl.stats.library.parameters.TeamStatsName.Turnovers" href="#audl.stats.library.parameters.TeamStatsName.Turnovers">Turnovers</a></code></li>
 </ul>
 </li>
 </ul>

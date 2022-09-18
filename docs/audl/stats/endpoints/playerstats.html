@@ -34,12 +34,21 @@ import requests
 import sys
 
 from audl.stats.endpoints._base import Endpoint
-from audl.stats.library.parameters import FileName
+#  from audl.stats.library.parameters import FileName
 
 
 class PlayerStats(Endpoint):
     &#34;&#34;&#34; class that download data from https://theaudl.com/stats/player-stats
         based on [Season], [Per], [Team]
+
+        Parameters
+        ----------
+        season: string or int
+            choices: [&#39;career&#39;, 2022, 2019, ..., 2012]
+        per: string
+            choices: [&#39;total&#39;, &#39;game&#39;]
+        team: string
+            choices: [&#39;all&#39;, &#39;aviators&#39;, ..., &#39;&lt;ext_team_id&gt;&#39;]
     &#34;&#34;&#34;
 
 #  https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&amp;year=2019&amp;per=possessions&amp;team=aviators
@@ -92,9 +101,7 @@ class PlayerStats(Endpoint):
         page = 1
         # add all players 
         while(hasPlayerLeft):
-            players = self._fetch_page_players_as_json(page)
-            if show_message:
-                print(page)
+            players = self._fetch_page_players_as_json(page, show_message)
             if not players:
                 break
             all_players = all_players + players     # concatenating
@@ -135,7 +142,7 @@ class PlayerStats(Endpoint):
             return f&#34;{self.base_url}&amp;page={page_num}&amp;year={self.season}&amp;per={self.per}&#34;
         return f&#34;{self.base_url}&amp;page={page_num}&amp;year={self.season}&amp;per={self.per}&amp;team={self.team}&#34;
 
-    def _fetch_page_players_as_json(self, page_num):
+    def _fetch_page_players_as_json(self, page_num, show_message=False):
         &#34;&#34;&#34;
         Function that fetch players in page as json 
 
@@ -143,6 +150,8 @@ class PlayerStats(Endpoint):
         ----------
         page_num: int
             page number of the url
+        show_message: bool
+            False by default. True if we print message
 
         Returns
         -------
@@ -159,6 +168,8 @@ class PlayerStats(Endpoint):
             page = requests.get(url)
             results = page.json()
             players = results[&#39;stats&#39;]
+            if show_message:
+                print(f&#34;Fetching from {url}&#34;)
         except: 
             print(f&#39;An error has occured when fetching the data from {url}&#39;)
             sys.exit(1)
@@ -224,6 +235,15 @@ based on [Season], [Per], [Team]</p>
 <dt><strong><code>team</code></strong> :&ensp;<code>string</code></dt>
 <dd>choices: ['all', 'aviators', &hellip;, '<ext_team_id>']</dd>
 </dl>
+<h2 id="parameters_1">Parameters</h2>
+<dl>
+<dt><strong><code>season</code></strong> :&ensp;<code>string</code> or <code>int</code></dt>
+<dd>choices: ['career', 2022, 2019, &hellip;, 2012]</dd>
+<dt><strong><code>per</code></strong> :&ensp;<code>string</code></dt>
+<dd>choices: ['total', 'game']</dd>
+<dt><strong><code>team</code></strong> :&ensp;<code>string</code></dt>
+<dd>choices: ['all', 'aviators', &hellip;, '<ext_team_id>']</dd>
+</dl>
 <h2 id="examples">Examples</h2>
 <pre><code class="python-repl">&gt;&gt;&gt; PlayerStats('career', 'total', 'all')
 &gt;&gt;&gt; PlayerStats(2022, 'minutes', 'breeze')
@@ -235,6 +255,15 @@ based on [Season], [Per], [Team]</p>
 <pre><code class="python">class PlayerStats(Endpoint):
     &#34;&#34;&#34; class that download data from https://theaudl.com/stats/player-stats
         based on [Season], [Per], [Team]
+
+        Parameters
+        ----------
+        season: string or int
+            choices: [&#39;career&#39;, 2022, 2019, ..., 2012]
+        per: string
+            choices: [&#39;total&#39;, &#39;game&#39;]
+        team: string
+            choices: [&#39;all&#39;, &#39;aviators&#39;, ..., &#39;&lt;ext_team_id&gt;&#39;]
     &#34;&#34;&#34;
 
 #  https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&amp;year=2019&amp;per=possessions&amp;team=aviators
@@ -287,9 +316,7 @@ based on [Season], [Per], [Team]</p>
         page = 1
         # add all players 
         while(hasPlayerLeft):
-            players = self._fetch_page_players_as_json(page)
-            if show_message:
-                print(page)
+            players = self._fetch_page_players_as_json(page, show_message)
             if not players:
                 break
             all_players = all_players + players     # concatenating
@@ -330,7 +357,7 @@ based on [Season], [Per], [Team]</p>
             return f&#34;{self.base_url}&amp;page={page_num}&amp;year={self.season}&amp;per={self.per}&#34;
         return f&#34;{self.base_url}&amp;page={page_num}&amp;year={self.season}&amp;per={self.per}&amp;team={self.team}&#34;
 
-    def _fetch_page_players_as_json(self, page_num):
+    def _fetch_page_players_as_json(self, page_num, show_message=False):
         &#34;&#34;&#34;
         Function that fetch players in page as json 
 
@@ -338,6 +365,8 @@ based on [Season], [Per], [Team]</p>
         ----------
         page_num: int
             page number of the url
+        show_message: bool
+            False by default. True if we print message
 
         Returns
         -------
@@ -354,6 +383,8 @@ based on [Season], [Per], [Team]</p>
             page = requests.get(url)
             results = page.json()
             players = results[&#39;stats&#39;]
+            if show_message:
+                print(f&#34;Fetching from {url}&#34;)
         except: 
             print(f&#39;An error has occured when fetching the data from {url}&#39;)
             sys.exit(1)
@@ -501,9 +532,7 @@ based on [Season], [Per], [Team]</p>
     page = 1
     # add all players 
     while(hasPlayerLeft):
-        players = self._fetch_page_players_as_json(page)
-        if show_message:
-            print(page)
+        players = self._fetch_page_players_as_json(page, show_message)
         if not players:
             break
         all_players = all_players + players     # concatenating
