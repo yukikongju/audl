@@ -629,6 +629,8 @@ class GameStats(Endpoint):
         """
         # get events
         home_events = json.loads(self.json['tsgHome']['events'])
+        away_events = json.loads(self.json['tsgAway']['events'])
+         
 
         # get players id
         players = self.get_players_metadata()
@@ -646,9 +648,23 @@ class GameStats(Endpoint):
         cols = cols[-1:] + cols[:-1]
         df = df[cols]
 
+        self._count_throw_frequency(home_events, players, df)
+        self._count_throw_frequency(away_events, players, df)
+
+
+        # count total
+        df['total'] = df.sum(axis=1)
+
+        return df
+
+    def _count_throw_frequency(self, events, players, df):
+        """ 
+        Helper function for get_throw_selection() that count throw frequency
+        for a team 
+        """
         # count throw frequency
         x1, y1, player1 = None, None, None
-        for i, event in enumerate(home_events):
+        for i, event in enumerate(events):
             event_type = int(event['t'])
             if event_type in [8, 19, 20, 22]: # event has x and y
                 x2, y2 = event['x'], event['y']
@@ -659,9 +675,9 @@ class GameStats(Endpoint):
                     player_id = players[players['id'] == player1]['player.ext_player_id'].tolist()[0]
 
                     # get distance and throw selection
-                    dist = get_throwing_distance(x1, y1, x2, y2)
+                    #  dist = get_throwing_distance(x1, y1, x2, y2)
                     throw = get_throw_type(x1, y1, x2, y2, event_type)
-                    print(player_id, throw, dist)
+                    #  print(player_id, throw, dist)
 
                     # increment player throw selection
                     df.loc[df['player'].isin([player_id]), throw] += 1
@@ -670,11 +686,7 @@ class GameStats(Endpoint):
                     player1 = player2
             else: 
                 x1, y1 = None, None
-
-        # count total
-        df['total'] = df.sum(axis=1)
-
-        return df
+        
 
 
     def get_thrower_receiver_count(self):
