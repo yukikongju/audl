@@ -48,4 +48,8 @@ class TestGameStats(unittest.TestCase):
     def test_get_throw_selection(self):
         throws = GameStats('2022-06-11-TOR-MTL').get_throw_selection()
         
+    def test_get_thrower_receiver_count(self):
+        thrower_receiver_count = GameStats('2022-06-11-TOR-MTL').get_thrower_receiver_count(True)
+        thrower_receiver_count = GameStats('2022-06-11-TOR-MTL').get_thrower_receiver_count(False)
+        
 
