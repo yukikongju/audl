@@ -1,6 +1,7 @@
 #!/usr/bin/env/python
 
 import json
+import math
 import pandas as pd
 import numpy as np
 import requests
@@ -9,7 +10,7 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
 from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
-from audl.stats.static.utils import get_quarter
+from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_distance
 
 
 #  from audl.stats.library.parameters import quarters_clock_dict
@@ -613,6 +614,99 @@ class GameStats(Endpoint):
 
         return all_events
         
+    def get_throw_selection(self):
+        """ 
+        Function that count throws types for all players
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x types of throws (pass, dump, huck, swing, throwaway, dish)
+
+        Example
+        -------
+
+        """
+        # get events
+        home_events = json.loads(self.json['tsgHome']['events'])
+
+        # get players id
+        players = self.get_players_metadata()
+        players = players[['id', 'player.first_name', 'player.last_name', 
+            'player.ext_player_id']]
+
+        # initialize df
+        type_of_throws = ['pass', 'huck', 'swing', 'dump', 'dish', 'throwaway', 'drop']
+        freq = [[0 for _ in range(len(type_of_throws))] for _ in range(len(players))]
+        df = pd.DataFrame(freq, columns=type_of_throws)
+        df['player'] = list(players['player.ext_player_id'])
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count throw frequency
+        x1, y1, player1 = None, None, None
+        for i, event in enumerate(home_events):
+            event_type = int(event['t'])
+            if event_type in [8, 19, 20, 22]: # event has x and y
+                x2, y2 = event['x'], event['y']
+                if event_type != 8:
+                    player2 = int(event['r'])
+                if x1 and y1 and player1:
+                    # get player
+                    player_id = players[players['id'] == player1]['player.ext_player_id'].tolist()[0]
+
+                    # get distance and throw selection
+                    dist = get_throwing_distance(x1, y1, x2, y2)
+                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+                    print(player_id, throw, dist)
+
+                    # increment player throw selection
+                    df.loc[df['player'].isin([player_id]), throw] += 1
+                x1, y1 = x2, y2
+                if event_type != 8:
+                    player1 = player2
+            else: 
+                x1, y1 = None, None
+
+        # count total
+        df['total'] = df.sum(axis=1)
+
+        return df
+
+
+    def get_thrower_receiver_count(self):
+        """ 
+        Function that returns the thrower-receiver count
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x players: +1 if thrower attempted a pass to receiver
+
+        Example
+        -------
+        """
+        pass
+
+
+    def get_thrower_receiver_selection(self):
+        """ 
+        For a given thrower, return throw selection for each teamates
+
+        Returns
+        -------
+        df: pandas dataframe
+            teamates x throwing_type
+
+        Example
+        -------
+        """
+        pass
+        
+
         
     def print_team_events(self, is_home): 
         """ 
@@ -657,7 +751,10 @@ class GameStats(Endpoint):
                     receiver = players[players['id'] == int(row['r'])]['player.ext_player_id'].tolist()[0]
                 except: 
                     receiver = 'NaN'
-                print(f"t: {t}; r: {receiver}")
+                if t in [3,19,20,22]:
+                    print(f"t: {t}; r: {receiver}; x: {row['x']}; y: {row['y']}")
+                else: 
+                    print(f"t: {t}; r: {receiver}")
             elif t in [14, 15, 42, 43]:
                 # print s
                 print(f"t: {t}; s: {row['s']}")

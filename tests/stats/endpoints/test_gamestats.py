@@ -44,7 +44,8 @@ class TestGameStats(unittest.TestCase):
     def test_get_events(self):
         events = GameStats('2022-06-11-TOR-MTL').get_events()
 
-    def test_team_events(self):
-        pass
 
+    def test_get_throw_selection(self):
+        throws = GameStats('2022-06-11-TOR-MTL').get_throw_selection()
+        
 
