@@ -694,6 +694,10 @@ class GameStats(Endpoint):
         Function that returns the thrower-receiver count only if throw was 
         successful. Useful to view players chemistry
 
+        Parameters
+        ----------
+        is_home: bool
+
         Returns
         -------
         df: pandas dataframe
@@ -749,12 +753,59 @@ class GameStats(Endpoint):
             else: 
                 player1 = None
 
-    def get_lineup_frequency(self):
+    def get_lineup_frequency(self, is_home): 
         """ 
         Function that calculates the number of time a player is on the same 
-        line as teamate
+        line as teamate. Only counts starting lineup (ie starting on offense 
+        or defense, not after timeout)
+
+        Parameters
+        ----------
+        is_home: bool
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x players: +1 if player i and j are on the same line
         """
-        pass
+        if is_home: 
+            events = json.loads(self.json['tsgHome']['events'])
+            players = pd.json_normalize(self.json['rostersHome'])
+        else: 
+            events = json.loads(self.json['tsgAway']['events'])
+            players = pd.json_normalize(self.json['rostersAway'])
+
+        # initialize df
+        list_players = list(players['player.ext_player_id'])
+        freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+        df = pd.DataFrame(freq, columns=list_players)
+        df['player'] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count lineup freq
+        self._count_lineup_frequency(events, players, df)
+
+        return df
+
+    def _count_lineup_frequency(self, events, players, df): 
+        """ 
+        Helper function for get_lineup_frequency()
+        """
+        for i, event in enumerate(events):
+            event_type = int(event['t']) 
+            if event_type in [1,2]:
+                l = event['l']
+                lineup = [players[players['id'] == int(player_id)]['player.ext_player_id'].tolist()[0] for player_id in l]
+                #  print(lineup)
+                for i in range(len(lineup)):
+                    for j in range(len(lineup)):
+                        if i != j:
+                            player1, player2 = lineup[i], lineup[j]
+                            df.loc[df['player'].isin([player1]), player2] += 1
         
 
     def get_thrower_receiver_selection(self):

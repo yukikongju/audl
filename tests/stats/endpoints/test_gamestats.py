@@ -51,5 +51,10 @@ class TestGameStats(unittest.TestCase):
     def test_get_thrower_receiver_count(self):
         thrower_receiver_count = GameStats('2022-06-11-TOR-MTL').get_thrower_receiver_count(True)
         thrower_receiver_count = GameStats('2022-06-11-TOR-MTL').get_thrower_receiver_count(False)
+
+    def test_lineup_frequency(self):
+        lineup = GameStats('2022-06-11-TOR-MTL').get_lineup_frequency(True)
+        lineup = GameStats('2022-06-11-TOR-MTL').get_lineup_frequency(False)
+        
         
 
