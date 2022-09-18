@@ -55,6 +55,10 @@ class TestGameStats(unittest.TestCase):
     def test_lineup_frequency(self):
         lineup = GameStats('2022-06-11-TOR-MTL').get_lineup_frequency(True)
         lineup = GameStats('2022-06-11-TOR-MTL').get_lineup_frequency(False)
+
+    def test_get_teamates_selection(self):
+        teamates = GameStats('2022-06-11-TOR-MTL').get_teamates_selection('jbrissett', True)
+        
         
         
 

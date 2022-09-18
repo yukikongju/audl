@@ -563,7 +563,6 @@ class GameStats(Endpoint):
     def get_events(self):
         """ 
         Function that fetch all events for all points for each team
-
         """
 
         # retrieve events from json
@@ -686,7 +685,7 @@ class GameStats(Endpoint):
                 if event_type != 8:
                     player1 = player2
             else: 
-                x1, y1 = None, None
+                x1, y1, player1 = None, None, None
 
 
     def get_thrower_receiver_count(self, is_home):
@@ -808,9 +807,16 @@ class GameStats(Endpoint):
                             df.loc[df['player'].isin([player1]), player2] += 1
         
 
-    def get_thrower_receiver_selection(self):
+    def get_teamates_selection(self, player_id, is_home):
         """ 
         For a given thrower, return throw selection for each teamates
+
+        Parameters
+        ----------
+        is_home: bool
+            True if player is in home team, else false
+        player_id: str
+            player external id
 
         Returns
         -------
@@ -819,9 +825,60 @@ class GameStats(Endpoint):
 
         Example
         -------
+        >>> game.get_thrower_receiver_selection('cbrock', True)
         """
-        pass
+        if is_home: 
+            events = json.loads(self.json['tsgHome']['events'])
+            players = pd.json_normalize(self.json['rostersHome'])
+        else: 
+            events = json.loads(self.json['tsgAway']['events'])
+            players = pd.json_normalize(self.json['rostersAway'])
+
+        # check if player_id in players list
+        list_players = list(players['player.ext_player_id'])
+        if player_id not in list_players:
+            raise ValueError("player_id doesn't exist. Please check!")
+
+        # initialize dataframe
+        type_of_throws = ['pass', 'huck', 'swing', 'dump', 'dish', 'throwaway', 'drop']
+        selection = [[0 for _ in range(len(type_of_throws))] for _ in range(len(list_players))]
+        df = pd.DataFrame(selection, columns=type_of_throws)
+        df['player'] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count teamates selection
+        self._count_teamate_selection(events, players, player_id, df)
+
+        # total throws by teamates
+        df['total'] = df.sum(axis=1)
+
+        return df
         
+    def _count_teamate_selection(self, events, players, thrower, df): 
+        """ 
+        Helper Function for get_teamates_selection()
+        """
+        x1, y1, player1 = None, None, None
+        for i, event in enumerate(events):
+            event_type = int(event['t'])
+            if event_type in [19, 20, 22]: # event has x and y
+                x2, y2 = event['x'], event['y']
+                player2 = int(event['r'])
+                player_id = players[players['id'] == player2]['player.ext_player_id'].tolist()[0]
+                if x1 and y1 and player1 == thrower:
+                    # get distance and throw selection
+                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+
+                    # increment player throw selection
+                    df.loc[df['player'].isin([player_id]), throw] += 1
+                x1, y1 = x2, y2
+                player1 = player_id
+            else: 
+                x1, y1, player1 = None, None, None
 
         
     def print_team_events(self, is_home): 
