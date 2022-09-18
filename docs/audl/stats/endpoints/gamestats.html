@@ -29,6 +29,7 @@
 <pre><code class="python">#!/usr/bin/env/python
 
 import json
+import math
 import pandas as pd
 import numpy as np
 import requests
@@ -37,7 +38,7 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
 from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
-from audl.stats.static.utils import get_quarter
+from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_distance
 
 
 #  from audl.stats.library.parameters import quarters_clock_dict
@@ -527,7 +528,6 @@ class GameStats(Endpoint):
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_lineup_by_points()
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-        pass
 
     def get_point_results(self, point_events):
         &#34;&#34;&#34; 
@@ -565,9 +565,8 @@ class GameStats(Endpoint):
 
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-        pass
 
-    def get_events(self):
+    def get_events_sequential(self):
         &#34;&#34;&#34; 
         Function that return the event of each points in sequential order
 
@@ -588,8 +587,326 @@ class GameStats(Endpoint):
 
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-        pass
 
+    def get_events(self):
+        &#34;&#34;&#34; 
+        Function that fetch all events for all points for each team
+        &#34;&#34;&#34;
+
+        # retrieve events from json
+        home_events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+        away_events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+
+        # get events by points
+        home_points = self._get_team_events_by_points(home_events)
+        away_points = self._get_team_events_by_points(away_events)
+
+        events_dict = {&#39;homeEvents&#39;: home_points, &#39;awayEvents&#39;: away_points}
+
+        return events_dict
+
+        
+    def _get_team_events_by_points(self, events):
+        &#34;&#34;&#34; 
+        Function that return a list of dict with all points events
+
+        Parameters
+        ----------
+        events: json dict
+            self.json[&#39;tsgHome&#39;][&#39;events&#39;] or self.json[&#39;tsgAway&#39;][&#39;events&#39;]
+
+        Examples
+        --------
+        &gt;&gt;&gt; 
+        &gt;&gt;&gt; [{&#39;point&#39;: 0, &#39;events&#39;: []},
+        &gt;&gt;&gt;  {&#39;point&#39;: 1,
+        &gt;&gt;&gt;    &#39;events&#39;: [{&#39;t&#39;: 1, &#39;l&#39;: [9246, 9237, 9323, 9262, 9241, 9568, 9242]},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9262, &#39;x&#39;: 12.89, &#39;y&#39;: 18.93},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9246, &#39;x&#39;: 4, &#39;y&#39;: 33.13},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9323, &#39;x&#39;: 20.47, &#39;y&#39;: 47.18},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9262, &#39;x&#39;: 0.94, &#39;y&#39;: 43.83},
+        &gt;&gt;&gt;     ...
+
+        &#34;&#34;&#34;
+        point_played = 0
+        all_events, point_events = [], []
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type not in [1,2]:
+                point_events.append(event)
+            else:
+                all_events.append({&#39;point&#39;: point_played, &#39;events&#39;: point_events})
+                point_events = []
+                point_played += 1
+
+        return all_events
+        
+    def get_throw_selection(self):
+        &#34;&#34;&#34; 
+        Function that count throws types for all players
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x types of throws (pass, dump, huck, swing, throwaway, dish)
+
+        Example
+        -------
+
+        &#34;&#34;&#34;
+        # get events
+        home_events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+        away_events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+         
+
+        # get players id
+        players = self.get_players_metadata()
+        players = players[[&#39;id&#39;, &#39;player.first_name&#39;, &#39;player.last_name&#39;, 
+            &#39;player.ext_player_id&#39;]]
+
+        # initialize df
+        type_of_throws = [&#39;pass&#39;, &#39;huck&#39;, &#39;swing&#39;, &#39;dump&#39;, &#39;dish&#39;, &#39;throwaway&#39;, &#39;drop&#39;]
+        freq = [[0 for _ in range(len(type_of_throws))] for _ in range(len(players))]
+        df = pd.DataFrame(freq, columns=type_of_throws)
+        df[&#39;player&#39;] = list(players[&#39;player.ext_player_id&#39;])
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count throw freq
+        self._count_throw_frequency(home_events, players, df)
+        self._count_throw_frequency(away_events, players, df)
+
+
+        # count total
+        df[&#39;total&#39;] = df.sum(axis=1)
+
+        return df
+
+    def _count_throw_frequency(self, events, players, df):
+        &#34;&#34;&#34; 
+        Helper function for get_throw_selection() that count throw frequency
+        for a team 
+        &#34;&#34;&#34;
+        # count throw frequency
+        x1, y1, player1 = None, None, None
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type in [8, 19, 20, 22]: # event has x and y
+                x2, y2 = event[&#39;x&#39;], event[&#39;y&#39;]
+                if event_type != 8:
+                    player2 = int(event[&#39;r&#39;])
+                if x1 and y1 and player1:
+                    # get player
+                    player_id = players[players[&#39;id&#39;] == player1][&#39;player.ext_player_id&#39;].tolist()[0]
+
+                    # get distance and throw selection
+                    #  dist = get_throwing_distance(x1, y1, x2, y2)
+                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+                    #  print(player_id, throw, dist)
+
+                    # increment player throw selection
+                    df.loc[df[&#39;player&#39;].isin([player_id]), throw] += 1
+                x1, y1 = x2, y2
+                if event_type != 8:
+                    player1 = player2
+            else: 
+                x1, y1, player1 = None, None, None
+
+
+    def get_thrower_receiver_count(self, is_home):
+        &#34;&#34;&#34; 
+        Function that returns the thrower-receiver count only if throw was 
+        successful. Useful to view players chemistry
+
+        Parameters
+        ----------
+        is_home: bool
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x players: +1 if thrower attempted a pass to receiver
+
+        Example
+        -------
+        &#34;&#34;&#34;
+        if is_home: 
+            events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+        else: 
+            events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+        # initialize df
+        list_players = list(players[&#39;player.ext_player_id&#39;])
+        freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+        df = pd.DataFrame(freq, columns=list_players)
+        df[&#39;player&#39;] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count thrower-receiver freq 
+        self._count_thrower_receiver(events, players, df)
+
+        # count total throws
+        df[&#39;total&#39;] = df.sum(axis=1)
+
+        return df
+
+    def _count_thrower_receiver(self, events, players, df):
+        &#34;&#34;&#34; 
+        Helper function for get_thrower_receiver_count() to count thrower and
+        receiver for team event
+        &#34;&#34;&#34;
+        player1 = None
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type in [20, 22]: # removed 19 because dropped
+                player2 = int(event[&#39;r&#39;])
+                if player1:
+                    # get player
+                    player1_id = players[players[&#39;id&#39;] == player1][&#39;player.ext_player_id&#39;].tolist()[0]
+                    player2_id = players[players[&#39;id&#39;] == player2][&#39;player.ext_player_id&#39;].tolist()[0]
+
+                    # increment thrower-receiver 
+                    df.loc[df[&#39;player&#39;].isin([player1_id]), player2_id] += 1
+                player1 = player2
+            else: 
+                player1 = None
+
+    def get_lineup_frequency(self, is_home): 
+        &#34;&#34;&#34; 
+        Function that calculates the number of time a player is on the same 
+        line as teamate. Only counts starting lineup (ie starting on offense 
+        or defense, not after timeout)
+
+        Parameters
+        ----------
+        is_home: bool
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x players: +1 if player i and j are on the same line
+        &#34;&#34;&#34;
+        if is_home: 
+            events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+        else: 
+            events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+        # initialize df
+        list_players = list(players[&#39;player.ext_player_id&#39;])
+        freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+        df = pd.DataFrame(freq, columns=list_players)
+        df[&#39;player&#39;] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count lineup freq
+        self._count_lineup_frequency(events, players, df)
+
+        return df
+
+    def _count_lineup_frequency(self, events, players, df): 
+        &#34;&#34;&#34; 
+        Helper function for get_lineup_frequency()
+        &#34;&#34;&#34;
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;]) 
+            if event_type in [1,2]:
+                l = event[&#39;l&#39;]
+                lineup = [players[players[&#39;id&#39;] == int(player_id)][&#39;player.ext_player_id&#39;].tolist()[0] for player_id in l]
+                #  print(lineup)
+                for i in range(len(lineup)):
+                    for j in range(len(lineup)):
+                        if i != j:
+                            player1, player2 = lineup[i], lineup[j]
+                            df.loc[df[&#39;player&#39;].isin([player1]), player2] += 1
+        
+
+    def get_teamates_selection(self, player_id, is_home):
+        &#34;&#34;&#34; 
+        For a given thrower, return throw selection for each teamates
+
+        Parameters
+        ----------
+        is_home: bool
+            True if player is in home team, else false
+        player_id: str
+            player external id
+
+        Returns
+        -------
+        df: pandas dataframe
+            teamates x throwing_type
+
+        Example
+        -------
+        &gt;&gt;&gt; game.get_thrower_receiver_selection(&#39;cbrock&#39;, True)
+        &#34;&#34;&#34;
+        if is_home: 
+            events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+        else: 
+            events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+        # check if player_id in players list
+        list_players = list(players[&#39;player.ext_player_id&#39;])
+        if player_id not in list_players:
+            raise ValueError(&#34;player_id doesn&#39;t exist. Please check!&#34;)
+
+        # initialize dataframe
+        type_of_throws = [&#39;pass&#39;, &#39;huck&#39;, &#39;swing&#39;, &#39;dump&#39;, &#39;dish&#39;, &#39;throwaway&#39;, &#39;drop&#39;]
+        selection = [[0 for _ in range(len(type_of_throws))] for _ in range(len(list_players))]
+        df = pd.DataFrame(selection, columns=type_of_throws)
+        df[&#39;player&#39;] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count teamates selection
+        self._count_teamate_selection(events, players, player_id, df)
+
+        # total throws by teamates
+        df[&#39;total&#39;] = df.sum(axis=1)
+
+        return df
+        
+    def _count_teamate_selection(self, events, players, thrower, df): 
+        &#34;&#34;&#34; 
+        Helper Function for get_teamates_selection()
+        &#34;&#34;&#34;
+        x1, y1, player1 = None, None, None
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type in [19, 20, 22]: # event has x and y
+                x2, y2 = event[&#39;x&#39;], event[&#39;y&#39;]
+                player2 = int(event[&#39;r&#39;])
+                player_id = players[players[&#39;id&#39;] == player2][&#39;player.ext_player_id&#39;].tolist()[0]
+                if x1 and y1 and player1 == thrower:
+                    # get distance and throw selection
+                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+
+                    # increment player throw selection
+                    df.loc[df[&#39;player&#39;].isin([player_id]), throw] += 1
+                x1, y1 = x2, y2
+                player1 = player_id
+            else: 
+                x1, y1, player1 = None, None, None
 
         
     def print_team_events(self, is_home): 
@@ -635,7 +952,10 @@ class GameStats(Endpoint):
                     receiver = players[players[&#39;id&#39;] == int(row[&#39;r&#39;])][&#39;player.ext_player_id&#39;].tolist()[0]
                 except: 
                     receiver = &#39;NaN&#39;
-                print(f&#34;t: {t}; r: {receiver}&#34;)
+                if t in [3,19,20,22]:
+                    print(f&#34;t: {t}; r: {receiver}; x: {row[&#39;x&#39;]}; y: {row[&#39;y&#39;]}&#34;)
+                else: 
+                    print(f&#34;t: {t}; r: {receiver}&#34;)
             elif t in [14, 15, 42, 43]:
                 # print s
                 print(f&#34;t: {t}; s: {row[&#39;s&#39;]}&#34;)
@@ -1142,7 +1462,6 @@ class GameStats(Endpoint):
         &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_lineup_by_points()
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-        pass
 
     def get_point_results(self, point_events):
         &#34;&#34;&#34; 
@@ -1180,9 +1499,8 @@ class GameStats(Endpoint):
 
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-        pass
 
-    def get_events(self):
+    def get_events_sequential(self):
         &#34;&#34;&#34; 
         Function that return the event of each points in sequential order
 
@@ -1203,8 +1521,326 @@ class GameStats(Endpoint):
 
         &#34;&#34;&#34;
         raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-        pass
 
+    def get_events(self):
+        &#34;&#34;&#34; 
+        Function that fetch all events for all points for each team
+        &#34;&#34;&#34;
+
+        # retrieve events from json
+        home_events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+        away_events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+
+        # get events by points
+        home_points = self._get_team_events_by_points(home_events)
+        away_points = self._get_team_events_by_points(away_events)
+
+        events_dict = {&#39;homeEvents&#39;: home_points, &#39;awayEvents&#39;: away_points}
+
+        return events_dict
+
+        
+    def _get_team_events_by_points(self, events):
+        &#34;&#34;&#34; 
+        Function that return a list of dict with all points events
+
+        Parameters
+        ----------
+        events: json dict
+            self.json[&#39;tsgHome&#39;][&#39;events&#39;] or self.json[&#39;tsgAway&#39;][&#39;events&#39;]
+
+        Examples
+        --------
+        &gt;&gt;&gt; 
+        &gt;&gt;&gt; [{&#39;point&#39;: 0, &#39;events&#39;: []},
+        &gt;&gt;&gt;  {&#39;point&#39;: 1,
+        &gt;&gt;&gt;    &#39;events&#39;: [{&#39;t&#39;: 1, &#39;l&#39;: [9246, 9237, 9323, 9262, 9241, 9568, 9242]},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9262, &#39;x&#39;: 12.89, &#39;y&#39;: 18.93},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9246, &#39;x&#39;: 4, &#39;y&#39;: 33.13},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9323, &#39;x&#39;: 20.47, &#39;y&#39;: 47.18},
+        &gt;&gt;&gt;     {&#39;t&#39;: 20, &#39;r&#39;: 9262, &#39;x&#39;: 0.94, &#39;y&#39;: 43.83},
+        &gt;&gt;&gt;     ...
+
+        &#34;&#34;&#34;
+        point_played = 0
+        all_events, point_events = [], []
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type not in [1,2]:
+                point_events.append(event)
+            else:
+                all_events.append({&#39;point&#39;: point_played, &#39;events&#39;: point_events})
+                point_events = []
+                point_played += 1
+
+        return all_events
+        
+    def get_throw_selection(self):
+        &#34;&#34;&#34; 
+        Function that count throws types for all players
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x types of throws (pass, dump, huck, swing, throwaway, dish)
+
+        Example
+        -------
+
+        &#34;&#34;&#34;
+        # get events
+        home_events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+        away_events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+         
+
+        # get players id
+        players = self.get_players_metadata()
+        players = players[[&#39;id&#39;, &#39;player.first_name&#39;, &#39;player.last_name&#39;, 
+            &#39;player.ext_player_id&#39;]]
+
+        # initialize df
+        type_of_throws = [&#39;pass&#39;, &#39;huck&#39;, &#39;swing&#39;, &#39;dump&#39;, &#39;dish&#39;, &#39;throwaway&#39;, &#39;drop&#39;]
+        freq = [[0 for _ in range(len(type_of_throws))] for _ in range(len(players))]
+        df = pd.DataFrame(freq, columns=type_of_throws)
+        df[&#39;player&#39;] = list(players[&#39;player.ext_player_id&#39;])
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count throw freq
+        self._count_throw_frequency(home_events, players, df)
+        self._count_throw_frequency(away_events, players, df)
+
+
+        # count total
+        df[&#39;total&#39;] = df.sum(axis=1)
+
+        return df
+
+    def _count_throw_frequency(self, events, players, df):
+        &#34;&#34;&#34; 
+        Helper function for get_throw_selection() that count throw frequency
+        for a team 
+        &#34;&#34;&#34;
+        # count throw frequency
+        x1, y1, player1 = None, None, None
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type in [8, 19, 20, 22]: # event has x and y
+                x2, y2 = event[&#39;x&#39;], event[&#39;y&#39;]
+                if event_type != 8:
+                    player2 = int(event[&#39;r&#39;])
+                if x1 and y1 and player1:
+                    # get player
+                    player_id = players[players[&#39;id&#39;] == player1][&#39;player.ext_player_id&#39;].tolist()[0]
+
+                    # get distance and throw selection
+                    #  dist = get_throwing_distance(x1, y1, x2, y2)
+                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+                    #  print(player_id, throw, dist)
+
+                    # increment player throw selection
+                    df.loc[df[&#39;player&#39;].isin([player_id]), throw] += 1
+                x1, y1 = x2, y2
+                if event_type != 8:
+                    player1 = player2
+            else: 
+                x1, y1, player1 = None, None, None
+
+
+    def get_thrower_receiver_count(self, is_home):
+        &#34;&#34;&#34; 
+        Function that returns the thrower-receiver count only if throw was 
+        successful. Useful to view players chemistry
+
+        Parameters
+        ----------
+        is_home: bool
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x players: +1 if thrower attempted a pass to receiver
+
+        Example
+        -------
+        &#34;&#34;&#34;
+        if is_home: 
+            events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+        else: 
+            events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+        # initialize df
+        list_players = list(players[&#39;player.ext_player_id&#39;])
+        freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+        df = pd.DataFrame(freq, columns=list_players)
+        df[&#39;player&#39;] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count thrower-receiver freq 
+        self._count_thrower_receiver(events, players, df)
+
+        # count total throws
+        df[&#39;total&#39;] = df.sum(axis=1)
+
+        return df
+
+    def _count_thrower_receiver(self, events, players, df):
+        &#34;&#34;&#34; 
+        Helper function for get_thrower_receiver_count() to count thrower and
+        receiver for team event
+        &#34;&#34;&#34;
+        player1 = None
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type in [20, 22]: # removed 19 because dropped
+                player2 = int(event[&#39;r&#39;])
+                if player1:
+                    # get player
+                    player1_id = players[players[&#39;id&#39;] == player1][&#39;player.ext_player_id&#39;].tolist()[0]
+                    player2_id = players[players[&#39;id&#39;] == player2][&#39;player.ext_player_id&#39;].tolist()[0]
+
+                    # increment thrower-receiver 
+                    df.loc[df[&#39;player&#39;].isin([player1_id]), player2_id] += 1
+                player1 = player2
+            else: 
+                player1 = None
+
+    def get_lineup_frequency(self, is_home): 
+        &#34;&#34;&#34; 
+        Function that calculates the number of time a player is on the same 
+        line as teamate. Only counts starting lineup (ie starting on offense 
+        or defense, not after timeout)
+
+        Parameters
+        ----------
+        is_home: bool
+
+        Returns
+        -------
+        df: pandas dataframe
+            players x players: +1 if player i and j are on the same line
+        &#34;&#34;&#34;
+        if is_home: 
+            events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+        else: 
+            events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+        # initialize df
+        list_players = list(players[&#39;player.ext_player_id&#39;])
+        freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+        df = pd.DataFrame(freq, columns=list_players)
+        df[&#39;player&#39;] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count lineup freq
+        self._count_lineup_frequency(events, players, df)
+
+        return df
+
+    def _count_lineup_frequency(self, events, players, df): 
+        &#34;&#34;&#34; 
+        Helper function for get_lineup_frequency()
+        &#34;&#34;&#34;
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;]) 
+            if event_type in [1,2]:
+                l = event[&#39;l&#39;]
+                lineup = [players[players[&#39;id&#39;] == int(player_id)][&#39;player.ext_player_id&#39;].tolist()[0] for player_id in l]
+                #  print(lineup)
+                for i in range(len(lineup)):
+                    for j in range(len(lineup)):
+                        if i != j:
+                            player1, player2 = lineup[i], lineup[j]
+                            df.loc[df[&#39;player&#39;].isin([player1]), player2] += 1
+        
+
+    def get_teamates_selection(self, player_id, is_home):
+        &#34;&#34;&#34; 
+        For a given thrower, return throw selection for each teamates
+
+        Parameters
+        ----------
+        is_home: bool
+            True if player is in home team, else false
+        player_id: str
+            player external id
+
+        Returns
+        -------
+        df: pandas dataframe
+            teamates x throwing_type
+
+        Example
+        -------
+        &gt;&gt;&gt; game.get_thrower_receiver_selection(&#39;cbrock&#39;, True)
+        &#34;&#34;&#34;
+        if is_home: 
+            events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+        else: 
+            events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+            players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+        # check if player_id in players list
+        list_players = list(players[&#39;player.ext_player_id&#39;])
+        if player_id not in list_players:
+            raise ValueError(&#34;player_id doesn&#39;t exist. Please check!&#34;)
+
+        # initialize dataframe
+        type_of_throws = [&#39;pass&#39;, &#39;huck&#39;, &#39;swing&#39;, &#39;dump&#39;, &#39;dish&#39;, &#39;throwaway&#39;, &#39;drop&#39;]
+        selection = [[0 for _ in range(len(type_of_throws))] for _ in range(len(list_players))]
+        df = pd.DataFrame(selection, columns=type_of_throws)
+        df[&#39;player&#39;] = list_players
+
+        # reorder columns
+        cols = df.columns.tolist()
+        cols = cols[-1:] + cols[:-1]
+        df = df[cols]
+
+        # count teamates selection
+        self._count_teamate_selection(events, players, player_id, df)
+
+        # total throws by teamates
+        df[&#39;total&#39;] = df.sum(axis=1)
+
+        return df
+        
+    def _count_teamate_selection(self, events, players, thrower, df): 
+        &#34;&#34;&#34; 
+        Helper Function for get_teamates_selection()
+        &#34;&#34;&#34;
+        x1, y1, player1 = None, None, None
+        for i, event in enumerate(events):
+            event_type = int(event[&#39;t&#39;])
+            if event_type in [19, 20, 22]: # event has x and y
+                x2, y2 = event[&#39;x&#39;], event[&#39;y&#39;]
+                player2 = int(event[&#39;r&#39;])
+                player_id = players[players[&#39;id&#39;] == player2][&#39;player.ext_player_id&#39;].tolist()[0]
+                if x1 and y1 and player1 == thrower:
+                    # get distance and throw selection
+                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+
+                    # increment player throw selection
+                    df.loc[df[&#39;player&#39;].isin([player_id]), throw] += 1
+                x1, y1 = x2, y2
+                player1 = player_id
+            else: 
+                x1, y1, player1 = None, None, None
 
         
     def print_team_events(self, is_home): 
@@ -1250,7 +1886,10 @@ class GameStats(Endpoint):
                     receiver = players[players[&#39;id&#39;] == int(row[&#39;r&#39;])][&#39;player.ext_player_id&#39;].tolist()[0]
                 except: 
                     receiver = &#39;NaN&#39;
-                print(f&#34;t: {t}; r: {receiver}&#34;)
+                if t in [3,19,20,22]:
+                    print(f&#34;t: {t}; r: {receiver}; x: {row[&#39;x&#39;]}; y: {row[&#39;y&#39;]}&#34;)
+                else: 
+                    print(f&#34;t: {t}; r: {receiver}&#34;)
             elif t in [14, 15, 42, 43]:
                 # print s
                 print(f&#34;t: {t}; s: {row[&#39;s&#39;]}&#34;)
@@ -1323,6 +1962,33 @@ royal       4       7       4       5       20
 <span>def <span class="ident">get_events</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<div class="desc"><p>Function that fetch all events for all points for each team</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_events(self):
+    &#34;&#34;&#34; 
+    Function that fetch all events for all points for each team
+    &#34;&#34;&#34;
+
+    # retrieve events from json
+    home_events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+    away_events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+
+    # get events by points
+    home_points = self._get_team_events_by_points(home_events)
+    away_points = self._get_team_events_by_points(away_events)
+
+    events_dict = {&#39;homeEvents&#39;: home_points, &#39;awayEvents&#39;: away_points}
+
+    return events_dict</code></pre>
+</details>
+</dd>
+<dt id="audl.stats.endpoints.gamestats.GameStats.get_events_sequential"><code class="name flex">
+<span>def <span class="ident">get_events_sequential</span></span>(<span>self)</span>
+</code></dt>
+<dd>
 <div class="desc"><p>Function that return the event of each points in sequential order</p>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -1341,7 +2007,7 @@ royal       4       7       4       5       20
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_events(self):
+<pre><code class="python">def get_events_sequential(self):
     &#34;&#34;&#34; 
     Function that return the event of each points in sequential order
 
@@ -1361,8 +2027,7 @@ royal       4       7       4       5       20
     &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_events()
 
     &#34;&#34;&#34;
-    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-    pass</code></pre>
+    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)</code></pre>
 </details>
 </dd>
 <dt id="audl.stats.endpoints.gamestats.GameStats.get_game_metadata"><code class="name flex">
@@ -1455,8 +2120,67 @@ Dataframe with the following columns
     --------
     &gt;&gt;&gt; GameStats(&#39;2022-06-11-TB-ATL&#39;).get_lineup_by_points()
     &#34;&#34;&#34;
-    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-    pass</code></pre>
+    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)</code></pre>
+</details>
+</dd>
+<dt id="audl.stats.endpoints.gamestats.GameStats.get_lineup_frequency"><code class="name flex">
+<span>def <span class="ident">get_lineup_frequency</span></span>(<span>self, is_home)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function that calculates the number of time a player is on the same
+line as teamate. Only counts starting lineup (ie starting on offense
+or defense, not after timeout)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>is_home</code></strong> :&ensp;<code>bool</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>df</code></strong> :&ensp;<code>pandas dataframe</code></dt>
+<dd>players x players: +1 if player i and j are on the same line</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_lineup_frequency(self, is_home): 
+    &#34;&#34;&#34; 
+    Function that calculates the number of time a player is on the same 
+    line as teamate. Only counts starting lineup (ie starting on offense 
+    or defense, not after timeout)
+
+    Parameters
+    ----------
+    is_home: bool
+
+    Returns
+    -------
+    df: pandas dataframe
+        players x players: +1 if player i and j are on the same line
+    &#34;&#34;&#34;
+    if is_home: 
+        events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+        players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+    else: 
+        events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+        players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+    # initialize df
+    list_players = list(players[&#39;player.ext_player_id&#39;])
+    freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+    df = pd.DataFrame(freq, columns=list_players)
+    df[&#39;player&#39;] = list_players
+
+    # reorder columns
+    cols = df.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df = df[cols]
+
+    # count lineup freq
+    self._count_lineup_frequency(events, players, df)
+
+    return df</code></pre>
 </details>
 </dd>
 <dt id="audl.stats.endpoints.gamestats.GameStats.get_players_metadata"><code class="name flex">
@@ -1595,8 +2319,7 @@ are not playing)</p>
         - timeout_called (bool): True if timeout was called
 
     &#34;&#34;&#34;
-    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)
-    pass</code></pre>
+    raise NotImplementedError(&#34;This function hasn&#39;t been implemented yet!&#34;)</code></pre>
 </details>
 </dd>
 <dt id="audl.stats.endpoints.gamestats.GameStats.get_roster_stats"><code class="name flex">
@@ -1767,6 +2490,82 @@ are not playing)</p>
     return tsg</code></pre>
 </details>
 </dd>
+<dt id="audl.stats.endpoints.gamestats.GameStats.get_teamates_selection"><code class="name flex">
+<span>def <span class="ident">get_teamates_selection</span></span>(<span>self, player_id, is_home)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>For a given thrower, return throw selection for each teamates</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>is_home</code></strong> :&ensp;<code>bool</code></dt>
+<dd>True if player is in home team, else false</dd>
+<dt><strong><code>player_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>player external id</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>df</code></strong> :&ensp;<code>pandas dataframe</code></dt>
+<dd>teamates x throwing_type</dd>
+</dl>
+<h2 id="example">Example</h2>
+<pre><code class="python-repl">&gt;&gt;&gt; game.get_thrower_receiver_selection('cbrock', True)
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_teamates_selection(self, player_id, is_home):
+    &#34;&#34;&#34; 
+    For a given thrower, return throw selection for each teamates
+
+    Parameters
+    ----------
+    is_home: bool
+        True if player is in home team, else false
+    player_id: str
+        player external id
+
+    Returns
+    -------
+    df: pandas dataframe
+        teamates x throwing_type
+
+    Example
+    -------
+    &gt;&gt;&gt; game.get_thrower_receiver_selection(&#39;cbrock&#39;, True)
+    &#34;&#34;&#34;
+    if is_home: 
+        events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+        players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+    else: 
+        events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+        players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+    # check if player_id in players list
+    list_players = list(players[&#39;player.ext_player_id&#39;])
+    if player_id not in list_players:
+        raise ValueError(&#34;player_id doesn&#39;t exist. Please check!&#34;)
+
+    # initialize dataframe
+    type_of_throws = [&#39;pass&#39;, &#39;huck&#39;, &#39;swing&#39;, &#39;dump&#39;, &#39;dish&#39;, &#39;throwaway&#39;, &#39;drop&#39;]
+    selection = [[0 for _ in range(len(type_of_throws))] for _ in range(len(list_players))]
+    df = pd.DataFrame(selection, columns=type_of_throws)
+    df[&#39;player&#39;] = list_players
+
+    # reorder columns
+    cols = df.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df = df[cols]
+
+    # count teamates selection
+    self._count_teamate_selection(events, players, player_id, df)
+
+    # total throws by teamates
+    df[&#39;total&#39;] = df.sum(axis=1)
+
+    return df</code></pre>
+</details>
+</dd>
 <dt id="audl.stats.endpoints.gamestats.GameStats.get_teams_metadata"><code class="name flex">
 <span>def <span class="ident">get_teams_metadata</span></span>(<span>self)</span>
 </code></dt>
@@ -1820,6 +2619,131 @@ are not playing)</p>
     # concatenate home and away dataframes
     teams = pd.concat([home, away])
     return teams</code></pre>
+</details>
+</dd>
+<dt id="audl.stats.endpoints.gamestats.GameStats.get_throw_selection"><code class="name flex">
+<span>def <span class="ident">get_throw_selection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function that count throws types for all players</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>df</code></strong> :&ensp;<code>pandas dataframe</code></dt>
+<dd>players x types of throws (pass, dump, huck, swing, throwaway, dish)</dd>
+</dl>
+<h2 id="example">Example</h2></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_throw_selection(self):
+    &#34;&#34;&#34; 
+    Function that count throws types for all players
+
+    Returns
+    -------
+    df: pandas dataframe
+        players x types of throws (pass, dump, huck, swing, throwaway, dish)
+
+    Example
+    -------
+
+    &#34;&#34;&#34;
+    # get events
+    home_events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+    away_events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+     
+
+    # get players id
+    players = self.get_players_metadata()
+    players = players[[&#39;id&#39;, &#39;player.first_name&#39;, &#39;player.last_name&#39;, 
+        &#39;player.ext_player_id&#39;]]
+
+    # initialize df
+    type_of_throws = [&#39;pass&#39;, &#39;huck&#39;, &#39;swing&#39;, &#39;dump&#39;, &#39;dish&#39;, &#39;throwaway&#39;, &#39;drop&#39;]
+    freq = [[0 for _ in range(len(type_of_throws))] for _ in range(len(players))]
+    df = pd.DataFrame(freq, columns=type_of_throws)
+    df[&#39;player&#39;] = list(players[&#39;player.ext_player_id&#39;])
+
+    # reorder columns
+    cols = df.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df = df[cols]
+
+    # count throw freq
+    self._count_throw_frequency(home_events, players, df)
+    self._count_throw_frequency(away_events, players, df)
+
+
+    # count total
+    df[&#39;total&#39;] = df.sum(axis=1)
+
+    return df</code></pre>
+</details>
+</dd>
+<dt id="audl.stats.endpoints.gamestats.GameStats.get_thrower_receiver_count"><code class="name flex">
+<span>def <span class="ident">get_thrower_receiver_count</span></span>(<span>self, is_home)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function that returns the thrower-receiver count only if throw was
+successful. Useful to view players chemistry</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>is_home</code></strong> :&ensp;<code>bool</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>df</code></strong> :&ensp;<code>pandas dataframe</code></dt>
+<dd>players x players: +1 if thrower attempted a pass to receiver</dd>
+</dl>
+<h2 id="example">Example</h2></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_thrower_receiver_count(self, is_home):
+    &#34;&#34;&#34; 
+    Function that returns the thrower-receiver count only if throw was 
+    successful. Useful to view players chemistry
+
+    Parameters
+    ----------
+    is_home: bool
+
+    Returns
+    -------
+    df: pandas dataframe
+        players x players: +1 if thrower attempted a pass to receiver
+
+    Example
+    -------
+    &#34;&#34;&#34;
+    if is_home: 
+        events = json.loads(self.json[&#39;tsgHome&#39;][&#39;events&#39;])
+        players = pd.json_normalize(self.json[&#39;rostersHome&#39;])
+    else: 
+        events = json.loads(self.json[&#39;tsgAway&#39;][&#39;events&#39;])
+        players = pd.json_normalize(self.json[&#39;rostersAway&#39;])
+
+    # initialize df
+    list_players = list(players[&#39;player.ext_player_id&#39;])
+    freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+    df = pd.DataFrame(freq, columns=list_players)
+    df[&#39;player&#39;] = list_players
+
+    # reorder columns
+    cols = df.columns.tolist()
+    cols = cols[-1:] + cols[:-1]
+    df = df[cols]
+
+    # count thrower-receiver freq 
+    self._count_thrower_receiver(events, players, df)
+
+    # count total throws
+    df[&#39;total&#39;] = df.sum(axis=1)
+
+    return df</code></pre>
 </details>
 </dd>
 <dt id="audl.stats.endpoints.gamestats.GameStats.print_team_events"><code class="name flex">
@@ -1883,7 +2807,10 @@ are not playing)</p>
                     receiver = players[players[&#39;id&#39;] == int(row[&#39;r&#39;])][&#39;player.ext_player_id&#39;].tolist()[0]
                 except: 
                     receiver = &#39;NaN&#39;
-                print(f&#34;t: {t}; r: {receiver}&#34;)
+                if t in [3,19,20,22]:
+                    print(f&#34;t: {t}; r: {receiver}; x: {row[&#39;x&#39;]}; y: {row[&#39;y&#39;]}&#34;)
+                else: 
+                    print(f&#34;t: {t}; r: {receiver}&#34;)
             elif t in [14, 15, 42, 43]:
                 # print s
                 print(f&#34;t: {t}; s: {row[&#39;s&#39;]}&#34;)
@@ -1914,14 +2841,19 @@ are not playing)</p>
 <ul class="">
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_boxscores" href="#audl.stats.endpoints.gamestats.GameStats.get_boxscores">get_boxscores</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_events" href="#audl.stats.endpoints.gamestats.GameStats.get_events">get_events</a></code></li>
+<li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_events_sequential" href="#audl.stats.endpoints.gamestats.GameStats.get_events_sequential">get_events_sequential</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_game_metadata" href="#audl.stats.endpoints.gamestats.GameStats.get_game_metadata">get_game_metadata</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_lineup_by_points" href="#audl.stats.endpoints.gamestats.GameStats.get_lineup_by_points">get_lineup_by_points</a></code></li>
+<li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_lineup_frequency" href="#audl.stats.endpoints.gamestats.GameStats.get_lineup_frequency">get_lineup_frequency</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_players_metadata" href="#audl.stats.endpoints.gamestats.GameStats.get_players_metadata">get_players_metadata</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_point_results" href="#audl.stats.endpoints.gamestats.GameStats.get_point_results">get_point_results</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_roster_stats" href="#audl.stats.endpoints.gamestats.GameStats.get_roster_stats">get_roster_stats</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_scores" href="#audl.stats.endpoints.gamestats.GameStats.get_scores">get_scores</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_team_stats" href="#audl.stats.endpoints.gamestats.GameStats.get_team_stats">get_team_stats</a></code></li>
+<li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_teamates_selection" href="#audl.stats.endpoints.gamestats.GameStats.get_teamates_selection">get_teamates_selection</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_teams_metadata" href="#audl.stats.endpoints.gamestats.GameStats.get_teams_metadata">get_teams_metadata</a></code></li>
+<li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_throw_selection" href="#audl.stats.endpoints.gamestats.GameStats.get_throw_selection">get_throw_selection</a></code></li>
+<li><code><a title="audl.stats.endpoints.gamestats.GameStats.get_thrower_receiver_count" href="#audl.stats.endpoints.gamestats.GameStats.get_thrower_receiver_count">get_thrower_receiver_count</a></code></li>
 <li><code><a title="audl.stats.endpoints.gamestats.GameStats.print_team_events" href="#audl.stats.endpoints.gamestats.GameStats.print_team_events">print_team_events</a></code></li>
 </ul>
 </li>

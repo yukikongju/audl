@@ -26,7 +26,9 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_quarter(scoring_time):
+<pre><code class="python">import math
+
+def get_quarter(scoring_time):
     &#34;&#34;&#34; 
     Function that returns quarter based on scoring time
 
@@ -57,7 +59,72 @@
         if scoring_time &lt; end_time:
             return quarter
 
-    return &#39;OT2&#39;</code></pre>
+    return &#39;OT2&#39;
+
+def get_throw_type(x1, y1, x2, y2, event_type): # FIXME: dish?
+    &#34;&#34;&#34; 
+    Function that returns throwing type from coordinates
+
+    Parameters
+    ----------
+    x1, x2: int
+        distance in x-axis in meters
+    y1, y2: int
+        distance in y-axis in meters
+
+    Returns 
+    -------
+    throwing_type: string
+        pass, huck, swing, dump, dish, throwaway, drop
+
+    Notes
+    -----
+        What&#39;s the difference between swing and dish
+    &#34;&#34;&#34;
+    x, y = x2 - x1, y2 - y1
+    dist = math.sqrt(x**2 + y**2)
+    #  angle = math.sin(x/y)
+
+    if event_type == 8:
+        return &#34;throwaway&#34;
+    elif event_type == 19:
+        return &#34;drop&#34;
+    elif dist &gt;= 40:
+        return &#34;huck&#34;
+    elif y &lt;= 0: 
+        return &#34;dump&#34;
+    elif y &lt;= 5: 
+        return &#34;swing&#34;
+    else: 
+        return &#34;pass&#34;
+
+
+def get_throwing_distance(x1, y1, x2, y2):
+    &#34;&#34;&#34; 
+    Function that return distance from thrower and receiver
+
+    Parameters
+    ----------
+    x1, x2: int
+        distance in x-axis in meters
+    y1, y2: int
+        distance in y-axis in meters
+
+    Returns 
+    -------
+    distance: double
+        distance between thrower and receiver
+    &#34;&#34;&#34;
+    x, y = x2 - x1, y2 - y1
+    return  math.sqrt(x**2 + y**2)
+    
+def get_throw_angle(x1, y1, x2, y2):
+    &#34;&#34;&#34; 
+    Function that return throwing angle
+    &#34;&#34;&#34;
+    x, y = x2 - x1, y2 - y1
+    return math.sin(x/y)
+    </code></pre>
 </details>
 </section>
 <section>
@@ -126,6 +193,122 @@ time when point was scored in second</p>
     return &#39;OT2&#39;</code></pre>
 </details>
 </dd>
+<dt id="audl.stats.static.utils.get_throw_angle"><code class="name flex">
+<span>def <span class="ident">get_throw_angle</span></span>(<span>x1, y1, x2, y2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function that return throwing angle</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_throw_angle(x1, y1, x2, y2):
+    &#34;&#34;&#34; 
+    Function that return throwing angle
+    &#34;&#34;&#34;
+    x, y = x2 - x1, y2 - y1
+    return math.sin(x/y)</code></pre>
+</details>
+</dd>
+<dt id="audl.stats.static.utils.get_throw_type"><code class="name flex">
+<span>def <span class="ident">get_throw_type</span></span>(<span>x1, y1, x2, y2, event_type)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function that returns throwing type from coordinates</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>x1</code></strong>, <strong><code>x2</code></strong> :&ensp;<code>int</code></dt>
+<dd>distance in x-axis in meters</dd>
+<dt><strong><code>y1</code></strong>, <strong><code>y2</code></strong> :&ensp;<code>int</code></dt>
+<dd>distance in y-axis in meters</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>throwing_type: string
+pass, huck, swing, dump, dish, throwaway, drop</p>
+<h2 id="notes">Notes</h2>
+<pre><code>What's the difference between swing and dish
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_throw_type(x1, y1, x2, y2, event_type): # FIXME: dish?
+    &#34;&#34;&#34; 
+    Function that returns throwing type from coordinates
+
+    Parameters
+    ----------
+    x1, x2: int
+        distance in x-axis in meters
+    y1, y2: int
+        distance in y-axis in meters
+
+    Returns 
+    -------
+    throwing_type: string
+        pass, huck, swing, dump, dish, throwaway, drop
+
+    Notes
+    -----
+        What&#39;s the difference between swing and dish
+    &#34;&#34;&#34;
+    x, y = x2 - x1, y2 - y1
+    dist = math.sqrt(x**2 + y**2)
+    #  angle = math.sin(x/y)
+
+    if event_type == 8:
+        return &#34;throwaway&#34;
+    elif event_type == 19:
+        return &#34;drop&#34;
+    elif dist &gt;= 40:
+        return &#34;huck&#34;
+    elif y &lt;= 0: 
+        return &#34;dump&#34;
+    elif y &lt;= 5: 
+        return &#34;swing&#34;
+    else: 
+        return &#34;pass&#34;</code></pre>
+</details>
+</dd>
+<dt id="audl.stats.static.utils.get_throwing_distance"><code class="name flex">
+<span>def <span class="ident">get_throwing_distance</span></span>(<span>x1, y1, x2, y2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function that return distance from thrower and receiver</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>x1</code></strong>, <strong><code>x2</code></strong> :&ensp;<code>int</code></dt>
+<dd>distance in x-axis in meters</dd>
+<dt><strong><code>y1</code></strong>, <strong><code>y2</code></strong> :&ensp;<code>int</code></dt>
+<dd>distance in y-axis in meters</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>distance: double
+distance between thrower and receiver</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_throwing_distance(x1, y1, x2, y2):
+    &#34;&#34;&#34; 
+    Function that return distance from thrower and receiver
+
+    Parameters
+    ----------
+    x1, x2: int
+        distance in x-axis in meters
+    y1, y2: int
+        distance in y-axis in meters
+
+    Returns 
+    -------
+    distance: double
+        distance between thrower and receiver
+    &#34;&#34;&#34;
+    x, y = x2 - x1, y2 - y1
+    return  math.sqrt(x**2 + y**2)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -145,6 +328,9 @@ time when point was scored in second</p>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="audl.stats.static.utils.get_quarter" href="#audl.stats.static.utils.get_quarter">get_quarter</a></code></li>
+<li><code><a title="audl.stats.static.utils.get_throw_angle" href="#audl.stats.static.utils.get_throw_angle">get_throw_angle</a></code></li>
+<li><code><a title="audl.stats.static.utils.get_throw_type" href="#audl.stats.static.utils.get_throw_type">get_throw_type</a></code></li>
+<li><code><a title="audl.stats.static.utils.get_throwing_distance" href="#audl.stats.static.utils.get_throwing_distance">get_throwing_distance</a></code></li>
 </ul>
 </li>
 </ul>

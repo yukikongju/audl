@@ -174,6 +174,9 @@ scoring_time = game._get_scoring_time()
 boxscores = game.get_boxscores()
 events = game.get_events()
 throw_selection = game.get_throw_selection()
+thrower_receiver_count = game.get_thrower_receiver_count(True)
+lineup = game.get_lineup_frequency(True)
+teamates = game.get_teamates_selection('ataylor', True)
 
 # print game events
 game.print_team_events(True)
