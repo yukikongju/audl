@@ -9,6 +9,8 @@ from audl.stats.endpoints._base import Endpoint
 #  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&page=1&year=2021
 #  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&page=1&year=2021&team=cascades
 
+#  new: https://www.backend.audlstats.com/web-api/team-game-stats?limit=20&page=1&year=2021&team=cascades
+
 
 class TeamGameStatsEndpoint(Endpoint):
 
@@ -33,7 +35,8 @@ class TeamGameStatsEndpoint(Endpoint):
 
         """
 
-        super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20")
+        #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20")
+        super().__init__("https://www.backend.audlstats.com/web-api/team-game-stats?limit=20")
         self.season = season
         self.team = team
 

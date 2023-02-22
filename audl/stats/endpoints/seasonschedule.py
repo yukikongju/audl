@@ -10,13 +10,15 @@ from bs4 import BeautifulSoup
 from audl.stats.endpoints._base import Endpoint
 
 #  https://audl-stat-server.herokuapp.com/web-api/games?limit=10&years=2022&teamID=alleycats
+#  new: https://www.backend.audlstats.com/web-api/games?limit=10&years=2022&teamID=alleycats
 
 
 class ScheduleEndpoint(Endpoint):
 
     def __init__(self):
         ""
-        super().__init__("https://audl-stat-server.herokuapp.com/web-api/games?limit=10")
+        #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/games?limit=10")
+        super().__init__("https://www.backend.audlstats.com/web-api/games?limit=10")
 
     def _get_prefix_url(self):
         pass
@@ -123,4 +125,13 @@ class TeamSeasonAgainstOpponentSchedule(ScheduleEndpoint):
 
     def _get_prefix_url(self):
         return f"{self.base_url}&years={self.season}&teamID={self.team}&opposingTeamID={self.opponent}"
+
+#  --------------------------------------------------------------------------
+
+def main():
+    schedule = SeasonSchedule(2022)
+    print(schedule.get_schedule())
+
+if __name__ == "__main__":
+    main()
 

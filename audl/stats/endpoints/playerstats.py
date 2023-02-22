@@ -26,6 +26,9 @@ class PlayerStats(Endpoint):
 #  https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&year=2019&per=possessions&team=aviators
 #  https://theaudl.com/stats/player-stats?page=2&per=possessions&team=aviators&year=2019
 
+#  new: https://www.backend.audlstats.com/web-api/player-stats?limit=20
+
+
     def __init__(self, season, per, team):
         """ 
         Parameters
@@ -47,7 +50,10 @@ class PlayerStats(Endpoint):
         self.season = season
         self.per = per
         self.team = team
-        super().__init__('https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20')
+        #  super().__init__('https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20')
+        super().__init__('https://www.backend.audlstats.com/web-api/player-stats?limit=20')
+
+
 
     def fetch_table(self, show_message=False):
         """
@@ -102,7 +108,7 @@ class PlayerStats(Endpoint):
         Examples
         --------
         >>> PlayerStats(2019, 'possessions', 'aviators')._get_url(3)
-        >>> https://theaudl.com/stats/player-stats?page=3&per=possessions&team=aviators&year=2019
+        >>> https://www.backend.audlstats.com/stats/player-stats?page=3&per=possessions&team=aviators&year=2019
 
 
         """
@@ -181,4 +187,12 @@ class PlayerStats(Endpoint):
             print('An error has occured when saving the file as csv')
         return flag 
 
+#  -----------------------------------------------------------------------------
 
+def main():
+    stats = PlayerStats(2022, 'game', 'aviators')
+    print(stats.fetch_table())
+    
+
+if __name__ == "__main__":
+    main()
