@@ -16,4 +16,4 @@ pip:
 	rm -r dist/
 	rm -r audl.egg-info/ 
 	python3 -m build 
-	jupyter nbconvert --to notebook --inplace --execute examples/*.ipynb
+	# jupyter nbconvert --to notebook --inplace --execute examples/*.ipynb

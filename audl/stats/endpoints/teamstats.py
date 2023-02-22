@@ -87,11 +87,17 @@ class TeamStats(Endpoint):
         is_per_game = 'true' if self.per == 'game' else 'false' 
         is_opponent = 'true' if self.team == 'opponent' else 'false'
         if self.season == 'career':
-            return f"https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&perGame={is_per_game}&opponent={is_opponent}"
+            return f"https://www.backend.audlstats.com/web-api/team-stats?limit=50&perGame={is_per_game}&opponent={is_opponent}"
         else: 
-            return f"https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&year={self.season}&perGame={is_per_game}&opponent={is_opponent}"
+            return f"https://www.backend.audlstats.com/web-api/team-stats?limit=50&year={self.season}&perGame={is_per_game}&opponent={is_opponent}"
 
-        
+def main():
+    team = TeamStats(2022, 'total', 'team')
+    print(team.get_table())
+    
+
+if __name__ == "__main__":
+    main()
 
 
 
