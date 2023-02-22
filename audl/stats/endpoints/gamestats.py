@@ -17,13 +17,14 @@ from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_di
 #  from audl.stats.library.parameters import team_roster_columns_name
 #  from audl.stats.library.parameters import HerokuPlay
 
-#  https://audl-stat-server.herokuapp.com/stats-pages/game/2022-06-11-TOR-MTL
+#  old: https://audl-stat-server.herokuapp.com/stats-pages/game/2022-06-11-TOR-MTL
+#  new: https://www.backend.audlstats.com/stats-pages/game/2022-07-31-DET-MIN
 
 
 class GameStats(Endpoint):
 
     def __init__(self, game_id: str):
-        super().__init__("https://audl-stat-server.herokuapp.com/stats-pages/game/")
+        super().__init__("https://www.backend.audlstats.com/stats-pages/game/")
         self.game_id = game_id
         self.json = self._get_json_from_url()
         self.home_team = self._get_home_team_ext_id()
@@ -234,12 +235,14 @@ class GameStats(Endpoint):
         roster_stats = pd.DataFrame()
         for player_id in roster_ext_ids:
             # get all games played in game's season
+            print(player_id)
             player = PlayerProfile(player_id)
             year = self._get_season_from_game_id()
-            games = player.get_season_games_stats(year)
+            games = player.get_season_games_stats(year) # FIXME: game info is not there anymore
+            print(games)
 
             # filter by gameID and add player_id, city_id
-            player_stat = games[games['gameID'] == self.game_id]
+            player_stat = games[games['gameID'] == self.game_id] 
             player_stat['ext_player_id'] = player_id
             # FIXME: use .iloc instead #  is_home = player_stat.at[0,'isHome']
             is_home = player_stat['isHome'].values[0]
@@ -300,7 +303,7 @@ class GameStats(Endpoint):
         >>> 2022
 
         """
-        return self.game_id.split('-')[0]
+        return int(self.game_id.split('-')[0])
 
 
         
@@ -934,4 +937,17 @@ class GameStats(Endpoint):
             else: 
                 print(f"t: {t}")
 
+def main():
+    game = GameStats('2022-07-31-DET-MIN')
+    #  print(game.get_boxscores()) # works
+    #  print(game.get_events()) # works
+    #  print(game.get_game_metadata()) # works
+    #  print(game.get_players_metadata()) # works
+    #  print(game.get_point_results()) 
+    #  print(game.get_teams_metadata()) # works
+    #  print(game.get_team_stats()) # works
+    print(game.get_roster_stats()) # FIXME
+    
 
+if __name__ == "__main__":
+    main()

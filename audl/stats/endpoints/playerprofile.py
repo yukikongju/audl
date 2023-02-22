@@ -12,13 +12,16 @@ from audl.stats.static.constants import FIRST_SEASON_YEAR
 #  https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
 #  https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&year=2022
 
-#  TODO: refractor into class
+#  new: https://www.backend.audlstats.com/web-api/roster-stats-for-player?playerID=abartlett
+#  new: https://www.backend.audlstats.com/web-api/roster-game-stats-for-player?playerID=wbrandt&year=2022
+
 
 
 class PlayerProfile(Endpoint):
 
     def __init__(self, player_id: str):
-        super().__init__("https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=")
+        #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=")
+        super().__init__("https://www.backend.audlstats.com/web-api/roster-stats-for-player?playerID=")
         self.player_id = player_id
 
 
@@ -122,7 +125,8 @@ class PlayerProfile(Endpoint):
 
         """
         try:
-            url = f"https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
+            #  url = f"https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
+            url = f"https://www.backend.audlstats.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
             results = requests.get(url).json()
             df = pd.DataFrame(results['stats'])
             df['player_ext_id'] = self.player_id
@@ -153,3 +157,19 @@ class PlayerProfile(Endpoint):
         df['player_ext_id'] = self.player_id
         return df
 
+#  ------------------------------------------------------------------------
+
+
+def main():
+    #  player = PlayerProfile('bbergmeie')
+    player = PlayerProfile('wbrandt')
+
+    #  print(player.get_career_games_stats())
+    print(player.get_career_stats())
+    #  print(player.get_playoffs_career())
+    #  print(player.get_regular_seasons_career())
+    #  print(player.get_season_games_stats(2022))
+    
+
+if __name__ == "__main__":
+    main()
