@@ -9,8 +9,8 @@ from datetime import datetime
 from audl.stats.endpoints._base import Endpoint
 from audl.stats.static.constants import FIRST_SEASON_YEAR
 
-#  https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
-#  https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&year=2022
+#  old: https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
+#  old: https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&year=2022
 
 #  new: https://www.backend.audlstats.com/web-api/roster-stats-for-player?playerID=abartlett
 #  new: https://www.backend.audlstats.com/web-api/roster-game-stats-for-player?playerID=wbrandt&year=2022

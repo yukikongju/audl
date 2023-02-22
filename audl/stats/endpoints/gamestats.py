@@ -12,11 +12,6 @@ from audl.stats.endpoints.playerprofile import PlayerProfile
 from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
 from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_distance
 
-
-#  from audl.stats.library.parameters import quarters_clock_dict
-#  from audl.stats.library.parameters import team_roster_columns_name
-#  from audl.stats.library.parameters import HerokuPlay
-
 #  old: https://audl-stat-server.herokuapp.com/stats-pages/game/2022-06-11-TOR-MTL
 #  new: https://www.backend.audlstats.com/stats-pages/game/2022-07-31-DET-MIN
 
@@ -946,7 +941,7 @@ def main():
     #  print(game.get_point_results()) 
     #  print(game.get_teams_metadata()) # works
     #  print(game.get_team_stats()) # works
-    print(game.get_roster_stats()) # FIXME
+    print(game.get_roster_stats()) # works
     
 
 if __name__ == "__main__":

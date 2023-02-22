@@ -14,6 +14,8 @@
 - [ ] Utils
     - [ ] Get Type of throw from x, y coordinates
     - [ ] Get previous thrower
+- [ ] Game Events
+    - [ ] Thrower and Receiver
 
 TODOs:
  - [ ] Create database from web scrapper (sql, database, workflows)

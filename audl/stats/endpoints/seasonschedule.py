@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 from audl.stats.endpoints._base import Endpoint
 
-#  https://audl-stat-server.herokuapp.com/web-api/games?limit=10&years=2022&teamID=alleycats
+#  old: https://audl-stat-server.herokuapp.com/web-api/games?limit=10&years=2022&teamID=alleycats
 #  new: https://www.backend.audlstats.com/web-api/games?limit=10&years=2022&teamID=alleycats
 
 

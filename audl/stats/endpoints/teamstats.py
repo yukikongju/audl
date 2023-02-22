@@ -6,7 +6,7 @@ import requests
 from audl.stats.endpoints._base import Endpoint
 
 
-#  https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&year=2019&perGame=true&opponent=true
+#  old: https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&year=2019&perGame=true&opponent=true
 #  new: https://www.backend.audlstats.com/web-api/team-stats?limit=50
 
 class TeamStats(Endpoint):

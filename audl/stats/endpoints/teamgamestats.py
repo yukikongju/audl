@@ -5,9 +5,9 @@ import pandas as pd
 import requests
 from audl.stats.endpoints._base import Endpoint
 
-#  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20
-#  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&page=1&year=2021
-#  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&page=1&year=2021&team=cascades
+# old: https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20
+# old: https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&page=1&year=2021
+# old: https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&page=1&year=2021&team=cascades
 
 #  new: https://www.backend.audlstats.com/web-api/team-game-stats?limit=20&page=1&year=2021&team=cascades
 

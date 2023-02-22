@@ -6,7 +6,11 @@ import requests
 import sys
 
 from audl.stats.endpoints._base import Endpoint
-#  from audl.stats.library.parameters import FileName
+
+#  old: https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&year=2019&per=possessions&team=aviators
+#  old: https://theaudl.com/stats/player-stats?page=2&per=possessions&team=aviators&year=2019
+
+#  new: https://www.backend.audlstats.com/web-api/player-stats?limit=20
 
 
 class PlayerStats(Endpoint):
@@ -22,12 +26,6 @@ class PlayerStats(Endpoint):
         team: string
             choices: ['all', 'aviators', ..., '<ext_team_id>']
     """
-
-#  https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&year=2019&per=possessions&team=aviators
-#  https://theaudl.com/stats/player-stats?page=2&per=possessions&team=aviators&year=2019
-
-#  new: https://www.backend.audlstats.com/web-api/player-stats?limit=20
-
 
     def __init__(self, season, per, team):
         """ 
@@ -155,7 +153,6 @@ class PlayerStats(Endpoint):
         return players
 
 
-    # TODO: create Download class
     def download_stats_as_dataframe(self, file_path_name, show_message=True):
         """ 
         Function that download players stats as csv file
