@@ -34,7 +34,11 @@ import requests
 import sys
 
 from audl.stats.endpoints._base import Endpoint
-#  from audl.stats.library.parameters import FileName
+
+#  old: https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&amp;year=2019&amp;per=possessions&amp;team=aviators
+#  old: https://theaudl.com/stats/player-stats?page=2&amp;per=possessions&amp;team=aviators&amp;year=2019
+
+#  new: https://www.backend.audlstats.com/web-api/player-stats?limit=20
 
 
 class PlayerStats(Endpoint):
@@ -50,9 +54,6 @@ class PlayerStats(Endpoint):
         team: string
             choices: [&#39;all&#39;, &#39;aviators&#39;, ..., &#39;&lt;ext_team_id&gt;&#39;]
     &#34;&#34;&#34;
-
-#  https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&amp;year=2019&amp;per=possessions&amp;team=aviators
-#  https://theaudl.com/stats/player-stats?page=2&amp;per=possessions&amp;team=aviators&amp;year=2019
 
     def __init__(self, season, per, team):
         &#34;&#34;&#34; 
@@ -75,7 +76,10 @@ class PlayerStats(Endpoint):
         self.season = season
         self.per = per
         self.team = team
-        super().__init__(&#39;https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&#39;)
+        #  super().__init__(&#39;https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&#39;)
+        super().__init__(&#39;https://www.backend.audlstats.com/web-api/player-stats?limit=20&#39;)
+
+
 
     def fetch_table(self, show_message=False):
         &#34;&#34;&#34;
@@ -130,7 +134,7 @@ class PlayerStats(Endpoint):
         Examples
         --------
         &gt;&gt;&gt; PlayerStats(2019, &#39;possessions&#39;, &#39;aviators&#39;)._get_url(3)
-        &gt;&gt;&gt; https://theaudl.com/stats/player-stats?page=3&amp;per=possessions&amp;team=aviators&amp;year=2019
+        &gt;&gt;&gt; https://www.backend.audlstats.com/stats/player-stats?page=3&amp;per=possessions&amp;team=aviators&amp;year=2019
 
 
         &#34;&#34;&#34;
@@ -177,7 +181,6 @@ class PlayerStats(Endpoint):
         return players
 
 
-    # TODO: create Download class
     def download_stats_as_dataframe(self, file_path_name, show_message=True):
         &#34;&#34;&#34; 
         Function that download players stats as csv file
@@ -207,7 +210,17 @@ class PlayerStats(Endpoint):
             flag = True
         except: 
             print(&#39;An error has occured when saving the file as csv&#39;)
-        return flag </code></pre>
+        return flag 
+
+#  -----------------------------------------------------------------------------
+
+def main():
+    stats = PlayerStats(2022, &#39;game&#39;, &#39;aviators&#39;)
+    print(stats.fetch_table())
+    
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
 </details>
 </section>
 <section>
@@ -215,6 +228,23 @@ class PlayerStats(Endpoint):
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="audl.stats.endpoints.playerstats.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    stats = PlayerStats(2022, &#39;game&#39;, &#39;aviators&#39;)
+    print(stats.fetch_table())</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
@@ -266,9 +296,6 @@ based on [Season], [Per], [Team]</p>
             choices: [&#39;all&#39;, &#39;aviators&#39;, ..., &#39;&lt;ext_team_id&gt;&#39;]
     &#34;&#34;&#34;
 
-#  https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&amp;year=2019&amp;per=possessions&amp;team=aviators
-#  https://theaudl.com/stats/player-stats?page=2&amp;per=possessions&amp;team=aviators&amp;year=2019
-
     def __init__(self, season, per, team):
         &#34;&#34;&#34; 
         Parameters
@@ -290,7 +317,10 @@ based on [Season], [Per], [Team]</p>
         self.season = season
         self.per = per
         self.team = team
-        super().__init__(&#39;https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&#39;)
+        #  super().__init__(&#39;https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20&#39;)
+        super().__init__(&#39;https://www.backend.audlstats.com/web-api/player-stats?limit=20&#39;)
+
+
 
     def fetch_table(self, show_message=False):
         &#34;&#34;&#34;
@@ -345,7 +375,7 @@ based on [Season], [Per], [Team]</p>
         Examples
         --------
         &gt;&gt;&gt; PlayerStats(2019, &#39;possessions&#39;, &#39;aviators&#39;)._get_url(3)
-        &gt;&gt;&gt; https://theaudl.com/stats/player-stats?page=3&amp;per=possessions&amp;team=aviators&amp;year=2019
+        &gt;&gt;&gt; https://www.backend.audlstats.com/stats/player-stats?page=3&amp;per=possessions&amp;team=aviators&amp;year=2019
 
 
         &#34;&#34;&#34;
@@ -392,7 +422,6 @@ based on [Season], [Per], [Team]</p>
         return players
 
 
-    # TODO: create Download class
     def download_stats_as_dataframe(self, file_path_name, show_message=True):
         &#34;&#34;&#34; 
         Function that download players stats as csv file
@@ -558,6 +587,11 @@ based on [Season], [Per], [Team]</p>
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="audl.stats.endpoints" href="index.html">audl.stats.endpoints</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="audl.stats.endpoints.playerstats.main" href="#audl.stats.endpoints.playerstats.main">main</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

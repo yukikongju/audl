@@ -34,7 +34,8 @@ import requests
 from audl.stats.endpoints._base import Endpoint
 
 
-#  https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&amp;year=2019&amp;perGame=true&amp;opponent=true
+#  old: https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&amp;year=2019&amp;perGame=true&amp;opponent=true
+#  new: https://www.backend.audlstats.com/web-api/team-stats?limit=50
 
 class TeamStats(Endpoint):
 
@@ -57,7 +58,9 @@ class TeamStats(Endpoint):
 
         &#34;&#34;&#34;
 
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/team-stats?limit=50&#34;)
+
         self.season = season
         self.per = per
         self.team = team
@@ -171,7 +174,9 @@ class TeamStats(Endpoint):
 
         &#34;&#34;&#34;
 
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/team-stats?limit=50&#34;)
+
         self.season = season
         self.per = per
         self.team = team

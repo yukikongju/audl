@@ -37,16 +37,19 @@ from datetime import datetime
 from audl.stats.endpoints._base import Endpoint
 from audl.stats.static.constants import FIRST_SEASON_YEAR
 
-#  https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
-#  https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&amp;year=2022
+#  old: https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=cbrock
+#  old: https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID=cbrock&amp;year=2022
 
-#  TODO: refractor into class
+#  new: https://www.backend.audlstats.com/web-api/roster-stats-for-player?playerID=abartlett
+#  new: https://www.backend.audlstats.com/web-api/roster-game-stats-for-player?playerID=wbrandt&amp;year=2022
+
 
 
 class PlayerProfile(Endpoint):
 
     def __init__(self, player_id: str):
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/roster-stats-for-player?playerID=&#34;)
         self.player_id = player_id
 
 
@@ -150,7 +153,8 @@ class PlayerProfile(Endpoint):
 
         &#34;&#34;&#34;
         try:
-            url = f&#34;https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
+            #  url = f&#34;https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
+            url = f&#34;https://www.backend.audlstats.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
             results = requests.get(url).json()
             df = pd.DataFrame(results[&#39;stats&#39;])
             df[&#39;player_ext_id&#39;] = self.player_id
@@ -179,7 +183,24 @@ class PlayerProfile(Endpoint):
             df_season = self.get_season_games_stats(year)
             df = df.append(df_season)
         df[&#39;player_ext_id&#39;] = self.player_id
-        return df</code></pre>
+        return df
+
+#  ------------------------------------------------------------------------
+
+
+def main():
+    #  player = PlayerProfile(&#39;bbergmeie&#39;)
+    player = PlayerProfile(&#39;wbrandt&#39;)
+
+    #  print(player.get_career_games_stats())
+    print(player.get_career_stats())
+    #  print(player.get_playoffs_career())
+    #  print(player.get_regular_seasons_career())
+    #  print(player.get_season_games_stats(2022))
+    
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
 </details>
 </section>
 <section>
@@ -187,6 +208,29 @@ class PlayerProfile(Endpoint):
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="audl.stats.endpoints.playerprofile.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    #  player = PlayerProfile(&#39;bbergmeie&#39;)
+    player = PlayerProfile(&#39;wbrandt&#39;)
+
+    #  print(player.get_career_games_stats())
+    print(player.get_career_stats())
+    #  print(player.get_playoffs_career())
+    #  print(player.get_regular_seasons_career())
+    #  print(player.get_season_games_stats(2022))</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
@@ -204,7 +248,8 @@ class PlayerProfile(Endpoint):
 <pre><code class="python">class PlayerProfile(Endpoint):
 
     def __init__(self, player_id: str):
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/roster-stats-for-player?playerID=&#34;)
         self.player_id = player_id
 
 
@@ -308,7 +353,8 @@ class PlayerProfile(Endpoint):
 
         &#34;&#34;&#34;
         try:
-            url = f&#34;https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
+            #  url = f&#34;https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
+            url = f&#34;https://www.backend.audlstats.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
             results = requests.get(url).json()
             df = pd.DataFrame(results[&#39;stats&#39;])
             df[&#39;player_ext_id&#39;] = self.player_id
@@ -543,7 +589,8 @@ class PlayerProfile(Endpoint):
 
     &#34;&#34;&#34;
     try:
-        url = f&#34;https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
+        #  url = f&#34;https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
+        url = f&#34;https://www.backend.audlstats.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&amp;year={year}&#34;
         results = requests.get(url).json()
         df = pd.DataFrame(results[&#39;stats&#39;])
         df[&#39;player_ext_id&#39;] = self.player_id
@@ -567,6 +614,11 @@ class PlayerProfile(Endpoint):
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="audl.stats.endpoints" href="index.html">audl.stats.endpoints</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="audl.stats.endpoints.playerprofile.main" href="#audl.stats.endpoints.playerprofile.main">main</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

@@ -230,11 +230,11 @@ class GameStats(Endpoint):
         roster_stats = pd.DataFrame()
         for player_id in roster_ext_ids:
             # get all games played in game's season
-            print(player_id)
+            #  print(player_id)
             player = PlayerProfile(player_id)
             year = self._get_season_from_game_id()
             games = player.get_season_games_stats(year) # FIXME: game info is not there anymore
-            print(games)
+            #  print(games)
 
             # filter by gameID and add player_id, city_id
             player_stat = games[games['gameID'] == self.game_id] 
@@ -475,50 +475,114 @@ class GameStats(Endpoint):
         teams = pd.concat([home, away])
         return teams
 
-    def get_lineup_by_points(self):
+    def get_lineup_by_points(self): 
         """ 
         Function that returns lineup for each point played
 
         Returns
         -------
-        lineup: pandas.DataFrame
-            Dataframe with the following columns
-            - point (int): ith point played
-            - team_on_off (string): team on offense (ext_team_id)
-            - team_on_def (string): team on defense (ext_team_id)
-            - lineup_def (list): lineup in def (7 players)
-            - lineup_off (list): lineup in off (7 players)
-            - result (string): ext_team_id of team who won the point
-            - scorer (string): ext_player_id of person who scored the point
-            - assist (string): ext_player_id of person who assisted
-            - hockey (string): ext_player_id of person who made the hockey assist
+        points_results: json
+            [
+                {'point': 1,
+                'offensive_team': royal, 
+                'defensive_team': rush, 
+                'offensive_lineup': [1096, ...],
+                'defensive_lineup': [1056, ...],
+                'outcome': royal
+                }
+            ]
 
         Examples
         --------
         >>> GameStats('2022-06-11-TB-ATL').get_lineup_by_points()
         """
-        raise NotImplementedError("This function hasn't been implemented yet!")
+        # retrieve events from json
+        home_events = json.loads(self.json['tsgHome']['events'])
+        away_events = json.loads(self.json['tsgAway']['events'])
 
-    def get_point_results(self, point_events):
+        num_home_events = len(home_events)
+        num_away_events = len(away_events)
+        i, j = 0, 0
+
+
+        # find lineups index for home and away team
+        index_home, index_away = [], []
+        while i < num_home_events and j < num_away_events:
+            while i < num_home_events and home_events[i]['t'] not in [1, 2] : i += 1
+            while j < num_away_events and away_events[j]['t'] not in [1, 2] : j += 1
+
+            try:
+                index_home.append(i)
+                index_away.append(j)
+            except:
+                break
+
+            i += 1
+            j += 1
+
+        # generate json lineups
+        outcomes_home = [i-1 for i in index_home[1:]]
+        outcomes_away = [i-1 for i in index_away[1:]]
+        outcomes_home.append(num_home_events-2)
+        outcomes_away.append(num_away_events-2)
+
+        num_points = min(len(index_home), len(index_away), len(outcomes_home), len(outcomes_away))
+
+        # FIXME: why does winner team has one more entries than losing team
+        all_lineups = []
+        for i in range(num_points-1):
+            lineup_home = home_events[index_home[i]]['l']
+            lineup_away = away_events[index_away[i]]['l']
+
+            #  get outcome: t==21, t==22
+            home_outcome = home_events[outcomes_home[i]]['t']
+            if home_outcome == 21: # home lost point
+                outcome = self.away_team
+            elif home_outcome == 22: # home win
+                outcome = self.home_team
+            else:
+                outcome = 'incomplete'
+
+            point = i+1
+
+            if home_events[i]['t'] == 1: # home team starts in offense
+                lineup = {
+                        'point': point,
+                        'offense': self.home_team,
+                        'defense': self.away_team, 
+                        'lineup_offense': lineup_home,
+                        'lineup_defense': lineup_away,
+                        'outcome': outcome
+                }
+            else:
+                lineup = {
+                        'point': point,
+                        'offense': self.away_team,
+                        'defense': self.home_team, 
+                        'lineup_offense': lineup_away,
+                        'lineup_defense': lineup_home,
+                        'outcome': outcome
+                }
+
+            all_lineups.append(lineup)
+
+        return all_lineups
+
+
+
+    def get_point_results(self): 
         """ 
         Function that returns (events) in a given point for a given team
 
         Parameters
         ----------
-        point_events: json
-            json document with all events in a point
-            [
-                {'t': 20, 'r': 10266, 'x': 3.86, 'y': 66.18},
-                {'t': 20, 'r': 10264, 'x': 7.21, 'y': 77.11},
-                {'t': 20, 'r': 10255, 'x': -3.07, 'y': 95.77},
-            ], 
-
-        See Also
-        --------
+        None
 
         Returns
         -------
-        points_results: json
+
+
+        More:
             json doc with the following information
             - team_on_off (string): team on offense (ext_team_id)
             - team_on_def (string): team on defense (ext_team_id)
@@ -535,6 +599,7 @@ class GameStats(Endpoint):
 
         """
         raise NotImplementedError("This function hasn't been implemented yet!")
+        
 
     def get_events_sequential(self):
         """ 
@@ -570,6 +635,19 @@ class GameStats(Endpoint):
         # get events by points
         home_points = self._get_team_events_by_points(home_events)
         away_points = self._get_team_events_by_points(away_events)
+
+        events_dict = {'homeEvents': home_points, 'awayEvents': away_points}
+
+        return events_dict
+
+    def get_all_events(self):
+        """ 
+        Function that fetch all events (raw) for home and away team for each team
+        """
+
+        # retrieve events from json
+        home_events = json.loads(self.json['tsgHome']['events'])
+        away_events = json.loads(self.json['tsgAway']['events'])
 
         events_dict = {'homeEvents': home_points, 'awayEvents': away_points}
 
@@ -932,8 +1010,12 @@ class GameStats(Endpoint):
             else: 
                 print(f"t: {t}")
 
+#  ---------------------------------------------------------------------
+
 def main():
-    game = GameStats('2022-07-31-DET-MIN')
+    game_id = '2022-07-22-NY-PHI'
+    #  game_id = '2022-07-31-DET-MIN'
+    game = GameStats(game_id)
     #  print(game.get_boxscores()) # works
     #  print(game.get_events()) # works
     #  print(game.get_game_metadata()) # works
@@ -941,7 +1023,12 @@ def main():
     #  print(game.get_point_results()) 
     #  print(game.get_teams_metadata()) # works
     #  print(game.get_team_stats()) # works
-    print(game.get_roster_stats()) # works
+    #  print(game.get_roster_stats()) # works
+    lineups = game.get_lineup_by_points()
+    #  for lineup in lineups:
+    #      print(lineup)
+    #  print(lineups)
+    #  print(len(lineups))
     
 
 if __name__ == "__main__":

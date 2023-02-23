@@ -112,8 +112,9 @@ class HerokuPlay:
     OLineIndex = 1
     DLineIndex = 2
     Pull = 3
-    Block = 5
-    ThrowawayCaused = 8
+    #  Block = 5
+    PointIncompleteEndQuarterOffense = 5 #?
+    ThrowawayCaused = 8 # block
     Throwaway = 9
     EndOfQ1 = 23
     EndOfQ2 = 24

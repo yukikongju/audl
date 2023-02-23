@@ -33,9 +33,11 @@ import pandas as pd
 import requests
 from audl.stats.endpoints._base import Endpoint
 
-#  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20
-#  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&amp;page=1&amp;year=2021
-#  https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&amp;page=1&amp;year=2021&amp;team=cascades
+# old: https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20
+# old: https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&amp;page=1&amp;year=2021
+# old: https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&amp;page=1&amp;year=2021&amp;team=cascades
+
+#  new: https://www.backend.audlstats.com/web-api/team-game-stats?limit=20&amp;page=1&amp;year=2021&amp;team=cascades
 
 
 class TeamGameStatsEndpoint(Endpoint):
@@ -61,7 +63,8 @@ class TeamGameStatsEndpoint(Endpoint):
 
         &#34;&#34;&#34;
 
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/team-game-stats?limit=20&#34;)
         self.season = season
         self.team = team
 
@@ -281,7 +284,8 @@ class TeamSeasonGameStats(TeamGameStatsEndpoint):
 
         &#34;&#34;&#34;
 
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/team-game-stats?limit=20&#34;)
         self.season = season
         self.team = team
 

@@ -37,14 +37,16 @@ from bs4 import BeautifulSoup
 
 from audl.stats.endpoints._base import Endpoint
 
-#  https://audl-stat-server.herokuapp.com/web-api/games?limit=10&amp;years=2022&amp;teamID=alleycats
+#  old: https://audl-stat-server.herokuapp.com/web-api/games?limit=10&amp;years=2022&amp;teamID=alleycats
+#  new: https://www.backend.audlstats.com/web-api/games?limit=10&amp;years=2022&amp;teamID=alleycats
 
 
 class ScheduleEndpoint(Endpoint):
 
     def __init__(self):
         &#34;&#34;
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/games?limit=10&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/games?limit=10&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/games?limit=10&#34;)
 
     def _get_prefix_url(self):
         pass
@@ -150,7 +152,16 @@ class TeamSeasonAgainstOpponentSchedule(ScheduleEndpoint):
         self.opponent = opponent
 
     def _get_prefix_url(self):
-        return f&#34;{self.base_url}&amp;years={self.season}&amp;teamID={self.team}&amp;opposingTeamID={self.opponent}&#34;</code></pre>
+        return f&#34;{self.base_url}&amp;years={self.season}&amp;teamID={self.team}&amp;opposingTeamID={self.opponent}&#34;
+
+#  --------------------------------------------------------------------------
+
+def main():
+    schedule = SeasonSchedule(2022)
+    print(schedule.get_schedule())
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
 </details>
 </section>
 <section>
@@ -158,6 +169,23 @@ class TeamSeasonAgainstOpponentSchedule(ScheduleEndpoint):
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="audl.stats.endpoints.seasonschedule.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    schedule = SeasonSchedule(2022)
+    print(schedule.get_schedule())</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
@@ -214,7 +242,8 @@ class TeamSeasonAgainstOpponentSchedule(ScheduleEndpoint):
 
     def __init__(self):
         &#34;&#34;
-        super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/games?limit=10&#34;)
+        #  super().__init__(&#34;https://audl-stat-server.herokuapp.com/web-api/games?limit=10&#34;)
+        super().__init__(&#34;https://www.backend.audlstats.com/web-api/games?limit=10&#34;)
 
     def _get_prefix_url(self):
         pass
@@ -461,6 +490,11 @@ This function will be called from the children class</p>
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="audl.stats.endpoints" href="index.html">audl.stats.endpoints</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="audl.stats.endpoints.seasonschedule.main" href="#audl.stats.endpoints.seasonschedule.main">main</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
