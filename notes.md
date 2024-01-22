@@ -75,10 +75,9 @@ TODOs:
 ## How to ...
 
 
-
-
-
 **How to deploy pip package**
+
+Update: 2024-01-21. Need to get API token as described [here](https://pypi.org/manage/account/token/). 
 
 
 ```bash

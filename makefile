@@ -13,8 +13,8 @@ tests:
 	python3 -m unittests tests/stats/endpoints/*
 
 deploy:
-	rm -r dist/
-	rm -r audl.egg-info/ 
+	# rm -r dist/
+	# rm -r audl.egg-info/ 
 	python3 -m build 
 	twine upload dist/*
 
