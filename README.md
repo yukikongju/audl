@@ -102,6 +102,7 @@ throw_selection = game.get_throw_selection()
 thrower_receiver_count = game.get_thrower_receiver_count(True)
 lineup = game.get_lineup_frequency(True)
 teamates = game.get_teamates_selection('ataylor', True)
+df_throws = game.get_throws_dataframe()
 
 # print game events
 game.print_team_events(True)

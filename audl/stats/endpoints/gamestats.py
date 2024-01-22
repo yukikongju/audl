@@ -10,7 +10,7 @@ from audl.stats.endpoints._base import Endpoint
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
 from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
-from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_distance
+from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_distance 
 
 #  old: https://audl-stat-server.herokuapp.com/stats-pages/game/2022-06-11-TOR-MTL
 #  new: https://www.backend.audlstats.com/stats-pages/game/2022-07-31-DET-MIN
@@ -1010,6 +1010,196 @@ class GameStats(Endpoint):
             else: 
                 print(f"t: {t}")
 
+
+    def get_throws_dataframe(self):
+        """
+        Get dataframe describing throw selection with the following columns:
+
+        - game_id: str
+            > id of the game
+        - point: int
+            > ith point of the game
+        - thrower_id: int
+            > thrower's player id
+        - receiver_id: int
+            > receiver's player id
+        - throw_type: str
+            > type of throw => pass, dish, huck, swing, dump, stall
+        - throw_distance: float
+            > distance the disc was thrown
+        - throw_angle: float
+            > angle which the disc was thrown
+        - x: float
+            > lateral distance the disc was thrown
+        - y: float
+            > forward distance the disc was thrown
+        - x_field: float
+            > x-position of the disc on the field when the disc was caught
+        - y_field: float
+            > y-position of the disc on the field when the disc was caught
+        - thrower_full_name: str
+            > Full Name of the thrower
+        - receiver_full_name: str
+            > Full Name of the receiver
+        - team_ext_id: str
+            > id of team which made the throw
+        - thrower_ext_id: str
+            > thrower's external id. Usually has the nomencalture <last_name><firt_name_letter>
+        - receiver_ext_id: str
+            > receiver's external id. Usually has the nomencalture <last_name><firt_name_letter>
+        """
+        def compute_game_events(game_id, tsg_events):
+            " helper method "
+
+            output = []
+            for res in tsg_events:
+                point = res['point']
+                events = res['events']
+                #  print(point)
+
+                thrower_id = None
+                x_prev, y_prev = None, None
+                for event in events:
+                    t = event['t']
+                    #  print(event)
+                    if t == 3: # pull
+                        x = event['x']
+                        y = event['y']
+                        try: 
+                            r_id = int(event['r']) # FIXME: investigate why no r sometimes
+                            throw_dist = round(math.sqrt(x**2 + y**2), 3)
+                            row = [game_id, point, r_id, None, 'Pull', throw_dist, x, y, None, None, None] 
+                            output.append(row)
+                        except:
+                            print('check error')
+                            pass
+                    if t == 20: # get receiver, throwing_type, x, y
+                        x = event['x']
+                        y = event['y']
+                        r_id = int(event['r'])
+                        if thrower_id:
+                            receiver_id = r_id
+                            #  print(get_throw_type(x_prev, y_prev, x, y))
+                            throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = get_throw_type(x_prev, y_prev, x, y)
+                            row = [game_id, point, thrower_id, receiver_id, throw_type, throw_distance, x_delta, y_delta, x, y, angle_degrees]
+                            output.append(row)
+
+                        # updating thrower
+                        thrower_id = r_id
+                        x_prev, y_prev = x, y
+
+                    if t == 8: # throwaway
+                        x = event['x']
+                        y = event['y']
+                        throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = get_throw_type(x_prev, y_prev, x, y)
+                        row = [game_id, point, thrower_id, None, 'Throwaway', throw_distance, x_delta, y_delta, x, y, angle_degrees]
+                        output.append(row)
+                        thrower_id = None
+                    else:
+                        pass
+
+                #  print('---')
+
+            columns_names = ['game_id', 'point' ,'thrower_id', 'receiver_id', 'throw_type', 'throw_distance', 'x', 'y', 'x_field', 'y_field', 'angle_degrees']
+            df_throws = pd.DataFrame(output, columns=columns_names)
+            df_throws['receiver_id'] = df_throws['receiver_id'].astype('Int64')
+            df_throws['thrower_id'] = df_throws['thrower_id'].astype('Int64')
+            return df_throws
+
+        def compute_player_column_from_id(df_game_players, players_id, column_name):
+            team_external_ids = []
+            for player_id in players_id:
+                try:
+                    player_id = int(player_id)
+                    team_id = df_game_players.loc[df_game_players['id'] == player_id, column_name].values[0]
+                except:
+                    team_id = None
+                team_external_ids.append(team_id)
+            return team_external_ids
+
+        def compute_player_full_name_from_id(df_game_players, players_id):
+            players_full_name = []
+            for player_id in players_id:
+                try: 
+                    player_id = int(player_id)
+                    first_name = df_game_players.loc[df_game_players['id'] == player_id, 'player.first_name'].values[0]
+                    last_name = df_game_players.loc[df_game_players['id'] == player_id, 'player.last_name'].values[0]
+                    full_name = ' '.join([first_name, last_name])
+                except:
+                    full_name = None
+
+                players_full_name.append(full_name)
+
+
+        def get_throw_type(x1, y1, x2, y2):
+            """ 
+            Get complete information on the throw
+
+            - throwing_type: pass, dump, swing, huck, dish
+            - throw_side: right, left
+            - distance: float
+            - angle: float
+
+            """
+            # compute angle
+            x_delta, y_delta = x2 - x1, y2 - y1
+            throw_dist = math.sqrt(x_delta**2 + y_delta**2)
+            angle_degrees = math.degrees(math.atan(y_delta / (x_delta + 0.001)))
+
+            # compute throw_type
+            threshold_lateral = 15
+            threshold_vertical = 40
+            if (x_delta == 0.0) and (y_delta == 0.0):
+                throw_type = 'Stall'
+            elif -threshold_lateral <= angle_degrees <= threshold_lateral and y_delta <= 0:
+                throw_type = 'Swing'
+            elif -threshold_lateral <= angle_degrees <= threshold_lateral and y_delta > 0: 
+                throw_type = 'Dish'
+            elif y_delta > 40:
+                throw_type = 'Huck'
+            elif y_delta <= 0 and abs(angle_degrees) > threshold_lateral:
+                throw_type = 'Dump'
+            else: 
+                throw_type = 'Pass'
+
+            # compute throw side
+            if angle_degrees >=0 : 
+                throw_side = 'Right'
+            else:
+                throw_side = 'Left'
+
+            # rounding
+            signif_number = 3
+            x_delta, y_delta = round(x_delta, signif_number), round(y_delta, signif_number)
+            throw_dist = round(throw_dist, signif_number)
+
+            return throw_type, throw_side, throw_dist, x_delta, y_delta, angle_degrees
+
+
+        # get home and away events
+        events_response = self.get_events()
+        home_events = events_response['homeEvents']
+        away_events = events_response['awayEvents']
+        df_game_players = self.get_players_metadata()
+
+        # compute throwing events for home and away teams + concatenate
+        df_home = compute_game_events(self.game_id, home_events)
+        df_away = compute_game_events(self.game_id, away_events)
+        df_concat = pd.concat([df_home, df_away])
+        df_concat['receiver_id'] = df_concat['receiver_id'].astype('Int64')
+        df_concat['thrower_id'] = df_concat['thrower_id'].astype('Int64')
+
+
+        # add info into df: thrower and receiver full names, team external id
+        df_concat['thrower_ext_id'] = compute_player_column_from_id(df_game_players, df_concat['thrower_id'], 'player.ext_player_id')
+        df_concat['receiver_ext_id'] = compute_player_column_from_id(df_game_players, df_concat['receiver_id'], 'player.ext_player_id')
+        df_concat['thrower_full_name'] = compute_player_full_name_from_id(df_game_players, df_concat['thrower_id'])
+        df_concat['receiver_full_name'] = compute_player_full_name_from_id(df_game_players, df_concat['receiver_id'])
+        df_concat['team_ext_id'] = compute_player_column_from_id(df_game_players, df_concat['thrower_id'], 'team')
+
+        return df_concat
+
+
 #  ---------------------------------------------------------------------
 
 def main():
@@ -1024,11 +1214,13 @@ def main():
     #  print(game.get_teams_metadata()) # works
     #  print(game.get_team_stats()) # works
     #  print(game.get_roster_stats()) # works
-    lineups = game.get_lineup_by_points()
+    #  lineups = game.get_lineup_by_points()
     #  for lineup in lineups:
     #      print(lineup)
     #  print(lineups)
     #  print(len(lineups))
+    #  df_throws = game.get_throws_dataframe()
+    #  print(df_throws.columns)
     
 
 if __name__ == "__main__":
