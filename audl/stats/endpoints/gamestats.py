@@ -696,7 +696,7 @@ class GameStats(Endpoint):
         Returns
         -------
         df: pandas dataframe
-            players x types of throws (pass, dump, huck, swing, throwaway, dish)
+            players x types of throws (pass, dump, huck, swing, throwaway, dish, stall)
 
         Example
         -------
@@ -713,7 +713,7 @@ class GameStats(Endpoint):
             'player.ext_player_id']]
 
         # initialize df
-        type_of_throws = ['pass', 'huck', 'swing', 'dump', 'dish', 'throwaway', 'drop']
+        type_of_throws = ['pass', 'huck', 'swing', 'dump', 'dish', 'throwaway', 'drop', 'stall']
         freq = [[0 for _ in range(len(type_of_throws))] for _ in range(len(players))]
         df = pd.DataFrame(freq, columns=type_of_throws)
         df['player'] = list(players['player.ext_player_id'])
@@ -752,7 +752,7 @@ class GameStats(Endpoint):
 
                     # get distance and throw selection
                     #  dist = get_throwing_distance(x1, y1, x2, y2)
-                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+                    throw, _, _, _, _, _ = get_throw_type(x1, y1, x2, y2)
                     #  print(player_id, throw, dist)
 
                     # increment player throw selection
@@ -947,7 +947,7 @@ class GameStats(Endpoint):
                 player_id = players[players['id'] == player2]['player.ext_player_id'].tolist()[0]
                 if x1 and y1 and player1 == thrower:
                     # get distance and throw selection
-                    throw = get_throw_type(x1, y1, x2, y2, event_type)
+                    throw, _, _, _, _, _ = get_throw_type(x1, y1, x2, y2)
 
                     # increment player throw selection
                     df.loc[df['player'].isin([player_id]), throw] += 1
@@ -1068,7 +1068,7 @@ class GameStats(Endpoint):
                         try: 
                             r_id = int(event['r']) # FIXME: investigate why no r sometimes
                             throw_dist = round(math.sqrt(x**2 + y**2), 3)
-                            row = [game_id, point, r_id, None, 'Pull', throw_dist, x, y, None, None, None] 
+                            row = [game_id, point, r_id, None, 'Pull', None, throw_dist, x, y, None, None, None] 
                             output.append(row)
                         except:
                             print('check error')
@@ -1081,7 +1081,7 @@ class GameStats(Endpoint):
                             receiver_id = r_id
                             #  print(get_throw_type(x_prev, y_prev, x, y))
                             throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = get_throw_type(x_prev, y_prev, x, y)
-                            row = [game_id, point, thrower_id, receiver_id, throw_type, throw_distance, x_delta, y_delta, x, y, angle_degrees]
+                            row = [game_id, point, thrower_id, receiver_id, throw_type, throw_side, throw_distance, x_delta, y_delta, x, y, angle_degrees]
                             output.append(row)
 
                         # updating thrower
@@ -1092,7 +1092,7 @@ class GameStats(Endpoint):
                         x = event['x']
                         y = event['y']
                         throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = get_throw_type(x_prev, y_prev, x, y)
-                        row = [game_id, point, thrower_id, None, 'Throwaway', throw_distance, x_delta, y_delta, x, y, angle_degrees]
+                        row = [game_id, point, thrower_id, None, 'Throwaway', None,throw_distance, x_delta, y_delta, x, y, angle_degrees]
                         output.append(row)
                         thrower_id = None
                     else:
@@ -1100,7 +1100,7 @@ class GameStats(Endpoint):
 
                 #  print('---')
 
-            columns_names = ['game_id', 'point' ,'thrower_id', 'receiver_id', 'throw_type', 'throw_distance', 'x', 'y', 'x_field', 'y_field', 'angle_degrees']
+            columns_names = ['game_id', 'point' ,'thrower_id', 'receiver_id', 'throw_type', 'throw_side','throw_distance', 'x', 'y', 'x_field', 'y_field', 'angle_degrees']
             df_throws = pd.DataFrame(output, columns=columns_names)
             df_throws['receiver_id'] = df_throws['receiver_id'].astype('Int64')
             df_throws['thrower_id'] = df_throws['thrower_id'].astype('Int64')
@@ -1129,52 +1129,6 @@ class GameStats(Endpoint):
                     full_name = None
 
                 players_full_name.append(full_name)
-
-
-        def get_throw_type(x1, y1, x2, y2):
-            """ 
-            Get complete information on the throw
-
-            - throwing_type: pass, dump, swing, huck, dish
-            - throw_side: right, left
-            - distance: float
-            - angle: float
-
-            """
-            # compute angle
-            x_delta, y_delta = x2 - x1, y2 - y1
-            throw_dist = math.sqrt(x_delta**2 + y_delta**2)
-            angle_degrees = math.degrees(math.atan(y_delta / (x_delta + 0.001)))
-
-            # compute throw_type
-            threshold_lateral = 15
-            threshold_vertical = 40
-            if (x_delta == 0.0) and (y_delta == 0.0):
-                throw_type = 'Stall'
-            elif -threshold_lateral <= angle_degrees <= threshold_lateral and y_delta <= 0:
-                throw_type = 'Swing'
-            elif -threshold_lateral <= angle_degrees <= threshold_lateral and y_delta > 0: 
-                throw_type = 'Dish'
-            elif y_delta > 40:
-                throw_type = 'Huck'
-            elif y_delta <= 0 and abs(angle_degrees) > threshold_lateral:
-                throw_type = 'Dump'
-            else: 
-                throw_type = 'Pass'
-
-            # compute throw side
-            if angle_degrees >=0 : 
-                throw_side = 'Right'
-            else:
-                throw_side = 'Left'
-
-            # rounding
-            signif_number = 3
-            x_delta, y_delta = round(x_delta, signif_number), round(y_delta, signif_number)
-            throw_dist = round(throw_dist, signif_number)
-
-            return throw_type, throw_side, throw_dist, x_delta, y_delta, angle_degrees
-
 
         # get home and away events
         events_response = self.get_events()
@@ -1219,8 +1173,8 @@ def main():
     #      print(lineup)
     #  print(lineups)
     #  print(len(lineups))
-    #  df_throws = game.get_throws_dataframe()
-    #  print(df_throws.columns)
+    df_throws = game.get_throws_dataframe()
+    print(df_throws.columns)
     
 
 if __name__ == "__main__":

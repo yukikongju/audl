@@ -33,42 +33,87 @@ def get_quarter(scoring_time):
 
     return 'OT2'
 
-def get_throw_type(x1, y1, x2, y2, event_type): # FIXME: dish?
+def get_throw_type(x1, y1, x2, y2):
     """ 
-    Function that returns throwing type from coordinates
+    Get complete information on the throw
 
-    Parameters
-    ----------
-    x1, x2: int
-        distance in x-axis in meters
-    y1, y2: int
-        distance in y-axis in meters
+    - throwing_type: pass, dump, swing, huck, dish
+    - throw_side: right, left
+    - distance: float
+    - angle: float
 
-    Returns 
-    -------
-    throwing_type: string
-        pass, huck, swing, dump, dish, throwaway, drop
-
-    Notes
-    -----
-        What's the difference between swing and dish
     """
-    x, y = x2 - x1, y2 - y1
-    dist = math.sqrt(x**2 + y**2)
-    #  angle = math.sin(x/y)
+    # compute angle
+    x_delta, y_delta = x2 - x1, y2 - y1
+    throw_dist = math.sqrt(x_delta**2 + y_delta**2)
+    angle_degrees = math.degrees(math.atan(y_delta / (x_delta + 0.001)))
 
-    if event_type == 8:
-        return "throwaway"
-    elif event_type == 19:
-        return "drop"
-    elif dist >= 40:
-        return "huck"
-    elif y <= 0: 
-        return "dump"
-    elif y <= 5: 
-        return "swing"
+    # compute throw_type
+    threshold_lateral = 15
+    threshold_vertical = 40
+    if (x_delta == 0.0) and (y_delta == 0.0):
+        throw_type = 'stall'
+    elif -threshold_lateral <= angle_degrees <= threshold_lateral and y_delta <= 0:
+        throw_type = 'swing'
+    elif -threshold_lateral <= angle_degrees <= threshold_lateral and y_delta > 0: 
+        throw_type = 'dish'
+    elif y_delta > 40:
+        throw_type = 'huck'
+    elif y_delta <= 0 and abs(angle_degrees) > threshold_lateral:
+        throw_type = 'dump'
     else: 
-        return "pass"
+        throw_type = 'pass'
+
+    # compute throw side
+    if angle_degrees >=0 : 
+        throw_side = 'right'
+    else:
+        throw_side = 'left'
+
+    # rounding
+    signif_number = 3
+    x_delta, y_delta = round(x_delta, signif_number), round(y_delta, signif_number)
+    throw_dist = round(throw_dist, signif_number)
+
+    return throw_type, throw_side, throw_dist, x_delta, y_delta, angle_degrees
+
+
+#  def get_throw_type(x1, y1, x2, y2, event_type): # deprecated
+#      """ 
+#      Function that returns throwing type from coordinates
+
+#      Parameters
+#      ----------
+#      x1, x2: int
+#          distance in x-axis in meters
+#      y1, y2: int
+#          distance in y-axis in meters
+
+#      Returns 
+#      -------
+#      throwing_type: string
+#          pass, huck, swing, dump, dish, throwaway, drop
+
+#      Notes
+#      -----
+#          What's the difference between swing and dish
+#      """
+#      x, y = x2 - x1, y2 - y1
+#      dist = math.sqrt(x**2 + y**2)
+#      #  angle = math.sin(x/y)
+
+#      if event_type == 8:
+#          return "throwaway"
+#      elif event_type == 19:
+#          return "drop"
+#      elif dist >= 40:
+#          return "huck"
+#      elif y <= 0: 
+#          return "dump"
+#      elif y <= 5: 
+#          return "swing"
+#      else: 
+#          return "pass"
 
 
 def get_throwing_distance(x1, y1, x2, y2):
