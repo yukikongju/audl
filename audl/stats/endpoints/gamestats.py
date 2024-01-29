@@ -238,18 +238,37 @@ class GameStats(Endpoint):
 
             # filter by gameID and add player_id, city_id
             player_stat = games[games['gameID'] == self.game_id] 
-            player_stat['ext_player_id'] = player_id
-            # FIXME: use .iloc instead #  is_home = player_stat.at[0,'isHome']
+            player_stat.loc[:, 'ext_player_id'] = player_id
             is_home = player_stat['isHome'].values[0]
-            player_stat['team_abbrev'] = self._get_city_abbrev_from_game_id(is_home)
+            player_stat.loc[:, 'team_ext_id'] = self._get_team_ext_id(is_home)
 
             roster_stats = pd.concat([roster_stats, player_stat])
 
         # change columns order
         roster_stats.insert(0, 'ext_player_id', roster_stats.pop('ext_player_id'))
-        roster_stats.insert(1, 'team_abbrev', roster_stats.pop('team_abbrev'))
+        roster_stats.insert(1, 'team_ext_id', roster_stats.pop('team_ext_id'))
 
         return roster_stats
+
+    def _get_team_ext_id(self, is_home: bool):
+        """ 
+        Function that retrieves team_ext_id
+
+        Parameters
+        ----------
+        is_home: bool
+            > True if team is home else False
+
+        Example
+        -------
+        > game._get_team_ext_id(True)
+        > 'empire'
+        """
+        road_str = 'home' if is_home else 'away'
+        df = self.get_teams_metadata()
+        team_ext_id = df[df['road'] == road_str]['team.ext_team_id'][0]
+        return team_ext_id
+        
 
     def _get_city_abbrev_from_game_id(self, is_home):
         """ 
@@ -1073,7 +1092,8 @@ class GameStats(Endpoint):
                         except:
                             print('check error')
                             pass
-                    if t == 20: # get receiver, throwing_type, x, y
+                    #  if t == 20 :
+                    if t == 20 or t == 22: # get receiver, throwing_type, x, y
                         x = event['x']
                         y = event['y']
                         r_id = int(event['r'])
@@ -1092,7 +1112,7 @@ class GameStats(Endpoint):
                         x = event['x']
                         y = event['y']
                         throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = get_throw_type(x_prev, y_prev, x, y)
-                        row = [game_id, point, thrower_id, None, 'Throwaway', None,throw_distance, x_delta, y_delta, x, y, angle_degrees]
+                        row = [game_id, point, thrower_id, None, 'throwaway', None,throw_distance, x_delta, y_delta, x, y, angle_degrees]
                         output.append(row)
                         thrower_id = None
                     else:
