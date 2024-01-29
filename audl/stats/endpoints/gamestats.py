@@ -373,11 +373,15 @@ class GameStats(Endpoint):
         """
         tsg_home = self._read_teams_tsg_json(self.json['tsgHome'])
         tsg_home['road'] = 'home'
-        tsg_home['team'] = self.home_team
+        tsg_home['team_ext_id'] = self.home_team
         tsg_away = self._read_teams_tsg_json(self.json['tsgAway'])
         tsg_away['road'] = 'away'
+        tsg_away['team_ext_id'] = self.away_team
+
         # concatenate home and away dataframes
         tsg = pd.concat([tsg_home, tsg_away])
+        tsg.loc[:, 'game_id'] = self.game_id
+        tsg.insert(0, 'game_id', tsg.pop('game_id'))
 
         # calculate percentage columns
         tsg['completionsPerc'] = tsg['completionsNumer'] / tsg['completionsDenom'] 
