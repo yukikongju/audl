@@ -24,3 +24,6 @@ deploy_test:
 	python3 -m build 
 	python3 -m twine upload --repository testpypi dist/*
 	# jupyter nbconvert --to notebook --inplace --execute examples/*.ipynb
+
+precommit_hook:
+	pre-commit install

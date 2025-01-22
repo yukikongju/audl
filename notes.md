@@ -18,6 +18,9 @@
     - [ ] Thrower and Receiver
 
 TODOs:
+ - [ ] Setup Github actions for tests before merging => [github action local hook](https://www.youtube.com/watch?v=itI2q7dca5Y)
+ - [ ] Black formatting before commit => [precommit hook](https://medium.com/@0xmatriksh/how-to-setup-git-hooks-pre-commit-commit-msg-in-my-project-11aaec139536)
+ - [ ] FastAPI integration
  - [ ] Create database from web scrapper (sql, database, workflows)
      - [ ] Teams
      - [ ] Players

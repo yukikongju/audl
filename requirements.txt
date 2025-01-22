@@ -9,3 +9,5 @@ numpy
 BeautifulSoup4
 requests
 pdoc3
+prec-commit
+black
