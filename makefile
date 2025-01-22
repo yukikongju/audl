@@ -26,5 +26,10 @@ deploy_test:
 	# jupyter nbconvert --to notebook --inplace --execute examples/*.ipynb
 
 precommit_hook:
-	# cz init or python3 -m commitizen init
 	pre-commit install
+
+commitizen_commit:
+	# cz init or python3 -m commitizen init
+	# cz commit
+	# cz bump
+	python3 -m commitizen commit
