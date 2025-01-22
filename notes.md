@@ -17,11 +17,15 @@
 - [ ] Game Events
     - [ ] Thrower and Receiver
 
-TODOs:
+TODOs for integration:
+ - [ ] Transition url request to "backend.udastats.com/web-v1/player-stats"
  - [X] Black formatting before commit => [precommit hook](https://medium.com/@0xmatriksh/how-to-setup-git-hooks-pre-commit-commit-msg-in-my-project-11aaec139536)
  - [X] Setup pre-commit hook commit-msg with comitizen
+ - [ ] Setup pre-commit hook to generate docs
  - [ ] Setup Github actions for tests before merging => [github action local hook](https://www.youtube.com/watch?v=itI2q7dca5Y)
  - [ ] FastAPI integration
+
+TODOs for project:
  - [ ] Create database from web scrapper (sql, database, workflows)
      - [ ] Teams
      - [ ] Players
