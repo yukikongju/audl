@@ -97,6 +97,24 @@ pdoc --html audl
 mv html/ docs/
 ```
 
+**How to setup pre-commit hoooks**
+
+After initializing the precommit hook with `pre-commit init` (it's already done),
+the `.prec-commit-config.yaml` file should be created. To activate this
+pre-commit hook, do
+
+```{bash}
+pre-commit install
+```
+
+If the files are not properly linted, the lint test will fail and will automatically
+lint it for us. We only need to add the files back with `git add -u` and try
+to commit again.
+
+
+**How to commit using commitizen**
+
+Use `cz commit` or `python3 -m commitizen commit`
 
 ## How to contribute
 
