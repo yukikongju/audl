@@ -18,8 +18,9 @@
     - [ ] Thrower and Receiver
 
 TODOs:
+ - [X] Black formatting before commit => [precommit hook](https://medium.com/@0xmatriksh/how-to-setup-git-hooks-pre-commit-commit-msg-in-my-project-11aaec139536)
+ - [X] Setup pre-commit hook commit-msg with comitizen
  - [ ] Setup Github actions for tests before merging => [github action local hook](https://www.youtube.com/watch?v=itI2q7dca5Y)
- - [ ] Black formatting before commit => [precommit hook](https://medium.com/@0xmatriksh/how-to-setup-git-hooks-pre-commit-commit-msg-in-my-project-11aaec139536)
  - [ ] FastAPI integration
  - [ ] Create database from web scrapper (sql, database, workflows)
      - [ ] Teams
@@ -27,7 +28,7 @@ TODOs:
      - [ ] Schedule
      - [ ] Player Game Stats
      - [ ] Team Game Stats
-     - [ ] 
+     - [ ]
  - [ ] Write Scripts to fetch data daily/weekly/monthly
  - [ ] Write examples in notebook
  - [ ] Generate Reports
@@ -37,7 +38,7 @@ TODOs:
 	 - [ ] Roster
 	 - [ ] Box Scores, Player Stats, Team Stats
 	 - [ ] More: Injury Report
-	 - [ ] More: Points events (point duration, number of TO/pass, throws 
+	 - [ ] More: Points events (point duration, number of TO/pass, throws
 		choices)
 	 - [ ] More: Outstanding performance
 	 - [ ] More: Point differential graph
@@ -80,7 +81,7 @@ TODOs:
 
 **How to deploy pip package**
 
-Update: 2024-01-21. Need to get API token as described [here](https://pypi.org/manage/account/token/). 
+Update: 2024-01-21. Need to get API token as described [here](https://pypi.org/manage/account/token/).
 
 
 ```bash
@@ -91,7 +92,7 @@ twine upload dist/*
 
 **How to generate documentation with pdoc3**
 
-```bash 
+```bash
 pdoc --html audl
 mv html/ docs/
 ```
@@ -108,4 +109,3 @@ mv html/ docs/
 - [Sample Project](https://github.com/pypa/sampleproject)
 - [Sports Analytics Project](https://github.com/wyattowalsh/sports-analytics)
 - [Generating Documentation with Docstring using pdoc3](https://pdoc3.github.io/pdoc/)
-

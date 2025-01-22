@@ -1,12 +1,12 @@
 .PHONY: docs
-docs:	
-	rm -r docs/ 
-	pdoc --html audl 
+docs:
+	rm -r docs/
+	pdoc --html audl
 	mv html/ docs/
 
 clean:
 	rm -r dist/
-	rm -r audl.egg-info/ 
+	rm -r audl.egg-info/
 
 .PHONY: tests
 tests:
@@ -14,16 +14,17 @@ tests:
 
 deploy:
 	# rm -r dist/
-	# rm -r audl.egg-info/ 
-	python3 -m build 
+	# rm -r audl.egg-info/
+	python3 -m build
 	twine upload dist/*
 
-deploy_test: 
+deploy_test:
 	rm -r dist/
-	rm -r audl.egg-info/ 
-	python3 -m build 
+	rm -r audl.egg-info/
+	python3 -m build
 	python3 -m twine upload --repository testpypi dist/*
 	# jupyter nbconvert --to notebook --inplace --execute examples/*.ipynb
 
 precommit_hook:
+	# cz init or python3 -m commitizen init
 	pre-commit install
