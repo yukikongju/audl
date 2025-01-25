@@ -1,5 +1,6 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+# From https://codecut.ai/4-pre-commit-plugins-to-automate-code-reviewing-and-formatting-in-python-2/
 # From https://medium.com/@0xmatriksh/how-to-setup-git-hooks-pre-commit-commit-msg-in-my-project-11aaec139536
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -9,6 +10,9 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
+      - id: sort-simple-yaml
+      - id: requirements-txt-fixer
+      - id: pretty-format-json
 
   - repo: https://github.com/psf/black
     rev: 24.10.0
@@ -16,6 +20,13 @@ repos:
       - id: black
         args: [--line-length=100]
         language_version: python3.10
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+    - id: flake8
+      description: "PEP 8 formatting check"
+
 
   - repo: https://github.com/kynan/nbstripout
     rev: 0.8.1
