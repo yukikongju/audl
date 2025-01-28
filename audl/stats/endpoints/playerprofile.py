@@ -60,8 +60,8 @@ class PlayerProfile(Endpoint):
             results = requests.get(url).json()
             df = pd.DataFrame(results["stats"])
             return df
-        except:
-            print(f"An error has occured when fetching regular season dataframe")
+        except BaseException:
+            print("An error has occured when fetching regular season dataframe")
             sys.exit(1)
 
     def get_regular_seasons_career(self):
@@ -81,7 +81,7 @@ class PlayerProfile(Endpoint):
         """
         df = self.get_career_stats()
         df["player_ext_id"] = self.player_id
-        regular_season = df[df["regSeason"] == True]
+        regular_season = df[df["regSeason"]]  # check if regular season is True
         return regular_season
 
     def get_playoffs_career(self):
@@ -100,7 +100,7 @@ class PlayerProfile(Endpoint):
 
         """
         df = self.get_career_stats()
-        playoffs = df[df["regSeason"] == True]
+        playoffs = df[~df["regSeason"]]
         return playoffs
 
     def get_season_games_stats(self, year):
@@ -129,8 +129,8 @@ class PlayerProfile(Endpoint):
             df = pd.DataFrame(results["stats"])
             df["player_ext_id"] = self.player_id
             return df
-        except:
-            print(f"An error has occured when fetching season stats dataframe")
+        except BaseException:
+            print("An error has occured when fetching season stats dataframe")
             sys.exit(1)
 
     def get_career_games_stats(self):
@@ -151,7 +151,7 @@ class PlayerProfile(Endpoint):
         current_year = int(datetime.today().strftime("%Y"))
         for year in range(FIRST_SEASON_YEAR, current_year + 1):
             df_season = self.get_season_games_stats(year)
-            df = df.append(df_season)
+            df = pd.concat([df, df_season], axis=0)
         df["player_ext_id"] = self.player_id
         return df
 

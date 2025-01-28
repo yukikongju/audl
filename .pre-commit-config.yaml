@@ -18,15 +18,16 @@ repos:
     rev: 24.10.0
     hooks:
       - id: black
-        args: [--line-length=100]
+        # args: [--line-length=100]
+        args: [--line-length=80]
         language_version: python3.10
 
-  # - repo: https://github.com/pycqa/flake8
-  #   rev: 3.8.4
-  #   hooks:
-  #   - id: flake8
-  #     description: "PEP 8 formatting check"
-
+  - repo: https://github.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+    - id: flake8
+      description: "PEP 8 formatting check"
+      args: [--ignore=E501]
 
   - repo: https://github.com/kynan/nbstripout
     rev: 0.8.1

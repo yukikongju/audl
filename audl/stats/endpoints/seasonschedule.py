@@ -19,7 +19,9 @@ class ScheduleEndpoint(Endpoint):
     def __init__(self):
         """"""
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/games?limit=10")
-        super().__init__("https://www.backend.ufastats.com/web-api/games?limit=10")
+        super().__init__(
+            "https://www.backend.ufastats.com/web-api/games?limit=10"
+        )
 
     def _get_prefix_url(self):
         pass
@@ -47,8 +49,8 @@ class ScheduleEndpoint(Endpoint):
             print(url)
             try:
                 page = requests.get(url)
-            except:
-                print(f"An error occured when fetching the data. Exiting...")
+            except BaseException:
+                print("An error occured when fetching the data. Exiting...")
                 sys.exit(1)
             results = page.json()
             games = results["games"]
@@ -56,7 +58,7 @@ class ScheduleEndpoint(Endpoint):
             if df.size == 0:
                 has_games = False
             i = i + 1
-            dfs = dfs.append(df)
+            dfs = pd.concat([dfs, df], axis=0)
 
         return dfs
 
@@ -124,9 +126,7 @@ class TeamSeasonAgainstOpponentSchedule(ScheduleEndpoint):
         self.opponent = opponent
 
     def _get_prefix_url(self):
-        return (
-            f"{self.base_url}&years={self.season}&teamID={self.team}&opposingTeamID={self.opponent}"
-        )
+        return f"{self.base_url}&years={self.season}&teamID={self.team}&opposingTeamID={self.opponent}"
 
 
 #  --------------------------------------------------------------------------

@@ -35,7 +35,9 @@ class TeamGameStatsEndpoint(Endpoint):
         """
 
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20")
-        super().__init__("https://www.backend.ufastats.com/web-api/team-game-stats?limit=20")
+        super().__init__(
+            "https://www.backend.ufastats.com/web-api/team-game-stats?limit=20"
+        )
         self.season = season
         self.team = team
 
@@ -71,8 +73,8 @@ class TeamGameStatsEndpoint(Endpoint):
                 print(url)
             try:
                 page = requests.get(url)
-            except:
-                print(f"An error occured when fetching the data. Exiting...")
+            except BaseException:
+                print("An error occured when fetching the data. Exiting...")
                 sys.exit(1)
             results = page.json()
             games = results["stats"]
@@ -81,7 +83,7 @@ class TeamGameStatsEndpoint(Endpoint):
             if df.size == 0:
                 has_games = False
             i = i + 1
-            dfs = dfs.append(df)
+            dfs = pd.concat([dfs, df], axis=0)
 
         return dfs
 
