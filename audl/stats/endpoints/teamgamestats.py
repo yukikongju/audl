@@ -13,13 +13,12 @@ from audl.stats.endpoints._base import Endpoint
 
 
 class TeamGameStatsEndpoint(Endpoint):
-
-    """ 
+    """
     Fetching Team Game Stats from https://theaudl.com/stats/team-game-stats
     """
 
     def __init__(self, season, team):
-        """ 
+        """
         Parameters
         ----------
         season: string or int
@@ -36,12 +35,12 @@ class TeamGameStatsEndpoint(Endpoint):
         """
 
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20")
-        super().__init__("https://www.backend.audlstats.com/web-api/team-game-stats?limit=20")
+        super().__init__("https://www.backend.ufastats.com/web-api/team-game-stats?limit=20")
         self.season = season
         self.team = team
 
     def get_game_stats(self, show_message=True):
-        """ 
+        """
         Function that return game statistics
 
         Parameters
@@ -58,7 +57,7 @@ class TeamGameStatsEndpoint(Endpoint):
         >>> gamestats = AllTeamGameStats().get_game_stats()
         >>> gamestats = SeasonGameStats(2022).get_game_stats()
         >>> gamestats = TeamSeasonGameStats(2022, 'royal').get_game_stats()
-            
+
         """
         suffix_url = self._get_suffix_url()
 
@@ -66,44 +65,43 @@ class TeamGameStatsEndpoint(Endpoint):
         i = 1
         has_games = True
         dfs = pd.DataFrame()
-        while(has_games):
+        while has_games:
             url = f"{self.base_url}&page={i}{suffix_url}"
             if show_message:
                 print(url)
             try:
                 page = requests.get(url)
             except:
-                print(f'An error occured when fetching the data. Exiting...')
+                print(f"An error occured when fetching the data. Exiting...")
                 sys.exit(1)
             results = page.json()
-            games = results['stats']
+            games = results["stats"]
             #  print(games)
             df = pd.json_normalize(games)
             if df.size == 0:
                 has_games = False
-            i = i + 1 
+            i = i + 1
             dfs = dfs.append(df)
 
         return dfs
 
-
     def _get_suffix_url(self):
         pass
-        
+
 
 class AllTeamGameStats(TeamGameStatsEndpoint):
 
     def __init__(self):
-        super().__init__('career', 'all')
+        super().__init__("career", "all")
 
     def _get_suffix_url(self):
         return ""
 
-        
+
 class SeasonGameStats(TeamGameStatsEndpoint):
 
     def __init__(self, season):
-        super().__init__(season, 'all')
+        super().__init__(season, "all")
 
     def _get_suffix_url(self):
         return f"&year={self.season}"
@@ -116,4 +114,3 @@ class TeamSeasonGameStats(TeamGameStatsEndpoint):
 
     def _get_suffix_url(self):
         return f"&year={self.season}&team={self.team}"
-

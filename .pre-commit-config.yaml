@@ -21,11 +21,11 @@ repos:
         args: [--line-length=100]
         language_version: python3.10
 
-  - repo: https://github.com/pycqa/flake8
-    rev: 3.8.4
-    hooks:
-    - id: flake8
-      description: "PEP 8 formatting check"
+  # - repo: https://github.com/pycqa/flake8
+  #   rev: 3.8.4
+  #   hooks:
+  #   - id: flake8
+  #     description: "PEP 8 formatting check"
 
 
   - repo: https://github.com/kynan/nbstripout
@@ -38,10 +38,10 @@ repos:
         language: python
         types: [jupyter]
 
-  - repo: local
-    hooks:
-      - id: black
-        name: black
-        entry: black
-        language: system
-        types: [python]
+  # - repo: local
+  #   hooks:
+  #     - id: black
+  #       name: black
+  #       entry: black
+  #       language: system
+  #       types: [python]

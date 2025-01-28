@@ -9,8 +9,9 @@ import requests
 from audl.stats.endpoints._base import Endpoint
 from audl.stats.endpoints.playerprofile import PlayerProfile
 
-from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
-from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_distance 
+#  from audl.stats.library.game_event import GameEventSimple, GameEventLineup, GameEventReceiver
+from audl.stats.static.utils import get_quarter, get_throw_type
+from audl.stats.static.utils import get_throwing_distance
 
 #  old: https://audl-stat-server.herokuapp.com/stats-pages/game/2022-06-11-TOR-MTL
 #  new: https://www.backend.audlstats.com/stats-pages/game/2022-07-31-DET-MIN
@@ -19,14 +20,14 @@ from audl.stats.static.utils import get_quarter, get_throw_type, get_throwing_di
 class GameStats(Endpoint):
 
     def __init__(self, game_id: str):
-        super().__init__("https://www.backend.audlstats.com/stats-pages/game/")
+        super().__init__("https://www.backend.ufastats.com/stats-pages/game/")
         self.game_id = game_id
         self.json = self._get_json_from_url()
         self.home_team = self._get_home_team_ext_id()
         self.away_team = self._get_away_team_ext_id()
 
     def _get_home_team_ext_id(self):
-        """ 
+        """
         Function that return team external id for home team
 
         Returns
@@ -39,10 +40,10 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL')._get_home_team_ext_id()
 
         """
-        return self.json['game']['team_season_home']['team']['ext_team_id']
-        
+        return self.json["game"]["team_season_home"]["team"]["ext_team_id"]
+
     def _get_away_team_ext_id(self):
-        """ 
+        """
         Function that return team external id for away team
 
         Returns
@@ -55,30 +56,29 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL')._get_away_team_ext_id()
 
         """
-        return self.json['game']['team_season_away']['team']['ext_team_id']
+        return self.json["game"]["team_season_away"]["team"]["ext_team_id"]
 
     def _get_url(self):
-        """ 
+        """
         Function that return complete url
 
         Returns
         -------
         url: string
             url of the heroku API request
-        
+
         Examples
         --------
         >>> GameStats('2022-06-11-TB-ATL')._get_url()
 
         """
         return f"{self.base_url}{self.game_id}"
-    
 
     def _get_json_from_url(self):
-        """ 
+        """
         Function that retrieves requests data as JSON document
 
-        Returns 
+        Returns
         -------
         json_doc: json
             json document from the get requests
@@ -92,11 +92,11 @@ class GameStats(Endpoint):
         return requests.get(url).json()
 
     def get_game_metadata(self):
-        """ 
+        """
         Function that retrieve game metadata
 
         Returns
-        ------- 
+        -------
         game_metadata: pandas.Dataframe
             Dataframe with the following columns
                 - is_regular_season (bool)
@@ -109,18 +109,18 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL').get_game_metadata()
 
         """
-        game = self.json['game']
+        game = self.json["game"]
         df = pd.json_normalize(game)
         return df
 
     def get_boxscores(self):
-        """ 
+        """
         Function that return team scores by quarter
-        
+
         Returns
         -------
         df_boxscores: pandas.DataFrame
-            Dataframe with team goals by quarter 
+            Dataframe with team goals by quarter
 
 
         Examples
@@ -134,25 +134,29 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL').get_boxscores()
 
         """
-        # get scoring times from json 
+        # get scoring times from json
         scores = self._get_scoring_time()
 
         # pivot table
-        scores = scores.pivot_table(values='scoring_time', 
-                index='ext_team_id', columns=['quarter'], aggfunc=np.count_nonzero)
+        scores = scores.pivot_table(
+            values="scoring_time",
+            index="ext_team_id",
+            columns=["quarter"],
+            aggfunc=np.count_nonzero,
+        )
 
         # add total column
-        scores['T'] = scores[list(scores.columns)].sum(axis=1)
+        scores["T"] = scores[list(scores.columns)].sum(axis=1)
 
         return scores
 
     def _get_scoring_time(self):
-        """ 
+        """
         Function that return scoring time for each team
 
-        Returns 
+        Returns
         -------
-        scorin_time: pandas.DataFrame   
+        scorin_time: pandas.DataFrame
             Dataframe with the following columns:
                 - scoring_time (int): time when point was scored in second
                 - ext_team_id (string): team external id ie 'royal'
@@ -171,30 +175,28 @@ class GameStats(Endpoint):
 
         """
         # get scoring time for both teams
-        score_times_home = self.json['game']['score_times_home'][1:]
-        score_times_away = self.json['game']['score_times_away'][1:]
+        score_times_home = self.json["game"]["score_times_home"][1:]
+        score_times_away = self.json["game"]["score_times_away"][1:]
 
         # create dataframes
-        home_df = pd.DataFrame(score_times_home, columns=['scoring_time'])
-        away_df = pd.DataFrame(score_times_away, columns=['scoring_time'])
-        home_df['ext_team_id'] = self._get_home_team_ext_id()
-        away_df['ext_team_id'] = self._get_away_team_ext_id()
+        home_df = pd.DataFrame(score_times_home, columns=["scoring_time"])
+        away_df = pd.DataFrame(score_times_away, columns=["scoring_time"])
+        home_df["ext_team_id"] = self._get_home_team_ext_id()
+        away_df["ext_team_id"] = self._get_away_team_ext_id()
         scores = pd.concat([home_df, away_df])
-        
+
         # calculate quarter columns
-        scores['quarter'] = scores['scoring_time'].apply(
-                lambda x: get_quarter(x))
+        scores["quarter"] = scores["scoring_time"].apply(lambda x: get_quarter(x))
 
         return scores
 
-        
     def get_scores(self):
-        """ 
+        """
         Function that retrieves scores by times
 
         Returns
         -------
-        scores_df: pandas.DataFrame 
+        scores_df: pandas.DataFrame
             Dataframe with the following columns:
                 - team: "home" or "away"
                 - time: time when the team scored
@@ -211,9 +213,9 @@ class GameStats(Endpoint):
         pass
 
     def get_roster_stats(self):
-        """ 
+        """
         Function that retrieves stats for all players that played this games
-        
+
         Returns
         -------
         roster_df: pandas.Dataframe
@@ -233,25 +235,25 @@ class GameStats(Endpoint):
             #  print(player_id)
             player = PlayerProfile(player_id)
             year = self._get_season_from_game_id()
-            games = player.get_season_games_stats(year) # FIXME: game info is not there anymore
+            games = player.get_season_games_stats(year)  # FIXME: game info is not there anymore
             #  print(games)
 
             # filter by gameID and add player_id, city_id
-            player_stat = games[games['gameID'] == self.game_id] 
-            player_stat.loc[:, 'ext_player_id'] = player_id
-            is_home = player_stat['isHome'].values[0]
-            player_stat.loc[:, 'team_ext_id'] = self._get_team_ext_id(is_home)
+            player_stat = games[games["gameID"] == self.game_id]
+            player_stat.loc[:, "ext_player_id"] = player_id
+            is_home = player_stat["isHome"].values[0]
+            player_stat.loc[:, "team_ext_id"] = self._get_team_ext_id(is_home)
 
             roster_stats = pd.concat([roster_stats, player_stat])
 
         # change columns order
-        roster_stats.insert(0, 'ext_player_id', roster_stats.pop('ext_player_id'))
-        roster_stats.insert(1, 'team_ext_id', roster_stats.pop('team_ext_id'))
+        roster_stats.insert(0, "ext_player_id", roster_stats.pop("ext_player_id"))
+        roster_stats.insert(1, "team_ext_id", roster_stats.pop("team_ext_id"))
 
         return roster_stats
 
     def _get_team_ext_id(self, is_home: bool):
-        """ 
+        """
         Function that retrieves team_ext_id
 
         Parameters
@@ -264,25 +266,24 @@ class GameStats(Endpoint):
         > game._get_team_ext_id(True)
         > 'empire'
         """
-        road_str = 'home' if is_home else 'away'
+        road_str = "home" if is_home else "away"
         df = self.get_teams_metadata()
-        team_ext_id = df[df['road'] == road_str]['team.ext_team_id'][0]
+        team_ext_id = df[df["road"] == road_str]["team.ext_team_id"][0]
         return team_ext_id
-        
 
     def _get_city_abbrev_from_game_id(self, is_home):
-        """ 
+        """
         Function that return season from game_id
 
         Parameters
         ----------
-        is_home: bool 
+        is_home: bool
             True if home, False if away
 
 
         Returns
         -------
-        season : int 
+        season : int
             season year (ex: 2022)
 
 
@@ -295,20 +296,18 @@ class GameStats(Endpoint):
 
         """
         if is_home:
-            return self.game_id.split('-')[4]
+            return self.game_id.split("-")[4]
         else:
-            return self.game_id.split('-')[3]
-        
-
+            return self.game_id.split("-")[3]
 
     def _get_season_from_game_id(self):
-        """ 
-        Function that return season from game_id 
+        """
+        Function that return season from game_id
 
         Returns
         -------
         season : int
-            season year 
+            season year
 
 
         Examples
@@ -317,18 +316,16 @@ class GameStats(Endpoint):
         >>> 2022
 
         """
-        return int(self.game_id.split('-')[0])
+        return int(self.game_id.split("-")[0])
 
-
-        
     def _get_roster_ext_ids(self):
-        """ 
+        """
         Function that return all players that played this game (rosterIds)
 
         Returns
         -------
         roster_ext_ids: list
-            List of ext_player_id 
+            List of ext_player_id
 
         Examples
         --------
@@ -337,20 +334,19 @@ class GameStats(Endpoint):
 
         """
         # get all player_id who have played as list
-        rosterHome = self.json['tsgHome']['rosterIds']
-        rosterAway= self.json['tsgAway']['rosterIds']
+        rosterHome = self.json["tsgHome"]["rosterIds"]
+        rosterAway = self.json["tsgAway"]["rosterIds"]
         roster_ids = rosterHome + rosterAway
 
         # get player_ext_ids
         players = self.get_players_metadata()
-        roster_df = players[players['id'].isin(roster_ids)]
-        ext_player_ids = roster_df['player.ext_player_id'].tolist()
+        roster_df = players[players["id"].isin(roster_ids)]
+        ext_player_ids = roster_df["player.ext_player_id"].tolist()
 
         return ext_player_ids
 
-
     def get_team_stats(self):
-        """ 
+        """
         Function that retrieves teams stats
 
         Returns
@@ -371,44 +367,43 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL').get_team_stats()
 
         """
-        tsg_home = self._read_teams_tsg_json(self.json['tsgHome'])
-        tsg_home['road'] = 'home'
-        tsg_home['team_ext_id'] = self.home_team
-        tsg_away = self._read_teams_tsg_json(self.json['tsgAway'])
-        tsg_away['road'] = 'away'
-        tsg_away['team_ext_id'] = self.away_team
+        tsg_home = self._read_teams_tsg_json(self.json["tsgHome"])
+        tsg_home["road"] = "home"
+        tsg_home["team_ext_id"] = self.home_team
+        tsg_away = self._read_teams_tsg_json(self.json["tsgAway"])
+        tsg_away["road"] = "away"
+        tsg_away["team_ext_id"] = self.away_team
 
         # concatenate home and away dataframes
         tsg = pd.concat([tsg_home, tsg_away])
-        tsg.loc[:, 'game_id'] = self.game_id
-        tsg.insert(0, 'game_id', tsg.pop('game_id'))
+        tsg.loc[:, "game_id"] = self.game_id
+        tsg.insert(0, "game_id", tsg.pop("game_id"))
 
         # calculate percentage columns
-        tsg['completionsPerc'] = tsg['completionsNumer'] / tsg['completionsDenom'] 
-        tsg['hucksPerc'] = tsg['hucksNumer'] / tsg['hucksDenom'] 
-        tsg['holdPerc'] = tsg['oLineScores'] / tsg['oLinePoints'] 
-        tsg['oLineConversionPerc'] = tsg['oLineScores'] / tsg['oLinePossessions'] 
-        tsg['dLineConversionPerc'] = tsg['dLineScores'] / tsg['dLinePossessions'] 
-        tsg['breakPerc'] = tsg['dLineScores'] / tsg['dLinePoints'] 
-        tsg['redZoneConversionPerc'] = tsg['redZoneScores'] / tsg['redZonePossessions'] 
+        tsg["completionsPerc"] = tsg["completionsNumer"] / tsg["completionsDenom"]
+        tsg["hucksPerc"] = tsg["hucksNumer"] / tsg["hucksDenom"]
+        tsg["holdPerc"] = tsg["oLineScores"] / tsg["oLinePoints"]
+        tsg["oLineConversionPerc"] = tsg["oLineScores"] / tsg["oLinePossessions"]
+        tsg["dLineConversionPerc"] = tsg["dLineScores"] / tsg["dLinePossessions"]
+        tsg["breakPerc"] = tsg["dLineScores"] / tsg["dLinePoints"]
+        tsg["redZoneConversionPerc"] = tsg["redZoneScores"] / tsg["redZonePossessions"]
 
         return tsg
 
-
     def _read_teams_tsg_json(self, team_tsg):
-        """ 
+        """
         Function that retrieves scoring information in json.tsgHome or json.tsgAway
 
         Parameters
         ----------
-        team_tsg: json 
+        team_tsg: json
             json dictionary of tsgHome or tsgAway
 
         Returns
         -------
         tsg_df: pandas.DataFrame
             dataframe of the tsg
-            
+
         Examples
         --------
         >>> GameStats('2022-06-11-TB-ATL')._read_teams_tsg_json(self.json['tsgHome'])
@@ -419,20 +414,14 @@ class GameStats(Endpoint):
         tsg = pd.json_normalize(team_tsg, max_level=1)
 
         # drop columns
-        cols_to_drop = [
-                'events', 
-                'scoreTimesOur',
-                'scoreTimesTheir',
-                'rosterIds'
-            ]
+        cols_to_drop = ["events", "scoreTimesOur", "scoreTimesTheir", "rosterIds"]
         tsg = tsg.drop(cols_to_drop, axis=1)
 
         return tsg
 
-
     def get_players_metadata(self):
-        """ 
-        Function that retrieves all players from both team (even those who 
+        """
+        Function that retrieves all players from both team (even those who
         are not playing)
 
         Returns
@@ -454,21 +443,21 @@ class GameStats(Endpoint):
 
         """
         # get home and away roster
-        homeJSON = self.json['rostersHome']
+        homeJSON = self.json["rostersHome"]
         home_players = pd.json_normalize(homeJSON)
-        home_players['road'] = 'home'
-        home_players['team'] = self.home_team
-        awayJSON = self.json['rostersAway']
+        home_players["road"] = "home"
+        home_players["team"] = self.home_team
+        awayJSON = self.json["rostersAway"]
         away_players = pd.json_normalize(awayJSON)
-        away_players['road'] = 'away'
-        away_players['team'] = self.away_team
+        away_players["road"] = "away"
+        away_players["team"] = self.away_team
 
         # concatenate dataset
         players = pd.concat([home_players, away_players])
-        return players 
+        return players
 
     def get_teams_metadata(self):
-        """ 
+        """
         Function that retrieve team and city name for home and away team
 
         Returns
@@ -488,18 +477,18 @@ class GameStats(Endpoint):
 
         """
         # retrieve df from home and away team
-        game = self.json['game']
-        home = pd.json_normalize(game['team_season_home'])
-        away = pd.json_normalize(game['team_season_away'])
-        home['road'] = 'home'
-        away['road'] = 'away'
+        game = self.json["game"]
+        home = pd.json_normalize(game["team_season_home"])
+        away = pd.json_normalize(game["team_season_away"])
+        home["road"] = "home"
+        away["road"] = "away"
 
         # concatenate home and away dataframes
         teams = pd.concat([home, away])
         return teams
 
-    def get_lineup_by_points(self): 
-        """ 
+    def get_lineup_by_points(self):
+        """
         Function that returns lineup for each point played
 
         Returns
@@ -507,8 +496,8 @@ class GameStats(Endpoint):
         points_results: json
             [
                 {'point': 1,
-                'offensive_team': royal, 
-                'defensive_team': rush, 
+                'offensive_team': royal,
+                'defensive_team': rush,
                 'offensive_lineup': [1096, ...],
                 'defensive_lineup': [1056, ...],
                 'outcome': royal
@@ -520,19 +509,20 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL').get_lineup_by_points()
         """
         # retrieve events from json
-        home_events = json.loads(self.json['tsgHome']['events'])
-        away_events = json.loads(self.json['tsgAway']['events'])
+        home_events = json.loads(self.json["tsgHome"]["events"])
+        away_events = json.loads(self.json["tsgAway"]["events"])
 
         num_home_events = len(home_events)
         num_away_events = len(away_events)
         i, j = 0, 0
 
-
         # find lineups index for home and away team
         index_home, index_away = [], []
         while i < num_home_events and j < num_away_events:
-            while i < num_home_events and home_events[i]['t'] not in [1, 2] : i += 1
-            while j < num_away_events and away_events[j]['t'] not in [1, 2] : j += 1
+            while i < num_home_events and home_events[i]["t"] not in [1, 2]:
+                i += 1
+            while j < num_away_events and away_events[j]["t"] not in [1, 2]:
+                j += 1
 
             try:
                 index_home.append(i)
@@ -544,57 +534,55 @@ class GameStats(Endpoint):
             j += 1
 
         # generate json lineups
-        outcomes_home = [i-1 for i in index_home[1:]]
-        outcomes_away = [i-1 for i in index_away[1:]]
-        outcomes_home.append(num_home_events-2)
-        outcomes_away.append(num_away_events-2)
+        outcomes_home = [i - 1 for i in index_home[1:]]
+        outcomes_away = [i - 1 for i in index_away[1:]]
+        outcomes_home.append(num_home_events - 2)
+        outcomes_away.append(num_away_events - 2)
 
         num_points = min(len(index_home), len(index_away), len(outcomes_home), len(outcomes_away))
 
         # FIXME: why does winner team has one more entries than losing team
         all_lineups = []
-        for i in range(num_points-1):
-            lineup_home = home_events[index_home[i]]['l']
-            lineup_away = away_events[index_away[i]]['l']
+        for i in range(num_points - 1):
+            lineup_home = home_events[index_home[i]]["l"]
+            lineup_away = away_events[index_away[i]]["l"]
 
             #  get outcome: t==21, t==22
-            home_outcome = home_events[outcomes_home[i]]['t']
-            if home_outcome == 21: # home lost point
+            home_outcome = home_events[outcomes_home[i]]["t"]
+            if home_outcome == 21:  # home lost point
                 outcome = self.away_team
-            elif home_outcome == 22: # home win
+            elif home_outcome == 22:  # home win
                 outcome = self.home_team
             else:
-                outcome = 'incomplete'
+                outcome = "incomplete"
 
-            point = i+1
+            point = i + 1
 
-            if home_events[i]['t'] == 1: # home team starts in offense
+            if home_events[i]["t"] == 1:  # home team starts in offense
                 lineup = {
-                        'point': point,
-                        'offense': self.home_team,
-                        'defense': self.away_team, 
-                        'lineup_offense': lineup_home,
-                        'lineup_defense': lineup_away,
-                        'outcome': outcome
+                    "point": point,
+                    "offense": self.home_team,
+                    "defense": self.away_team,
+                    "lineup_offense": lineup_home,
+                    "lineup_defense": lineup_away,
+                    "outcome": outcome,
                 }
             else:
                 lineup = {
-                        'point': point,
-                        'offense': self.away_team,
-                        'defense': self.home_team, 
-                        'lineup_offense': lineup_away,
-                        'lineup_defense': lineup_home,
-                        'outcome': outcome
+                    "point": point,
+                    "offense": self.away_team,
+                    "defense": self.home_team,
+                    "lineup_offense": lineup_away,
+                    "lineup_defense": lineup_home,
+                    "outcome": outcome,
                 }
 
             all_lineups.append(lineup)
 
         return all_lineups
 
-
-
-    def get_point_results(self): 
-        """ 
+    def get_point_results(self):
+        """
         Function that returns (events) in a given point for a given team
 
         Parameters
@@ -614,7 +602,7 @@ class GameStats(Endpoint):
             - result (string): ext_team_id of team who won the point
             - scorer (string): ext_player_id of person who scored the point (t:22)
             - assist (string): ext_player_id of person who assisted (prev t:20)
-            - hockey (string): ext_player_id of person who made the hockey assist 
+            - hockey (string): ext_player_id of person who made the hockey assist
             - catcher (string): ext_player_id of player who caught the pull
             - center (string): ext_player_id of player who caught the second pass
             - scoring_time (int):
@@ -622,10 +610,9 @@ class GameStats(Endpoint):
 
         """
         raise NotImplementedError("This function hasn't been implemented yet!")
-        
 
     def get_events_sequential(self):
-        """ 
+        """
         Function that return the event of each points in sequential order
 
         Returns
@@ -638,7 +625,7 @@ class GameStats(Endpoint):
                 - lineup_def (list): lineup in def (7 players)
                 - lineup_off (list): lineup in off (7 players)
 
-        
+
         Examples
         --------
         >>> GameStats('2022-06-11-TB-ATL').get_events()
@@ -647,38 +634,37 @@ class GameStats(Endpoint):
         raise NotImplementedError("This function hasn't been implemented yet!")
 
     def get_events(self):
-        """ 
+        """
         Function that fetch all events for all points for each team
         """
 
         # retrieve events from json
-        home_events = json.loads(self.json['tsgHome']['events'])
-        away_events = json.loads(self.json['tsgAway']['events'])
+        home_events = json.loads(self.json["tsgHome"]["events"])
+        away_events = json.loads(self.json["tsgAway"]["events"])
 
         # get events by points
         home_points = self._get_team_events_by_points(home_events)
         away_points = self._get_team_events_by_points(away_events)
 
-        events_dict = {'homeEvents': home_points, 'awayEvents': away_points}
+        events_dict = {"homeEvents": home_points, "awayEvents": away_points}
 
         return events_dict
 
     def get_all_events(self):
-        """ 
+        """
         Function that fetch all events (raw) for home and away team for each team
         """
 
         # retrieve events from json
-        home_events = json.loads(self.json['tsgHome']['events'])
-        away_events = json.loads(self.json['tsgAway']['events'])
+        home_events = json.loads(self.json["tsgHome"]["events"])
+        away_events = json.loads(self.json["tsgAway"]["events"])
 
-        events_dict = {'homeEvents': home_points, 'awayEvents': away_points}
+        events_dict = {"homeEvents": home_events, "awayEvents": away_events}
 
         return events_dict
 
-        
     def _get_team_events_by_points(self, events):
-        """ 
+        """
         Function that return a list of dict with all points events
 
         Parameters
@@ -688,7 +674,7 @@ class GameStats(Endpoint):
 
         Examples
         --------
-        >>> 
+        >>>
         >>> [{'point': 0, 'events': []},
         >>>  {'point': 1,
         >>>    'events': [{'t': 1, 'l': [9246, 9237, 9323, 9262, 9241, 9568, 9242]},
@@ -702,18 +688,18 @@ class GameStats(Endpoint):
         point_played = 0
         all_events, point_events = [], []
         for i, event in enumerate(events):
-            event_type = int(event['t'])
-            if event_type not in [1,2]:
+            event_type = int(event["t"])
+            if event_type not in [1, 2]:
                 point_events.append(event)
             else:
-                all_events.append({'point': point_played, 'events': point_events})
+                all_events.append({"point": point_played, "events": point_events})
                 point_events = []
                 point_played += 1
 
         return all_events
-        
+
     def get_throw_selection(self):
-        """ 
+        """
         Function that count throws types for all players
 
         Returns
@@ -726,20 +712,18 @@ class GameStats(Endpoint):
 
         """
         # get events
-        home_events = json.loads(self.json['tsgHome']['events'])
-        away_events = json.loads(self.json['tsgAway']['events'])
-         
+        home_events = json.loads(self.json["tsgHome"]["events"])
+        away_events = json.loads(self.json["tsgAway"]["events"])
 
         # get players id
         players = self.get_players_metadata()
-        players = players[['id', 'player.first_name', 'player.last_name', 
-            'player.ext_player_id']]
+        players = players[["id", "player.first_name", "player.last_name", "player.ext_player_id"]]
 
         # initialize df
-        type_of_throws = ['pass', 'huck', 'swing', 'dump', 'dish', 'throwaway', 'drop', 'stall']
+        type_of_throws = ["pass", "huck", "swing", "dump", "dish", "throwaway", "drop", "stall"]
         freq = [[0 for _ in range(len(type_of_throws))] for _ in range(len(players))]
         df = pd.DataFrame(freq, columns=type_of_throws)
-        df['player'] = list(players['player.ext_player_id'])
+        df["player"] = list(players["player.ext_player_id"])
 
         # reorder columns
         cols = df.columns.tolist()
@@ -750,28 +734,29 @@ class GameStats(Endpoint):
         self._count_throw_frequency(home_events, players, df)
         self._count_throw_frequency(away_events, players, df)
 
-
         # count total
-        df['total'] = df.sum(axis=1)
+        df["total"] = df.sum(axis=1)
 
         return df
 
     def _count_throw_frequency(self, events, players, df):
-        """ 
+        """
         Helper function for get_throw_selection() that count throw frequency
-        for a team 
+        for a team
         """
         # count throw frequency
         x1, y1, player1 = None, None, None
         for i, event in enumerate(events):
-            event_type = int(event['t'])
-            if event_type in [8, 19, 20, 22]: # event has x and y
-                x2, y2 = event['x'], event['y']
+            event_type = int(event["t"])
+            if event_type in [8, 19, 20, 22]:  # event has x and y
+                x2, y2 = event["x"], event["y"]
                 if event_type != 8:
-                    player2 = int(event['r'])
+                    player2 = int(event["r"])
                 if x1 and y1 and player1:
                     # get player
-                    player_id = players[players['id'] == player1]['player.ext_player_id'].tolist()[0]
+                    player_id = players[players["id"] == player1]["player.ext_player_id"].tolist()[
+                        0
+                    ]
 
                     # get distance and throw selection
                     #  dist = get_throwing_distance(x1, y1, x2, y2)
@@ -779,17 +764,16 @@ class GameStats(Endpoint):
                     #  print(player_id, throw, dist)
 
                     # increment player throw selection
-                    df.loc[df['player'].isin([player_id]), throw] += 1
+                    df.loc[df["player"].isin([player_id]), throw] += 1
                 x1, y1 = x2, y2
                 if event_type != 8:
                     player1 = player2
-            else: 
+            else:
                 x1, y1, player1 = None, None, None
 
-
     def get_thrower_receiver_count(self, is_home):
-        """ 
-        Function that returns the thrower-receiver count only if throw was 
+        """
+        Function that returns the thrower-receiver count only if throw was
         successful. Useful to view players chemistry
 
         Parameters
@@ -804,57 +788,61 @@ class GameStats(Endpoint):
         Example
         -------
         """
-        if is_home: 
-            events = json.loads(self.json['tsgHome']['events'])
-            players = pd.json_normalize(self.json['rostersHome'])
-        else: 
-            events = json.loads(self.json['tsgAway']['events'])
-            players = pd.json_normalize(self.json['rostersAway'])
+        if is_home:
+            events = json.loads(self.json["tsgHome"]["events"])
+            players = pd.json_normalize(self.json["rostersHome"])
+        else:
+            events = json.loads(self.json["tsgAway"]["events"])
+            players = pd.json_normalize(self.json["rostersAway"])
 
         # initialize df
-        list_players = list(players['player.ext_player_id'])
+        list_players = list(players["player.ext_player_id"])
         freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
         df = pd.DataFrame(freq, columns=list_players)
-        df['player'] = list_players
+        df["player"] = list_players
 
         # reorder columns
         cols = df.columns.tolist()
         cols = cols[-1:] + cols[:-1]
         df = df[cols]
 
-        # count thrower-receiver freq 
+        # count thrower-receiver freq
         self._count_thrower_receiver(events, players, df)
 
         # count total throws
-        df['total'] = df.sum(axis=1)
+        df["total"] = df.sum(axis=1)
 
         return df
 
     def _count_thrower_receiver(self, events, players, df):
-        """ 
+        """
         Helper function for get_thrower_receiver_count() to count thrower and
         receiver for team event
         """
         player1 = None
         for i, event in enumerate(events):
-            event_type = int(event['t'])
-            if event_type in [20, 22]: # removed 19 because dropped
-                player2 = int(event['r'])
+            event_type = int(event["t"])
+            if event_type in [20, 22]:  # removed 19 because dropped
+                player2 = int(event["r"])
                 if player1:
                     # get player
-                    player1_id = players[players['id'] == player1]['player.ext_player_id'].tolist()[0]
-                    player2_id = players[players['id'] == player2]['player.ext_player_id'].tolist()[0]
+                    player1_id = players[players["id"] == player1]["player.ext_player_id"].tolist()[
+                        0
+                    ]
+                    player2_id = players[players["id"] == player2]["player.ext_player_id"].tolist()[
+                        0
+                    ]
 
-                    # increment thrower-receiver 
-                    df.loc[df['player'].isin([player1_id]), player2_id] += 1
+                    # increment thrower-receiver
+                    df.loc[df["player"].isin([player1_id]), player2_id] += 1
                 player1 = player2
-            else: 
+            else:
                 player1 = None
 
-    def get_lineup_frequency(self, is_home): 
-        """ 
-        Function that calculates the number of time a player is on the same 
-        line as teamate. Only counts starting lineup (ie starting on offense 
+    def get_lineup_frequency(self, is_home):
+        """
+        Function that calculates the number of time a player is on the same
+        line as teamate. Only counts starting lineup (ie starting on offense
         or defense, not after timeout)
 
         Parameters
@@ -866,18 +854,18 @@ class GameStats(Endpoint):
         df: pandas dataframe
             players x players: +1 if player i and j are on the same line
         """
-        if is_home: 
-            events = json.loads(self.json['tsgHome']['events'])
-            players = pd.json_normalize(self.json['rostersHome'])
-        else: 
-            events = json.loads(self.json['tsgAway']['events'])
-            players = pd.json_normalize(self.json['rostersAway'])
+        if is_home:
+            events = json.loads(self.json["tsgHome"]["events"])
+            players = pd.json_normalize(self.json["rostersHome"])
+        else:
+            events = json.loads(self.json["tsgAway"]["events"])
+            players = pd.json_normalize(self.json["rostersAway"])
 
         # initialize df
-        list_players = list(players['player.ext_player_id'])
+        list_players = list(players["player.ext_player_id"])
         freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
         df = pd.DataFrame(freq, columns=list_players)
-        df['player'] = list_players
+        df["player"] = list_players
 
         # reorder columns
         cols = df.columns.tolist()
@@ -889,25 +877,27 @@ class GameStats(Endpoint):
 
         return df
 
-    def _count_lineup_frequency(self, events, players, df): 
-        """ 
+    def _count_lineup_frequency(self, events, players, df):
+        """
         Helper function for get_lineup_frequency()
         """
         for i, event in enumerate(events):
-            event_type = int(event['t']) 
-            if event_type in [1,2]:
-                l = event['l']
-                lineup = [players[players['id'] == int(player_id)]['player.ext_player_id'].tolist()[0] for player_id in l]
+            event_type = int(event["t"])
+            if event_type in [1, 2]:
+                l = event["l"]
+                lineup = [
+                    players[players["id"] == int(player_id)]["player.ext_player_id"].tolist()[0]
+                    for player_id in l
+                ]
                 #  print(lineup)
                 for i in range(len(lineup)):
                     for j in range(len(lineup)):
                         if i != j:
                             player1, player2 = lineup[i], lineup[j]
-                            df.loc[df['player'].isin([player1]), player2] += 1
-        
+                            df.loc[df["player"].isin([player1]), player2] += 1
 
     def get_teamates_selection(self, player_id, is_home):
-        """ 
+        """
         For a given thrower, return throw selection for each teamates
 
         Parameters
@@ -926,23 +916,23 @@ class GameStats(Endpoint):
         -------
         >>> game.get_thrower_receiver_selection('cbrock', True)
         """
-        if is_home: 
-            events = json.loads(self.json['tsgHome']['events'])
-            players = pd.json_normalize(self.json['rostersHome'])
-        else: 
-            events = json.loads(self.json['tsgAway']['events'])
-            players = pd.json_normalize(self.json['rostersAway'])
+        if is_home:
+            events = json.loads(self.json["tsgHome"]["events"])
+            players = pd.json_normalize(self.json["rostersHome"])
+        else:
+            events = json.loads(self.json["tsgAway"]["events"])
+            players = pd.json_normalize(self.json["rostersAway"])
 
         # check if player_id in players list
-        list_players = list(players['player.ext_player_id'])
+        list_players = list(players["player.ext_player_id"])
         if player_id not in list_players:
             raise ValueError("player_id doesn't exist. Please check!")
 
         # initialize dataframe
-        type_of_throws = ['pass', 'huck', 'swing', 'dump', 'dish', 'throwaway', 'drop']
+        type_of_throws = ["pass", "huck", "swing", "dump", "dish", "throwaway", "drop"]
         selection = [[0 for _ in range(len(type_of_throws))] for _ in range(len(list_players))]
         df = pd.DataFrame(selection, columns=type_of_throws)
-        df['player'] = list_players
+        df["player"] = list_players
 
         # reorder columns
         cols = df.columns.tolist()
@@ -953,35 +943,34 @@ class GameStats(Endpoint):
         self._count_teamate_selection(events, players, player_id, df)
 
         # total throws by teamates
-        df['total'] = df.sum(axis=1)
+        df["total"] = df.sum(axis=1)
 
         return df
-        
-    def _count_teamate_selection(self, events, players, thrower, df): 
-        """ 
+
+    def _count_teamate_selection(self, events, players, thrower, df):
+        """
         Helper Function for get_teamates_selection()
         """
         x1, y1, player1 = None, None, None
         for i, event in enumerate(events):
-            event_type = int(event['t'])
-            if event_type in [19, 20, 22]: # event has x and y
-                x2, y2 = event['x'], event['y']
-                player2 = int(event['r'])
-                player_id = players[players['id'] == player2]['player.ext_player_id'].tolist()[0]
+            event_type = int(event["t"])
+            if event_type in [19, 20, 22]:  # event has x and y
+                x2, y2 = event["x"], event["y"]
+                player2 = int(event["r"])
+                player_id = players[players["id"] == player2]["player.ext_player_id"].tolist()[0]
                 if x1 and y1 and player1 == thrower:
                     # get distance and throw selection
                     throw, _, _, _, _, _ = get_throw_type(x1, y1, x2, y2)
 
                     # increment player throw selection
-                    df.loc[df['player'].isin([player_id]), throw] += 1
+                    df.loc[df["player"].isin([player_id]), throw] += 1
                 x1, y1 = x2, y2
                 player1 = player_id
-            else: 
+            else:
                 x1, y1, player1 = None, None, None
 
-        
-    def print_team_events(self, is_home): 
-        """ 
+    def print_team_events(self, is_home):
+        """
         Function that print events for home and away teams
 
         Parameters
@@ -995,7 +984,7 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL').print_team_events(False)
 
         """
-        events = self.json['tsgHome']['events'] if is_home else self.json['tsgAway']['events']
+        events = self.json["tsgHome"]["events"] if is_home else self.json["tsgAway"]["events"]
 
         # FIXME: convert columns double values to int
         #  cols_to_int = ['t', 'ms', 's', 'c']
@@ -1004,35 +993,36 @@ class GameStats(Endpoint):
 
         # get players_metadata
         players = self.get_players_metadata()
-        players = players[['id', 'player.first_name', 'player.last_name', 
-            'player.ext_player_id']]
-
+        players = players[["id", "player.first_name", "player.last_name", "player.ext_player_id"]]
 
         # print all events
         for _, row in enumerate(json.loads(events)):
-            t = row['t']
-            if t in [1,2, 40, 41]:
+            t = row["t"]
+            if t in [1, 2, 40, 41]:
                 # print lineup
-                l = row['l']
-                lineup = [players[players['id'] == int(player_id)]['player.ext_player_id'].tolist()[0] for player_id in l
-]
+                l = row["l"]
+                lineup = [
+                    players[players["id"] == int(player_id)]["player.ext_player_id"].tolist()[0]
+                    for player_id in l
+                ]
                 print(f"t: {t}; lineup: {lineup}")
-            elif t in [3,5,19,20,22]:
+            elif t in [3, 5, 19, 20, 22]:
                 # print receiver
                 try:
-                    receiver = players[players['id'] == int(row['r'])]['player.ext_player_id'].tolist()[0]
-                except: 
-                    receiver = 'NaN'
-                if t in [3,19,20,22]:
+                    receiver = players[players["id"] == int(row["r"])][
+                        "player.ext_player_id"
+                    ].tolist()[0]
+                except:
+                    receiver = "NaN"
+                if t in [3, 19, 20, 22]:
                     print(f"t: {t}; r: {receiver}; x: {row['x']}; y: {row['y']}")
-                else: 
+                else:
                     print(f"t: {t}; r: {receiver}")
             elif t in [14, 15, 42, 43]:
                 # print s
                 print(f"t: {t}; s: {row['s']}")
-            else: 
+            else:
                 print(f"t: {t}")
-
 
     def get_throws_dataframe(self):
         """
@@ -1071,52 +1061,101 @@ class GameStats(Endpoint):
         - receiver_ext_id: str
             > receiver's external id. Usually has the nomencalture <last_name><firt_name_letter>
         """
+
         def compute_game_events(game_id, tsg_events):
-            " helper method "
+            "helper method"
 
             output = []
             for res in tsg_events:
-                point = res['point']
-                events = res['events']
+                point = res["point"]
+                events = res["events"]
                 #  print(point)
 
                 thrower_id = None
                 x_prev, y_prev = None, None
                 for event in events:
-                    t = event['t']
+                    t = event["t"]
                     #  print(event)
-                    if t == 3: # pull
-                        x = event['x']
-                        y = event['y']
-                        try: 
-                            r_id = int(event['r']) # FIXME: investigate why no r sometimes
+                    if t == 3:  # pull
+                        x = event["x"]
+                        y = event["y"]
+                        try:
+                            r_id = int(event["r"])  # FIXME: investigate why no r sometimes
                             throw_dist = round(math.sqrt(x**2 + y**2), 3)
-                            row = [game_id, point, r_id, None, 'Pull', None, throw_dist, x, y, None, None, None] 
+                            row = [
+                                game_id,
+                                point,
+                                r_id,
+                                None,
+                                "Pull",
+                                None,
+                                throw_dist,
+                                x,
+                                y,
+                                None,
+                                None,
+                                None,
+                            ]
                             output.append(row)
                         except:
-                            print('check error')
+                            print("check error")
                             pass
                     #  if t == 20 :
-                    if t == 20 or t == 22: # get receiver, throwing_type, x, y
-                        x = event['x']
-                        y = event['y']
-                        r_id = int(event['r'])
+                    if t == 20 or t == 22:  # get receiver, throwing_type, x, y
+                        x = event["x"]
+                        y = event["y"]
+                        r_id = int(event["r"])
                         if thrower_id:
                             receiver_id = r_id
                             #  print(get_throw_type(x_prev, y_prev, x, y))
-                            throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = get_throw_type(x_prev, y_prev, x, y)
-                            row = [game_id, point, thrower_id, receiver_id, throw_type, throw_side, throw_distance, x_delta, y_delta, x, y, angle_degrees]
+                            (
+                                throw_type,
+                                throw_side,
+                                throw_distance,
+                                x_delta,
+                                y_delta,
+                                angle_degrees,
+                            ) = get_throw_type(x_prev, y_prev, x, y)
+                            row = [
+                                game_id,
+                                point,
+                                thrower_id,
+                                receiver_id,
+                                throw_type,
+                                throw_side,
+                                throw_distance,
+                                x_delta,
+                                y_delta,
+                                x,
+                                y,
+                                angle_degrees,
+                            ]
                             output.append(row)
 
                         # updating thrower
                         thrower_id = r_id
                         x_prev, y_prev = x, y
 
-                    if t == 8: # throwaway
-                        x = event['x']
-                        y = event['y']
-                        throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = get_throw_type(x_prev, y_prev, x, y)
-                        row = [game_id, point, thrower_id, None, 'throwaway', None,throw_distance, x_delta, y_delta, x, y, angle_degrees]
+                    if t == 8:  # throwaway
+                        x = event["x"]
+                        y = event["y"]
+                        throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = (
+                            get_throw_type(x_prev, y_prev, x, y)
+                        )
+                        row = [
+                            game_id,
+                            point,
+                            thrower_id,
+                            None,
+                            "throwaway",
+                            None,
+                            throw_distance,
+                            x_delta,
+                            y_delta,
+                            x,
+                            y,
+                            angle_degrees,
+                        ]
                         output.append(row)
                         thrower_id = None
                     else:
@@ -1124,10 +1163,23 @@ class GameStats(Endpoint):
 
                 #  print('---')
 
-            columns_names = ['game_id', 'point' ,'thrower_id', 'receiver_id', 'throw_type', 'throw_side','throw_distance', 'x', 'y', 'x_field', 'y_field', 'angle_degrees']
+            columns_names = [
+                "game_id",
+                "point",
+                "thrower_id",
+                "receiver_id",
+                "throw_type",
+                "throw_side",
+                "throw_distance",
+                "x",
+                "y",
+                "x_field",
+                "y_field",
+                "angle_degrees",
+            ]
             df_throws = pd.DataFrame(output, columns=columns_names)
-            df_throws['receiver_id'] = df_throws['receiver_id'].astype('Int64')
-            df_throws['thrower_id'] = df_throws['thrower_id'].astype('Int64')
+            df_throws["receiver_id"] = df_throws["receiver_id"].astype("Int64")
+            df_throws["thrower_id"] = df_throws["thrower_id"].astype("Int64")
             return df_throws
 
         def compute_player_column_from_id(df_game_players, players_id, column_name):
@@ -1135,7 +1187,9 @@ class GameStats(Endpoint):
             for player_id in players_id:
                 try:
                     player_id = int(player_id)
-                    team_id = df_game_players.loc[df_game_players['id'] == player_id, column_name].values[0]
+                    team_id = df_game_players.loc[
+                        df_game_players["id"] == player_id, column_name
+                    ].values[0]
                 except:
                     team_id = None
                 team_external_ids.append(team_id)
@@ -1144,11 +1198,15 @@ class GameStats(Endpoint):
         def compute_player_full_name_from_id(df_game_players, players_id):
             players_full_name = []
             for player_id in players_id:
-                try: 
+                try:
                     player_id = int(player_id)
-                    first_name = df_game_players.loc[df_game_players['id'] == player_id, 'player.first_name'].values[0]
-                    last_name = df_game_players.loc[df_game_players['id'] == player_id, 'player.last_name'].values[0]
-                    full_name = ' '.join([first_name, last_name])
+                    first_name = df_game_players.loc[
+                        df_game_players["id"] == player_id, "player.first_name"
+                    ].values[0]
+                    last_name = df_game_players.loc[
+                        df_game_players["id"] == player_id, "player.last_name"
+                    ].values[0]
+                    full_name = " ".join([first_name, last_name])
                 except:
                     full_name = None
 
@@ -1156,39 +1214,49 @@ class GameStats(Endpoint):
 
         # get home and away events
         events_response = self.get_events()
-        home_events = events_response['homeEvents']
-        away_events = events_response['awayEvents']
+        home_events = events_response["homeEvents"]
+        away_events = events_response["awayEvents"]
         df_game_players = self.get_players_metadata()
 
         # compute throwing events for home and away teams + concatenate
         df_home = compute_game_events(self.game_id, home_events)
         df_away = compute_game_events(self.game_id, away_events)
         df_concat = pd.concat([df_home, df_away])
-        df_concat['receiver_id'] = df_concat['receiver_id'].astype('Int64')
-        df_concat['thrower_id'] = df_concat['thrower_id'].astype('Int64')
-
+        df_concat["receiver_id"] = df_concat["receiver_id"].astype("Int64")
+        df_concat["thrower_id"] = df_concat["thrower_id"].astype("Int64")
 
         # add info into df: thrower and receiver full names, team external id
-        df_concat['thrower_ext_id'] = compute_player_column_from_id(df_game_players, df_concat['thrower_id'], 'player.ext_player_id')
-        df_concat['receiver_ext_id'] = compute_player_column_from_id(df_game_players, df_concat['receiver_id'], 'player.ext_player_id')
-        df_concat['thrower_full_name'] = compute_player_full_name_from_id(df_game_players, df_concat['thrower_id'])
-        df_concat['receiver_full_name'] = compute_player_full_name_from_id(df_game_players, df_concat['receiver_id'])
-        df_concat['team_ext_id'] = compute_player_column_from_id(df_game_players, df_concat['thrower_id'], 'team')
+        df_concat["thrower_ext_id"] = compute_player_column_from_id(
+            df_game_players, df_concat["thrower_id"], "player.ext_player_id"
+        )
+        df_concat["receiver_ext_id"] = compute_player_column_from_id(
+            df_game_players, df_concat["receiver_id"], "player.ext_player_id"
+        )
+        df_concat["thrower_full_name"] = compute_player_full_name_from_id(
+            df_game_players, df_concat["thrower_id"]
+        )
+        df_concat["receiver_full_name"] = compute_player_full_name_from_id(
+            df_game_players, df_concat["receiver_id"]
+        )
+        df_concat["team_ext_id"] = compute_player_column_from_id(
+            df_game_players, df_concat["thrower_id"], "team"
+        )
 
         return df_concat
 
 
 #  ---------------------------------------------------------------------
 
+
 def main():
-    game_id = '2022-07-22-NY-PHI'
+    game_id = "2022-07-22-NY-PHI"
     #  game_id = '2022-07-31-DET-MIN'
     game = GameStats(game_id)
     #  print(game.get_boxscores()) # works
     #  print(game.get_events()) # works
     #  print(game.get_game_metadata()) # works
     #  print(game.get_players_metadata()) # works
-    #  print(game.get_point_results()) 
+    #  print(game.get_point_results())
     #  print(game.get_teams_metadata()) # works
     #  print(game.get_team_stats()) # works
     #  print(game.get_roster_stats()) # works
@@ -1199,7 +1267,7 @@ def main():
     #  print(len(lineups))
     df_throws = game.get_throws_dataframe()
     print(df_throws.columns)
-    
+
 
 if __name__ == "__main__":
     main()
