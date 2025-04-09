@@ -36,7 +36,7 @@ class TeamGameStatsEndpoint(Endpoint):
 
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-game-stats?limit=20")
         super().__init__(
-            "https://www.backend.ufastats.com/web-api/team-game-stats?limit=20"
+            "https://www.backend.ufastats.com/web-v1/team-game-stats?limit=20"
         )
         self.season = season
         self.team = team

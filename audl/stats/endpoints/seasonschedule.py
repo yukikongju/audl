@@ -20,7 +20,7 @@ class ScheduleEndpoint(Endpoint):
         """"""
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/games?limit=10")
         super().__init__(
-            "https://www.backend.ufastats.com/web-api/games?limit=10"
+            "https://www.backend.ufastats.com/web-v1/games?limit=10"
         )
 
     def _get_prefix_url(self):

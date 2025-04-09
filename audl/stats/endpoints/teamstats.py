@@ -32,7 +32,7 @@ class TeamStats(Endpoint):
         """
 
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50")
-        super().__init__("https://www.backend.ufastats.com/web-api/team-stats?limit=50")
+        super().__init__("https://www.backend.ufastats.com/web-v1/team-stats?limit=50")
 
         self.season = season
         self.per = per

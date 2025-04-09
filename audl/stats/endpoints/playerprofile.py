@@ -21,7 +21,7 @@ class PlayerProfile(Endpoint):
     def __init__(self, player_id: str):
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=")
         super().__init__(
-            "https://www.backend.ufastats.com/web-api/roster-stats-for-player?playerID="
+            "https://www.backend.ufastats.com/web-v1/roster-stats-for-player?playerID="
         )
         self.player_id = player_id
 
