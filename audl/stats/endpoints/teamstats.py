@@ -32,7 +32,9 @@ class TeamStats(Endpoint):
         """
 
         #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/team-stats?limit=50")
-        super().__init__("https://www.backend.ufastats.com/web-v1/team-stats?limit=50")
+        super().__init__(
+            "https://www.backend.ufastats.com/web-v1/team-stats?limit=50"
+        )
 
         self.season = season
         self.per = per
@@ -64,7 +66,9 @@ class TeamStats(Endpoint):
             teams = results["stats"]
             df = pd.DataFrame(teams)
         except:
-            print(f"An error has occured when fetching the page results as dataframe")
+            print(
+                f"An error has occured when fetching the page results as dataframe"
+            )
             sys.exit(1)
 
         return df

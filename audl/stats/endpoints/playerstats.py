@@ -49,7 +49,9 @@ class PlayerStats(Endpoint):
         self.per = per
         self.team = team
         #  super().__init__('https://audl-stat-server.herokuapp.com/web-api/player-stats?limit=20')
-        super().__init__("https://www.backend.ufastats.com/web-v1/player-stats?limit=20")
+        super().__init__(
+            "https://www.backend.ufastats.com/web-v1/player-stats?limit=20"
+        )
 
     def fetch_table(self, show_message=False):
         """

@@ -16,7 +16,8 @@ deploy:
 	# rm -r dist/
 	# rm -r audl.egg-info/
 	python3 -m build
-	twine upload dist/*
+	# twine upload dist/*
+	python3 -m twine upload dist/*
 
 deploy_test:
 	rm -r dist/
