@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import sys
 
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 from audl.stats.endpoints._base import Endpoint
@@ -124,7 +125,7 @@ class PlayerProfile(Endpoint):
         """
         try:
             #  url = f"https://audl-stat-server.herokuapp.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
-            url = f"https://www.backend.ufastats.com/web-api/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
+            url = f"https://www.backend.ufastats.com/web-v1/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
             results = requests.get(url).json()
             df = pd.DataFrame(results["stats"])
             df["player_ext_id"] = self.player_id
@@ -153,6 +154,84 @@ class PlayerProfile(Endpoint):
             df_season = self.get_season_games_stats(year)
             df = pd.concat([df, df_season], axis=0)
         df["player_ext_id"] = self.player_id
+        return df
+
+    def get_personal_information(self) -> pd.DataFrame:  # TODO
+        """
+        Function that returns dataframe with player metadata. Columns include
+        the following:
+        - Name
+        - Team
+        - Jersey Number
+        - Height
+        - Weight
+        - College
+        - Hometown
+        - Bio
+
+        ex: https://www.watchufa.com/league/players/mmcdonnel
+        """
+        BASE_URL = "https://www.watchufa.com/league/players"
+        url = f"{BASE_URL}/{self.player_id}"
+
+        try:
+            response = requests.get(url)
+        except Exception as e:
+            raise ConnectionError(
+                f"The following error occured when fetching {url}: {e}"
+            )
+
+        try:
+            soup = BeautifulSoup(response.text)
+            name = soup.find(
+                "div", class_="audl-player-display-name"
+            ).text.strip()
+            team_position = soup.find(
+                "div", class_="audl-player-current-team-position"
+            ).text.strip()
+            jersey_number = soup.find(
+                "div", class_="audl-player-jersey-number"
+            ).text.strip()
+
+            # Extract personal stats
+            stats = {}
+            for item in soup.find_all("div", class_="audl-personal-stats-item"):
+                label = item.find(
+                    "span", class_="audl-personal-stats-label"
+                ).text.strip()
+                value = item.find(
+                    "span", class_="audl-personal-stats-value"
+                ).text.strip()
+                stats[label] = value
+
+            # Extract player bio text and hometown
+            bio_paragraphs = soup.select(".audl-player-bio-text p")
+            bio_text = " ".join(
+                [p.text for p in bio_paragraphs if "Hometown:" not in p.text]
+            )
+            hometown = ""
+            for p in bio_paragraphs:
+                if "Hometown:" in p.text:
+                    hometown = p.text.split("Hometown:")[-1].strip()
+
+            # Combine all into a dictionary
+            player_data = {
+                "Name": name,
+                "Team / Position": team_position,
+                "Jersey Number": jersey_number,
+                "Height": stats.get("HEIGHT"),
+                "Weight": stats.get("WEIGHT"),
+                "DOB": stats.get("AGE/DOB"),
+                "College": stats.get("COLLEGE"),
+                "Hometown": hometown,
+                "Bio": bio_text,
+            }
+
+            # Convert to DataFrame
+            df = pd.DataFrame([player_data])
+        except Exception as e:
+            raise ValueError("An error occured when processing player metadata")
+
         return df
 
 

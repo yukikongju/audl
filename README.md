@@ -2,7 +2,7 @@
 
 Unofficial AUDL api for python users
 
-What it does: 
+What it does:
 - [X] Fetch Data directly from [audl website](https://theaudl.com)
 - [ ] Update database from Web Scrapping using workflow
 - [ ] Generate pdf reports for player, team and games
@@ -27,6 +27,7 @@ reg = player.get_regular_seasons_career()
 playoffs = player.get_playoffs_career()
 season = player.get_season_games_stats(2019)
 games_stats = player.get_career_games_stats()
+player_metadata = player.get_personal_information()
 ```
 
 #### How to get Team Stats
@@ -122,5 +123,3 @@ all_games = AllTeamGameStats().get_game_stats()
 season_games = SeasonGameStats(2022).get_game_stats()
 
 ```
-
-

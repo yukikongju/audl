@@ -14,7 +14,7 @@ from audl.stats.static.utils import get_quarter, get_throw_type
 from audl.stats.static.utils import get_throwing_distance
 
 #  old: https://audl-stat-server.herokuapp.com/stats-pages/game/2022-06-11-TOR-MTL
-#  new: https://www.backend.audlstats.com/stats-pages/game/2022-07-31-DET-MIN
+#  new: https://www.backend.ufastats.com/stats-pages/game/2022-07-31-DET-MIN
 
 
 class GameStats(Endpoint):
@@ -186,7 +186,9 @@ class GameStats(Endpoint):
         scores = pd.concat([home_df, away_df])
 
         # calculate quarter columns
-        scores["quarter"] = scores["scoring_time"].apply(lambda x: get_quarter(x))
+        scores["quarter"] = scores["scoring_time"].apply(
+            lambda x: get_quarter(x)
+        )
 
         return scores
 
@@ -235,7 +237,9 @@ class GameStats(Endpoint):
             #  print(player_id)
             player = PlayerProfile(player_id)
             year = self._get_season_from_game_id()
-            games = player.get_season_games_stats(year)  # FIXME: game info is not there anymore
+            games = player.get_season_games_stats(
+                year
+            )  # FIXME: game info is not there anymore
             #  print(games)
 
             # filter by gameID and add player_id, city_id
@@ -247,7 +251,9 @@ class GameStats(Endpoint):
             roster_stats = pd.concat([roster_stats, player_stat])
 
         # change columns order
-        roster_stats.insert(0, "ext_player_id", roster_stats.pop("ext_player_id"))
+        roster_stats.insert(
+            0, "ext_player_id", roster_stats.pop("ext_player_id")
+        )
         roster_stats.insert(1, "team_ext_id", roster_stats.pop("team_ext_id"))
 
         return roster_stats
@@ -380,13 +386,21 @@ class GameStats(Endpoint):
         tsg.insert(0, "game_id", tsg.pop("game_id"))
 
         # calculate percentage columns
-        tsg["completionsPerc"] = tsg["completionsNumer"] / tsg["completionsDenom"]
+        tsg["completionsPerc"] = (
+            tsg["completionsNumer"] / tsg["completionsDenom"]
+        )
         tsg["hucksPerc"] = tsg["hucksNumer"] / tsg["hucksDenom"]
         tsg["holdPerc"] = tsg["oLineScores"] / tsg["oLinePoints"]
-        tsg["oLineConversionPerc"] = tsg["oLineScores"] / tsg["oLinePossessions"]
-        tsg["dLineConversionPerc"] = tsg["dLineScores"] / tsg["dLinePossessions"]
+        tsg["oLineConversionPerc"] = (
+            tsg["oLineScores"] / tsg["oLinePossessions"]
+        )
+        tsg["dLineConversionPerc"] = (
+            tsg["dLineScores"] / tsg["dLinePossessions"]
+        )
         tsg["breakPerc"] = tsg["dLineScores"] / tsg["dLinePoints"]
-        tsg["redZoneConversionPerc"] = tsg["redZoneScores"] / tsg["redZonePossessions"]
+        tsg["redZoneConversionPerc"] = (
+            tsg["redZoneScores"] / tsg["redZonePossessions"]
+        )
 
         return tsg
 
@@ -414,7 +428,12 @@ class GameStats(Endpoint):
         tsg = pd.json_normalize(team_tsg, max_level=1)
 
         # drop columns
-        cols_to_drop = ["events", "scoreTimesOur", "scoreTimesTheir", "rosterIds"]
+        cols_to_drop = [
+            "events",
+            "scoreTimesOur",
+            "scoreTimesTheir",
+            "rosterIds",
+        ]
         tsg = tsg.drop(cols_to_drop, axis=1)
 
         return tsg
@@ -539,7 +558,12 @@ class GameStats(Endpoint):
         outcomes_home.append(num_home_events - 2)
         outcomes_away.append(num_away_events - 2)
 
-        num_points = min(len(index_home), len(index_away), len(outcomes_home), len(outcomes_away))
+        num_points = min(
+            len(index_home),
+            len(index_away),
+            len(outcomes_home),
+            len(outcomes_away),
+        )
 
         # FIXME: why does winner team has one more entries than losing team
         all_lineups = []
@@ -692,7 +716,9 @@ class GameStats(Endpoint):
             if event_type not in [1, 2]:
                 point_events.append(event)
             else:
-                all_events.append({"point": point_played, "events": point_events})
+                all_events.append(
+                    {"point": point_played, "events": point_events}
+                )
                 point_events = []
                 point_played += 1
 
@@ -717,11 +743,29 @@ class GameStats(Endpoint):
 
         # get players id
         players = self.get_players_metadata()
-        players = players[["id", "player.first_name", "player.last_name", "player.ext_player_id"]]
+        players = players[
+            [
+                "id",
+                "player.first_name",
+                "player.last_name",
+                "player.ext_player_id",
+            ]
+        ]
 
         # initialize df
-        type_of_throws = ["pass", "huck", "swing", "dump", "dish", "throwaway", "drop", "stall"]
-        freq = [[0 for _ in range(len(type_of_throws))] for _ in range(len(players))]
+        type_of_throws = [
+            "pass",
+            "huck",
+            "swing",
+            "dump",
+            "dish",
+            "throwaway",
+            "drop",
+            "stall",
+        ]
+        freq = [
+            [0 for _ in range(len(type_of_throws))] for _ in range(len(players))
+        ]
         df = pd.DataFrame(freq, columns=type_of_throws)
         df["player"] = list(players["player.ext_player_id"])
 
@@ -754,9 +798,9 @@ class GameStats(Endpoint):
                     player2 = int(event["r"])
                 if x1 and y1 and player1:
                     # get player
-                    player_id = players[players["id"] == player1]["player.ext_player_id"].tolist()[
-                        0
-                    ]
+                    player_id = players[players["id"] == player1][
+                        "player.ext_player_id"
+                    ].tolist()[0]
 
                     # get distance and throw selection
                     #  dist = get_throwing_distance(x1, y1, x2, y2)
@@ -797,7 +841,10 @@ class GameStats(Endpoint):
 
         # initialize df
         list_players = list(players["player.ext_player_id"])
-        freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+        freq = [
+            [0 for _ in range(len(list_players))]
+            for _ in range(len(list_players))
+        ]
         df = pd.DataFrame(freq, columns=list_players)
         df["player"] = list_players
 
@@ -826,12 +873,12 @@ class GameStats(Endpoint):
                 player2 = int(event["r"])
                 if player1:
                     # get player
-                    player1_id = players[players["id"] == player1]["player.ext_player_id"].tolist()[
-                        0
-                    ]
-                    player2_id = players[players["id"] == player2]["player.ext_player_id"].tolist()[
-                        0
-                    ]
+                    player1_id = players[players["id"] == player1][
+                        "player.ext_player_id"
+                    ].tolist()[0]
+                    player2_id = players[players["id"] == player2][
+                        "player.ext_player_id"
+                    ].tolist()[0]
 
                     # increment thrower-receiver
                     df.loc[df["player"].isin([player1_id]), player2_id] += 1
@@ -863,7 +910,10 @@ class GameStats(Endpoint):
 
         # initialize df
         list_players = list(players["player.ext_player_id"])
-        freq = [[0 for _ in range(len(list_players))] for _ in range(len(list_players))]
+        freq = [
+            [0 for _ in range(len(list_players))]
+            for _ in range(len(list_players))
+        ]
         df = pd.DataFrame(freq, columns=list_players)
         df["player"] = list_players
 
@@ -886,7 +936,9 @@ class GameStats(Endpoint):
             if event_type in [1, 2]:
                 l = event["l"]
                 lineup = [
-                    players[players["id"] == int(player_id)]["player.ext_player_id"].tolist()[0]
+                    players[players["id"] == int(player_id)][
+                        "player.ext_player_id"
+                    ].tolist()[0]
                     for player_id in l
                 ]
                 #  print(lineup)
@@ -929,8 +981,19 @@ class GameStats(Endpoint):
             raise ValueError("player_id doesn't exist. Please check!")
 
         # initialize dataframe
-        type_of_throws = ["pass", "huck", "swing", "dump", "dish", "throwaway", "drop"]
-        selection = [[0 for _ in range(len(type_of_throws))] for _ in range(len(list_players))]
+        type_of_throws = [
+            "pass",
+            "huck",
+            "swing",
+            "dump",
+            "dish",
+            "throwaway",
+            "drop",
+        ]
+        selection = [
+            [0 for _ in range(len(type_of_throws))]
+            for _ in range(len(list_players))
+        ]
         df = pd.DataFrame(selection, columns=type_of_throws)
         df["player"] = list_players
 
@@ -957,7 +1020,9 @@ class GameStats(Endpoint):
             if event_type in [19, 20, 22]:  # event has x and y
                 x2, y2 = event["x"], event["y"]
                 player2 = int(event["r"])
-                player_id = players[players["id"] == player2]["player.ext_player_id"].tolist()[0]
+                player_id = players[players["id"] == player2][
+                    "player.ext_player_id"
+                ].tolist()[0]
                 if x1 and y1 and player1 == thrower:
                     # get distance and throw selection
                     throw, _, _, _, _, _ = get_throw_type(x1, y1, x2, y2)
@@ -984,7 +1049,11 @@ class GameStats(Endpoint):
         >>> GameStats('2022-06-11-TB-ATL').print_team_events(False)
 
         """
-        events = self.json["tsgHome"]["events"] if is_home else self.json["tsgAway"]["events"]
+        events = (
+            self.json["tsgHome"]["events"]
+            if is_home
+            else self.json["tsgAway"]["events"]
+        )
 
         # FIXME: convert columns double values to int
         #  cols_to_int = ['t', 'ms', 's', 'c']
@@ -993,7 +1062,14 @@ class GameStats(Endpoint):
 
         # get players_metadata
         players = self.get_players_metadata()
-        players = players[["id", "player.first_name", "player.last_name", "player.ext_player_id"]]
+        players = players[
+            [
+                "id",
+                "player.first_name",
+                "player.last_name",
+                "player.ext_player_id",
+            ]
+        ]
 
         # print all events
         for _, row in enumerate(json.loads(events)):
@@ -1002,7 +1078,9 @@ class GameStats(Endpoint):
                 # print lineup
                 l = row["l"]
                 lineup = [
-                    players[players["id"] == int(player_id)]["player.ext_player_id"].tolist()[0]
+                    players[players["id"] == int(player_id)][
+                        "player.ext_player_id"
+                    ].tolist()[0]
                     for player_id in l
                 ]
                 print(f"t: {t}; lineup: {lineup}")
@@ -1015,7 +1093,9 @@ class GameStats(Endpoint):
                 except:
                     receiver = "NaN"
                 if t in [3, 19, 20, 22]:
-                    print(f"t: {t}; r: {receiver}; x: {row['x']}; y: {row['y']}")
+                    print(
+                        f"t: {t}; r: {receiver}; x: {row['x']}; y: {row['y']}"
+                    )
                 else:
                     print(f"t: {t}; r: {receiver}")
             elif t in [14, 15, 42, 43]:
@@ -1080,7 +1160,9 @@ class GameStats(Endpoint):
                         x = event["x"]
                         y = event["y"]
                         try:
-                            r_id = int(event["r"])  # FIXME: investigate why no r sometimes
+                            r_id = int(
+                                event["r"]
+                            )  # FIXME: investigate why no r sometimes
                             throw_dist = round(math.sqrt(x**2 + y**2), 3)
                             row = [
                                 game_id,
@@ -1139,9 +1221,14 @@ class GameStats(Endpoint):
                     if t == 8:  # throwaway
                         x = event["x"]
                         y = event["y"]
-                        throw_type, throw_side, throw_distance, x_delta, y_delta, angle_degrees = (
-                            get_throw_type(x_prev, y_prev, x, y)
-                        )
+                        (
+                            throw_type,
+                            throw_side,
+                            throw_distance,
+                            x_delta,
+                            y_delta,
+                            angle_degrees,
+                        ) = get_throw_type(x_prev, y_prev, x, y)
                         row = [
                             game_id,
                             point,
@@ -1182,7 +1269,9 @@ class GameStats(Endpoint):
             df_throws["thrower_id"] = df_throws["thrower_id"].astype("Int64")
             return df_throws
 
-        def compute_player_column_from_id(df_game_players, players_id, column_name):
+        def compute_player_column_from_id(
+            df_game_players, players_id, column_name
+        ):
             team_external_ids = []
             for player_id in players_id:
                 try:
