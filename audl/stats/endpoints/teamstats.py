@@ -60,14 +60,14 @@ class TeamStats(Endpoint):
         >>> TeamStats(2019, 'game', 'opponent').get_table()
 
         """
+        url = self._get_url()
         try:
-            url = self._get_url()
             results = requests.get(url).json()
             teams = results["stats"]
             df = pd.DataFrame(teams)
-        except:
+        except Exception as e:
             print(
-                f"An error has occured when fetching the page results as dataframe"
+                f"The following error has occured when fetching the results from url {url}: {e}"
             )
             sys.exit(1)
 

@@ -1,10 +1,18 @@
+## BUGS
+
+
+- FAILED test_gamestats.py::TestGameStats::test_get_events - AssertionError: <class 'dict'> != 'dict'
+- FAILED test_gamestats.py::TestGameStats::test_get_teamates_selection - TypeError: can only concatenate str (not "int") to str
+- FAILED test_gamestats.py::TestGameStats::test_get_throw_selection - TypeError: can only concatenate str (not "int") to str
+- FAILED test_gamestats.py::TestGameStats::test_get_thrower_receiver_count - TypeError: can only concatenate str (not "int") to str
+
+
 ## [Features](#features)
 
 
 [AUDL Stats](https://theaudl.com/league/stats)
 
-- [O] Fetch Data from
-	- [X] [Player Profile](https://theaudl.com/league/players/mmcdonnel)
+- [O] Fetch Data from [Player Profile](https://theaudl.com/league/players/mmcdonnel)
 	- [X] [Team Stats](https://theaudl.com/stats/team)
 	    - [ ] Merge team and opponent columns into single df
 	- [X] [Player Stats](https://theaudl.com/stats/player-stats)
