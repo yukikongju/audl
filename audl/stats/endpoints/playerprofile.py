@@ -156,7 +156,7 @@ class PlayerProfile(Endpoint):
         df["player_ext_id"] = self.player_id
         return df
 
-    def get_personal_information(self) -> pd.DataFrame:  # TODO
+    def get_personal_information(self) -> pd.DataFrame:
         """
         Function that returns dataframe with player metadata. Columns include
         the following:
@@ -216,15 +216,15 @@ class PlayerProfile(Endpoint):
 
             # Combine all into a dictionary
             player_data = {
-                "Name": name,
-                "Team / Position": team_position,
-                "Jersey Number": jersey_number,
-                "Height": stats.get("HEIGHT"),
-                "Weight": stats.get("WEIGHT"),
-                "DOB": stats.get("AGE/DOB"),
-                "College": stats.get("COLLEGE"),
-                "Hometown": hometown,
-                "Bio": bio_text,
+                "name": name,
+                "team_position": team_position,
+                "jersey_number": jersey_number,
+                "height": stats.get("HEIGHT"),
+                "weight": stats.get("WEIGHT"),
+                "dob": stats.get("AGE/DOB"),
+                "college": stats.get("COLLEGE"),
+                "hometown": hometown,
+                "bio": bio_text,
             }
 
             # Convert to DataFrame

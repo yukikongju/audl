@@ -1,4 +1,4 @@
-BeautifulSoup4
+beautifulsoup4
 black
 commitizen
 flake8
