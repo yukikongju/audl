@@ -216,6 +216,7 @@ class PlayerProfile(Endpoint):
 
             # Combine all into a dictionary
             player_data = {
+                "ext_player_id": self.player_id,
                 "name": name,
                 "team_position": team_position,
                 "jersey_number": jersey_number,
