@@ -20,8 +20,8 @@ deploy:
 	python3 -m twine upload dist/*
 
 deploy_test:
-	rm -r dist/
-	rm -r audl.egg-info/
+	# rm -r dist/
+	# rm -r audl.egg-info/
 	python3 -m build
 	python3 -m twine upload --repository testpypi dist/*
 	# jupyter nbconvert --to notebook --inplace --execute examples/*.ipynb

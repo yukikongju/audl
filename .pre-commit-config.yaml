@@ -29,15 +29,15 @@ repos:
   #     description: "PEP 8 formatting check"
   #     args: [--ignore=E501]
 
-  - repo: https://github.com/kynan/nbstripout
-    rev: 0.8.1
-    hooks:
-      - id: nbstripout
-        name: nbstripout
-        description: "nbstripout: strip output from Jupyter and IPython notebooks"
-        entry: nbstripout
-        language: python
-        types: [jupyter]
+  # - repo: https://github.com/kynan/nbstripout
+  #   rev: 0.8.1
+  #   hooks:
+  #     - id: nbstripout
+  #       name: nbstripout
+  #       description: "nbstripout: strip output from Jupyter and IPython notebooks"
+  #       entry: nbstripout
+  #       language: python
+  #       types: [jupyter]
 
   # - repo: local
   #   hooks:

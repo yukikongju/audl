@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="audl",
-    version="0.0.16",
+    version="0.0.17",
     license="MIT",
     author="yukikongju",
     author_email="yukikongju@outlook.com",
