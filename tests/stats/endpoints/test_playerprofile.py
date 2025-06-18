@@ -7,11 +7,11 @@ from audl.stats.endpoints.playerprofile import PlayerProfile
 class TestPlayerProfile(unittest.TestCase):
 
     def test_existing_player(self):
-        player = PlayerProfile("cbrock")
+        player = PlayerProfile("amerriman")
         career = player.get_career_stats()
         reg = player.get_regular_seasons_career()
         playoffs = player.get_playoffs_career()
-        season = player.get_season_games_stats(2019)
+        season = player.get_season_games_stats(2025)
         games_stats = player.get_career_games_stats()
         player_metadata = player.get_personal_information()
 

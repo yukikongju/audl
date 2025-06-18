@@ -128,7 +128,7 @@ class PlayerProfile(Endpoint):
             url = f"https://www.backend.ufastats.com/web-v1/roster-game-stats-for-player?playerID={self.player_id}&year={year}"
             results = requests.get(url).json()
             df = pd.DataFrame(results["stats"])
-            df["player_ext_id"] = self.player_id
+            df["ext_player_id"] = self.player_id
             return df
         except BaseException:
             print("An error has occured when fetching season stats dataframe")
