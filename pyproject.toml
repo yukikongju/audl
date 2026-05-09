@@ -1,16 +1,47 @@
 [build-system]
-# These are the assumed default build requirements from pip:
-# https://pip.pypa.io/en/stable/reference/pip/#pep-517-and-518-support
 requires = ["setuptools>=43.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "audl"
+version = "0.0.19"
+description = "Unofficial audl api"
+readme = "README.md"
+license = { file = "LICENCE" }
+authors = [{ name = "yukikongju", email = "yukikongju@outlook.com" }]
+requires-python = ">=3.7"
+keywords = ["audl", "audl.com", "ultimate frisbee"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = ["pandas", "requests", "lxml", "html5lib"]
+
+[dependency-groups]
+dev = [
+    "beautifulsoup4",
+    "black",
+    "commitizen",
+    "flake8",
+    "isort",
+    "numpy",
+    "pdoc3",
+    "pre-commit",
+    "setuptools",
+    "tqdm",
+    "twine",
+    "wheel",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "1.0.0"
+version = "0.0.18"
 tag_format = "v$version"
 version_files = [
-    "VERSION",
-    "setup.py",
     "pyproject.toml:version"
 ]
 bump_message = "bump: version $current_version → $new_version"
