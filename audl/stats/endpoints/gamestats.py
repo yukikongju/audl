@@ -1,4 +1,32 @@
 #!/usr/bin/env/python
+"""
+Endpoint wrapper for a single AUDL game's box score, roster, and event data.
+
+Fetches the full game JSON from the UFA stats API:
+    https://www.backend.ufastats.com/stats-pages/game/<game_id>
+
+Game IDs follow the format ``YYYY-MM-DD-AWAY-HOME``, e.g.
+``'2022-06-11-TOR-MTL'`` is the June 11 2022 game where Toronto visited
+Montreal. IDs can be found from schedule endpoints or directly in game URLs
+on https://www.watchufa.com.
+
+The API response is a single JSON document containing:
+
+- ``game`` – metadata (teams, score, date, location).
+- ``tsgHome`` / ``tsgAway`` – team stat groups: aggregate counts plus a
+  raw ``events`` JSON string encoding every disc touch in the game.
+- ``rostersHome`` / ``rostersAway`` – player metadata for both rosters.
+
+Usage
+-----
+>>> from audl.stats.endpoints.gamestats import GameStats
+>>> game = GameStats('2022-06-11-TOR-MTL')
+>>> game.get_boxscores()
+>>> game.get_team_stats()
+>>> game.get_roster_stats()
+>>> game.get_throws_dataframe()
+>>> game.get_lineup_by_points()
+"""
 
 import json
 import math

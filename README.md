@@ -1,19 +1,21 @@
 # AUDL API
 
-Unofficial AUDL api for python users
+[![PyPI version](https://badge.fury.io/py/audl.svg)](https://pypi.org/project/audl/)
+[![Python](https://img.shields.io/badge/python-3.7%2B-blue)](https://pypi.org/project/audl/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-What it does:
-- [X] Fetch Data directly from [audl website](https://theaudl.com)
-- [ ] Update database from Web Scrapping using workflow
-- [ ] Generate pdf reports for player, team and games
+Unofficial AUDL api for python users
 
 [See Documentation](https://htmlpreview.github.io/?https://github.com/yukikongju/audl/blob/master/docs/audl/index.html)
 
-To download the package: `pip install audl`
+To install: `pip install audl`
 
+## Requirements
+
+- Python 3.7+
+- pandas, requests, lxml, html5lib
 
 ## Usage
-
 
 #### How to get player profile
 
@@ -59,6 +61,10 @@ from audl.stats.endpoints.playerstats import PlayerStats
 
 # from "https://theaudl.com/stats/player-stats"
 playerstats = PlayerStats('career', 'total', 'breeze').fetch_table()  # PlayerStats(season, per, team)
+
+# save to CSV
+playerstats_obj = PlayerStats('career', 'total', 'breeze')
+playerstats_obj.download_stats_as_dataframe('output/player_stats.csv')
 ```
 
 #### How to fetch season schedule
@@ -67,26 +73,21 @@ playerstats = PlayerStats('career', 'total', 'breeze').fetch_table()  # PlayerSt
 
 
 ```python
-
 from audl.stats.endpoints.seasonschedule import SeasonSchedule, TeamSeasonSchedule, AllSchedule, TeamSeasonAgainstOpponentSchedule
 
 # Fetch complete season schedule from "https://theaudl.com/league/game-search"
-
-from audl.stats.endpoints.seasonschedule import SeasonSchedule, TeamSeasonSchedule, AllSchedule, TeamSeasonAgainstOpponentSchedule
-
-# Fetch complete season schedule from "https://theaudl.com/league/game-search"
-
 season_schedule = SeasonSchedule(2022).get_schedule()
 team_season_schedule = TeamSeasonSchedule(2022, 'royal').get_schedule()
 all_schedule = AllSchedule().get_schedule()
 team_season_against_opponent = TeamSeasonAgainstOpponentSchedule(2022, 'royal', 'rush').get_schedule()
-
 ```
 
 #### How to get game statistics
 
-```python
+Game IDs follow the format `YYYY-MM-DD-AWAY-HOME` (e.g. `2021-06-05-RAL-ATL` is the
+June 5 2021 game where Raleigh visited Atlanta).
 
+```python
 from audl.stats.endpoints.gamestats import GameStats
 
 # Fetching Box Scores from "https://theaudl.com/stats/game/2021-06-05-RAL-ATL"
@@ -96,9 +97,12 @@ players = game.get_players_metadata()
 game_metadata = game.get_game_metadata()
 team_stats = game.get_team_stats()
 roster = game.get_roster_stats()
-scoring_time = game._get_scoring_time()
 boxscores = game.get_boxscores()
 events = game.get_events()
+all_events = game.get_all_events()           # raw home + away events as dict
+events_seq = game.get_events_sequential()    # events in sequential point order
+point_results = game.get_point_results()     # offense/defense lineups and outcome per point
+lineup_by_points = game.get_lineup_by_points()
 throw_selection = game.get_throw_selection()
 thrower_receiver_count = game.get_thrower_receiver_count(True)
 lineup = game.get_lineup_frequency(True)
@@ -121,5 +125,14 @@ from audl.stats.endpoints.teamgamestats import AllTeamGameStats, SeasonGameStats
 team_season = TeamSeasonGameStats(2022, 'royal').get_game_stats()
 all_games = AllTeamGameStats().get_game_stats()
 season_games = SeasonGameStats(2022).get_game_stats()
-
 ```
+
+## Examples
+
+Jupyter notebooks with worked examples are in the [`examples/`](examples/) directory:
+
+- [Player Profile](examples/Endpoints%20-%20Player%20Profile.ipynb)
+- [Player Stats](examples/Endpoints%20-%20Player%20Stats.ipynb)
+- [Game Statistics](examples/Endpoints%20-%20Game%20Statistics.ipynb)
+- [Season Schedule](examples/Endpoints%20-%20Season%20Schedule.ipynb)
+- [Team Game Stats](examples/Endpoints%20-%20Team%20Game%20Stats.ipynb)
