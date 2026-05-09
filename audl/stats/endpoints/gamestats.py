@@ -1,4 +1,32 @@
 #!/usr/bin/env/python
+"""
+Endpoint wrapper for a single AUDL game's box score, roster, and event data.
+
+Fetches the full game JSON from the UFA stats API:
+    https://www.backend.ufastats.com/stats-pages/game/<game_id>
+
+Game IDs follow the format ``YYYY-MM-DD-AWAY-HOME``, e.g.
+``'2022-06-11-TOR-MTL'`` is the June 11 2022 game where Toronto visited
+Montreal. IDs can be found from schedule endpoints or directly in game URLs
+on https://www.watchufa.com.
+
+The API response is a single JSON document containing:
+
+- ``game`` – metadata (teams, score, date, location).
+- ``tsgHome`` / ``tsgAway`` – team stat groups: aggregate counts plus a
+  raw ``events`` JSON string encoding every disc touch in the game.
+- ``rostersHome`` / ``rostersAway`` – player metadata for both rosters.
+
+Usage
+-----
+>>> from audl.stats.endpoints.gamestats import GameStats
+>>> game = GameStats('2022-06-11-TOR-MTL')
+>>> game.get_boxscores()
+>>> game.get_team_stats()
+>>> game.get_roster_stats()
+>>> game.get_throws_dataframe()
+>>> game.get_lineup_by_points()
+"""
 
 import json
 import math
@@ -18,8 +46,47 @@ from audl.stats.static.utils import get_throwing_distance
 
 
 class GameStats(Endpoint):
+    """Full statistics for a single AUDL game.
+
+    On construction the game JSON is fetched once and cached in ``self.json``.
+    All subsequent method calls operate on that cached document — no
+    additional HTTP requests are made unless ``get_roster_stats()`` is called
+    (which hits the player-profile API for each roster member).
+
+    Parameters
+    ----------
+    game_id : str
+        Game identifier in ``YYYY-MM-DD-AWAY-HOME`` format, e.g.
+        ``'2022-06-11-TOR-MTL'``. The city abbreviations match the team
+        ``city_abbrev`` field returned by ``get_teams_metadata()``.
+
+    Attributes
+    ----------
+    json : dict
+        Raw JSON document returned by the stats API.
+    home_team : str
+        External team ID of the home team (e.g. ``'royal'``).
+    away_team : str
+        External team ID of the away team (e.g. ``'rush'``).
+
+    Examples
+    --------
+    >>> game = GameStats('2022-06-11-TOR-MTL')
+    >>> game.get_team_stats()
+    >>> game.get_boxscores()
+    >>> game.get_throws_dataframe()
+    """
 
     def __init__(self, game_id: str):
+        """
+        Parameters
+        ----------
+        game_id : str
+            Game identifier in ``YYYY-MM-DD-AWAY-HOME`` format, e.g.
+            ``'2022-06-11-TOR-MTL'``. Fetches and caches the full game JSON
+            from:
+                https://www.backend.ufastats.com/stats-pages/game/<game_id>
+        """
         super().__init__("https://www.backend.ufastats.com/stats-pages/game/")
         self.game_id = game_id
         self.json = self._get_json_from_url()
@@ -658,8 +725,28 @@ class GameStats(Endpoint):
         raise NotImplementedError("This function hasn't been implemented yet!")
 
     def get_events(self):
-        """
-        Function that fetch all events for all points for each team
+        """Fetch all events grouped by point for both teams.
+
+        Parses the raw ``tsgHome.events`` and ``tsgAway.events`` JSON strings
+        and splits them into per-point buckets using
+        ``_get_team_events_by_points()``.
+
+        Returns
+        -------
+        dict
+            ``{'homeEvents': [...], 'awayEvents': [...]}`` where each value is
+            a list of dicts ``{'point': int, 'events': list}``. Each inner
+            ``events`` list contains the raw JSON event dicts for that point
+            (excluding the lineup event that opens the point).
+
+        See Also
+        --------
+        get_all_events : returns the flat (unpartitioned) raw event lists.
+
+        Examples
+        --------
+        >>> events = GameStats('2022-06-11-TOR-MTL').get_events()
+        >>> events['homeEvents'][1]['events']  # all events in point 2 for home team
         """
 
         # retrieve events from json
@@ -675,8 +762,27 @@ class GameStats(Endpoint):
         return events_dict
 
     def get_all_events(self):
-        """
-        Function that fetch all events (raw) for home and away team for each team
+        """Fetch all raw events for both teams as flat lists.
+
+        Returns the ``tsgHome.events`` and ``tsgAway.events`` arrays without
+        any grouping or filtering. Each element is a JSON dict with at minimum
+        a ``t`` field; see ``audl.stats.library.parameters.game_event_dict``
+        for event-type descriptions.
+
+        Returns
+        -------
+        dict
+            ``{'homeEvents': list, 'awayEvents': list}`` where each value is
+            the complete unpartitioned sequence of event dicts for that team.
+
+        See Also
+        --------
+        get_events : returns the same data partitioned into per-point buckets.
+
+        Examples
+        --------
+        >>> raw = GameStats('2022-06-11-TOR-MTL').get_all_events()
+        >>> raw['homeEvents'][0]  # first event of the game for the home team
         """
 
         # retrieve events from json

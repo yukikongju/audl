@@ -16,3 +16,9 @@ version_files = [
 bump_message = "bump: version $current_version → $new_version"
 update_changelog_on_bump = true
 annotated_tag = true
+
+[project.urls]
+Homepage = "https://github.com/yukikongju/audl"
+Documentation = "https://htmlpreview.github.io/?https://github.com/yukikongju/audl/blob/master/docs/audl/index.html"
+Repository = "https://github.com/yukikongju/audl"
+Issues = "https://github.com/yukikongju/audl/issues"

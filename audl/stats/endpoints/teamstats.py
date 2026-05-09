@@ -1,4 +1,18 @@
 #!/usr/bin/env/python
+"""
+Endpoint wrapper for AUDL team season statistics.
+
+Fetches aggregated team stats from the UFA stats API:
+    https://www.backend.ufastats.com/web-v1/team-stats?limit=50
+
+Equivalent to the table shown at:
+    https://theaudl.com/stats/team
+
+Usage
+-----
+>>> from audl.stats.endpoints.teamstats import TeamStats
+>>> df = TeamStats('career', 'game', 'opponent').get_table()
+"""
 
 import sys
 import pandas as pd
@@ -11,6 +25,28 @@ from audl.stats.endpoints._base import Endpoint
 
 
 class TeamStats(Endpoint):
+    """Aggregated team statistics for a given season, per-unit, and side.
+
+    Wraps ``GET /web-v1/team-stats`` on the UFA stats backend. Results mirror
+    the table at https://theaudl.com/stats/team.
+
+    Parameters
+    ----------
+    season : str or int
+        ``'career'`` for all-time totals, or a specific year (e.g. ``2022``).
+        Valid range: ``'career'``, 2012–present.
+    per : str
+        Aggregation unit. One of ``'total'`` (season totals) or ``'game'``
+        (per-game averages).
+    team : str
+        Perspective. ``'team'`` for the team's own stats; ``'opponent'`` for
+        opponent stats faced by each team.
+
+    Examples
+    --------
+    >>> TeamStats('career', 'total', 'team').get_table()
+    >>> TeamStats(2022, 'game', 'opponent').get_table()
+    """
 
     def __init__(self, season, per, team):
         """

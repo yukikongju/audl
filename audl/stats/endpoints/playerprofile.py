@@ -1,4 +1,29 @@
 #!/usr/bin/env/python
+"""
+Endpoint wrapper for an individual AUDL player's career profile.
+
+Fetches player stats and personal information from two UFA endpoints:
+
+Career and per-season stats (JSON API):
+    https://www.backend.ufastats.com/web-v1/roster-stats-for-player?playerID=<player_id>
+    https://www.backend.ufastats.com/web-v1/roster-game-stats-for-player?playerID=<player_id>&year=<year>
+
+Personal bio and metadata (HTML scrape):
+    https://www.watchufa.com/league/players/<player_id>
+
+A player's external ID (e.g. ``'cbrock'``) can be found in the URL of their
+profile page on https://www.watchufa.com/league/players or via
+``audl.stats.endpoints.utils.get_all_players_ext_ids()``.
+
+Usage
+-----
+>>> from audl.stats.endpoints.playerprofile import PlayerProfile
+>>> player = PlayerProfile('cbrock')
+>>> player.get_career_stats()
+>>> player.get_regular_seasons_career()
+>>> player.get_season_games_stats(2022)
+>>> player.get_personal_information()
+"""
 
 import pandas as pd
 import requests
@@ -18,9 +43,32 @@ from audl.stats.static.constants import FIRST_SEASON_YEAR
 
 
 class PlayerProfile(Endpoint):
+    """Career statistics and personal metadata for a single AUDL player.
+
+    Combines data from the JSON stats API and a lightweight HTML scrape of the
+    player's profile page.
+
+    Parameters
+    ----------
+    player_id : str
+        The player's external ID as it appears in the UFA URL, e.g.
+        ``'cbrock'`` from ``https://www.watchufa.com/league/players/cbrock``.
+
+    Examples
+    --------
+    >>> player = PlayerProfile('cbrock')
+    >>> career = player.get_career_stats()
+    >>> info   = player.get_personal_information()
+    """
 
     def __init__(self, player_id: str):
-        #  super().__init__("https://audl-stat-server.herokuapp.com/web-api/roster-stats-for-player?playerID=")
+        """
+        Parameters
+        ----------
+        player_id : str
+            Player external ID (e.g. ``'cbrock'``). Used as the ``playerID``
+            query parameter in all API calls.
+        """
         super().__init__(
             "https://www.backend.ufastats.com/web-v1/roster-stats-for-player?playerID="
         )
@@ -182,7 +230,7 @@ class PlayerProfile(Endpoint):
             )
 
         try:
-            soup = BeautifulSoup(response.text)
+            soup = BeautifulSoup(response.text, "lxml")
             name = soup.find(
                 "div", class_="audl-player-display-name"
             ).text.strip()

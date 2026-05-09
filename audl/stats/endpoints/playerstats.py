@@ -1,4 +1,22 @@
 #!/usr/bin/env/python
+"""
+Endpoint wrapper for AUDL player season statistics.
+
+Fetches per-player stats from the UFA stats API using paginated requests:
+    https://www.backend.ufastats.com/web-v1/player-stats?limit=20
+
+Equivalent to the table shown at:
+    https://theaudl.com/stats/player-stats
+
+The API paginates results (20 players per page). ``PlayerStats.fetch_table()``
+automatically iterates all pages and returns a single combined DataFrame.
+
+Usage
+-----
+>>> from audl.stats.endpoints.playerstats import PlayerStats
+>>> df = PlayerStats('career', 'total', 'all').fetch_table()
+>>> PlayerStats(2022, 'game', 'breeze').download_stats_as_dataframe('out.csv')
+"""
 
 import pandas as pd
 import json
