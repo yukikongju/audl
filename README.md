@@ -1,10 +1,13 @@
+
+</think>
+
 # AUDL API
 
 [![PyPI version](https://badge.fury.io/py/audl.svg)](https://pypi.org/project/audl/)
 [![Python](https://img.shields.io/badge/python-3.7%2B-blue)](https://pypi.org/project/audl/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Unofficial AUDL api for python users
+Unofficial AUDL API for Python users
 
 [See Documentation](https://htmlpreview.github.io/?https://github.com/yukikongju/audl/blob/master/docs/audl/index.html)
 
